@@ -183,5 +183,23 @@
 
 </div>
 
-  </footer>  <script src="script.js"></script></body>
+  </footer><script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfiON-27mz4OlD2Hl8uGNMk_2iS2cp2Qw",
+    authDomain: "mazad-b8b34.firebaseapp.com",
+    projectId: "mazad-b8b34",
+    storageBucket: "mazad-b8b34.firebasestorage.app",
+    messagingSenderId: "720192718299",
+    appId: "1:720192718299:web:703589b39b9ef03e5a13fe",
+    measurementId: "G-6HKL7P0H83"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  console.log("Mazad Firebase connected successfully!");
+</script><script src="script.js"></script></body>
 </html>
