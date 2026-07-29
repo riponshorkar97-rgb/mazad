@@ -27,6 +27,7 @@
         <a href="#categories" data-i18n="categories">Categories</a>
         <a href="#listings" data-i18n="listings">Listings</a>
         <a href="#login" data-i18n="login">Login</a>
+        <a href="#profile" id="profileNavBtn" data-i18n="profile">Profile</a>
       </nav>
 
       <div class="header-actions">
@@ -164,17 +165,13 @@
           <div class="category-card" data-category="Mobiles">
             <div class="category-icon">📱</div>
             <h3 data-i18n="mobiles">Mobiles</h3>
-            <p data-i18n="phonesAccessories">
-              Phones & accessories
-            </p>
+            <p data-i18n="phonesAccessories">Phones & accessories</p>
           </div>
 
           <div class="category-card" data-category="Electronics">
             <div class="category-icon">💻</div>
             <h3 data-i18n="electronics">Electronics</h3>
-            <p data-i18n="devicesGadgets">
-              Devices & gadgets
-            </p>
+            <p data-i18n="devicesGadgets">Devices & gadgets</p>
           </div>
 
           <div class="category-card" data-category="Property">
@@ -186,17 +183,13 @@
           <div class="category-card" data-category="Fashion">
             <div class="category-icon">👕</div>
             <h3 data-i18n="fashion">Fashion</h3>
-            <p data-i18n="clothesAccessories">
-              Clothes & accessories
-            </p>
+            <p data-i18n="clothesAccessories">Clothes & accessories</p>
           </div>
 
           <div class="category-card" data-category="Jobs">
             <div class="category-icon">💼</div>
             <h3 data-i18n="jobs">Jobs</h3>
-            <p data-i18n="findOpportunities">
-              Find opportunities
-            </p>
+            <p data-i18n="findOpportunities">Find opportunities</p>
           </div>
 
         </div>
@@ -211,23 +204,15 @@
 
         <div class="section-title">
           <p data-i18n="marketplace">Marketplace</p>
-          <h2 data-i18n="latestListings">
-            Latest Listings
-          </h2>
+          <h2 data-i18n="latestListings">Latest Listings</h2>
         </div>
 
         <div id="productsContainer" class="products-grid">
 
           <div class="empty-state">
             <div>📦</div>
-
-            <h3 data-i18n="loadingProducts">
-              Loading products...
-            </h3>
-
-            <p data-i18n="pleaseWait">
-              Please wait.
-            </p>
+            <h3 data-i18n="loadingProducts">Loading products...</h3>
+            <p data-i18n="pleaseWait">Please wait.</p>
           </div>
 
         </div>
@@ -242,9 +227,7 @@
 
         <div class="section-title">
           <p data-i18n="marketplace">Marketplace</p>
-          <h2 data-i18n="sellYourProduct">
-            Sell Your Product
-          </h2>
+          <h2 data-i18n="sellYourProduct">Sell Your Product</h2>
         </div>
 
         <div class="login-card">
@@ -260,29 +243,19 @@
             >
 
             <select id="productCategory" required>
-
               <option value="" data-i18n="selectCategory">
                 Select Category
               </option>
 
               <option value="Cars" data-i18n="cars">Cars</option>
-              <option value="Mobiles" data-i18n="mobiles">
-                Mobiles
-              </option>
+              <option value="Mobiles" data-i18n="mobiles">Mobiles</option>
               <option value="Electronics" data-i18n="electronics">
                 Electronics
               </option>
-              <option value="Property" data-i18n="property">
-                Property
-              </option>
-              <option value="Fashion" data-i18n="fashion">
-                Fashion
-              </option>
+              <option value="Property" data-i18n="property">Property</option>
+              <option value="Fashion" data-i18n="fashion">Fashion</option>
               <option value="Jobs" data-i18n="jobs">Jobs</option>
-              <option value="Others" data-i18n="others">
-                Others
-              </option>
-
+              <option value="Others" data-i18n="others">Others</option>
             </select>
 
             <input
@@ -448,6 +421,85 @@
       </div>
     </section>
 
+
+    <!-- PROFILE SECTION -->
+    <section id="profile" class="profile-section">
+      <div class="container">
+
+        <div class="section-title">
+          <p data-i18n="account">Account</p>
+          <h2 data-i18n="myProfile">My Profile</h2>
+        </div>
+
+        <div id="profileContent"></div>
+
+      </div>
+    </section>
+
+
+    <!-- MESSAGES -->
+    <section id="messages" class="messages-section">
+      <div class="container">
+
+        <div class="section-title">
+          <p data-i18n="communication">Communication</p>
+          <h2 data-i18n="messages">Messages</h2>
+        </div>
+
+        <div class="messages-layout">
+
+          <div class="conversation-list" id="conversationList">
+            <div class="chat-empty">
+              💬
+              <p data-i18n="noConversations">
+                No conversations yet.
+              </p>
+            </div>
+          </div>
+
+          <div class="chat-panel">
+
+            <div class="chat-header" id="chatHeader">
+              <span data-i18n="selectConversation">
+                Select a conversation
+              </span>
+            </div>
+
+            <div
+              class="chat-messages"
+              id="chatMessages"
+            ></div>
+
+            <form
+              class="chat-form"
+              id="chatForm"
+            >
+
+              <input
+                type="text"
+                id="chatInput"
+                placeholder="Write a message..."
+                data-i18n-placeholder="writeMessage"
+                autocomplete="off"
+              >
+
+              <button
+                type="submit"
+                class="primary-btn"
+                data-i18n="send"
+              >
+                Send
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
 
@@ -477,13 +529,11 @@
       </button>
 
       <div class="modal-image-wrapper">
-
         <img
           id="modalProductImage"
           src=""
           alt="Product"
         >
-
       </div>
 
       <div class="modal-product-content">
@@ -495,29 +545,20 @@
           Category
         </span>
 
-        <h2 id="modalProductTitle">
-          Product
-        </h2>
+        <h2 id="modalProductTitle">Product</h2>
 
-        <div
-          id="modalProductPrice"
-          class="modal-price"
-        >
+        <div id="modalProductPrice" class="modal-price">
           $0
         </div>
 
         <div class="modal-location">
           📍
-          <span id="modalProductLocation">
-            Unknown
-          </span>
+          <span id="modalProductLocation">Unknown</span>
         </div>
 
         <div class="modal-divider"></div>
 
-        <h3 data-i18n="description">
-          Description
-        </h3>
+        <h3 data-i18n="description">Description</h3>
 
         <p
           id="modalProductDescription"
@@ -526,21 +567,27 @@
           No description available.
         </p>
 
+        <!-- SELLER -->
         <div class="seller-box">
 
-          <div class="seller-avatar">
-            👤
-          </div>
+          <img
+            id="modalSellerPhoto"
+            class="seller-avatar-image"
+            src=""
+            alt="Seller"
+          >
 
           <div class="seller-details">
 
-            <span data-i18n="seller">
-              Seller
-            </span>
+            <span data-i18n="seller">Seller</span>
 
-            <strong id="modalSellerEmail">
-              Seller information
+            <strong id="modalSellerName">
+              Seller
             </strong>
+
+            <small id="modalSellerEmail">
+              Seller information
+            </small>
 
           </div>
 
@@ -558,30 +605,154 @@
   </div>
 
 
+  <!-- PROFILE MODAL -->
+  <div
+    id="profileModal"
+    class="profile-modal"
+    aria-hidden="true"
+  >
+
+    <div class="profile-modal-overlay"></div>
+
+    <div
+      class="profile-modal-box"
+      role="dialog"
+      aria-modal="true"
+    >
+
+      <button
+        id="closeProfileModal"
+        class="modal-close"
+        type="button"
+      >
+        ×
+      </button>
+
+      <div id="profileModalContent"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- EDIT PROFILE MODAL -->
+  <div
+    id="editProfileModal"
+    class="profile-modal"
+    aria-hidden="true"
+  >
+
+    <div class="profile-modal-overlay"></div>
+
+    <div
+      class="profile-modal-box edit-profile-box"
+      role="dialog"
+      aria-modal="true"
+    >
+
+      <button
+        id="closeEditProfileModal"
+        class="modal-close"
+        type="button"
+      >
+        ×
+      </button>
+
+      <div class="edit-profile-content">
+
+        <h2 data-i18n="editProfile">
+          Edit Profile
+        </h2>
+
+        <form id="editProfileForm">
+
+          <label
+            for="profilePhotoFile"
+            data-i18n="profilePhoto"
+          >
+            Profile Photo
+          </label>
+
+          <input
+            type="file"
+            id="profilePhotoFile"
+            accept="image/*"
+          >
+
+          <p id="profileImageStatus"></p>
+
+          <input
+            type="text"
+            id="profileNameInput"
+            placeholder="Your name"
+            data-i18n-placeholder="yourName"
+            maxlength="80"
+          >
+
+          <input
+            type="tel"
+            id="profilePhoneInput"
+            placeholder="Phone number"
+            data-i18n-placeholder="phoneNumber"
+            maxlength="30"
+          >
+
+          <input
+            type="text"
+            id="profileLocationInput"
+            placeholder="Location"
+            data-i18n-placeholder="location"
+            maxlength="100"
+          >
+
+          <textarea
+            id="profileBioInput"
+            placeholder="About you"
+            data-i18n-placeholder="aboutBio"
+            rows="5"
+            maxlength="500"
+          ></textarea>
+
+          <button
+            type="submit"
+            class="primary-btn"
+            id="saveProfileBtn"
+            data-i18n="saveProfile"
+          >
+            Save Profile
+          </button>
+
+          <p id="profileSaveStatus"></p>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
   <!-- FOOTER -->
   <footer class="footer">
 
     <div class="container footer-content">
 
       <div>
-
         <h2>Mazad</h2>
 
         <p data-i18n="buySellProducts">
           Buy and sell products easily.
         </p>
-
       </div>
 
       <div>
-
         <p>
           © 2026 Mazad.
           <span data-i18n="allRightsReserved">
             All rights reserved.
           </span>
         </p>
-
       </div>
 
     </div>
