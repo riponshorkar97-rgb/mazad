@@ -522,7 +522,77 @@ content="Mazad is an online marketplace to buy and sell products easily."
   </div>
 
 </section>
+<!-- ================================
+     Sell Product
+================================= --><section id="sell" class="sell-section">  <div class="container"><div class="section-title">
+  <p>Marketplace</p>
+  <h2>Sell Your Product</h2>
+</div>
 
+<div class="login-card">
+
+  <form id="sellProductForm">
+
+    <input
+      type="text"
+      id="productTitle"
+      placeholder="Product title"
+      required
+    >
+
+    <select id="productCategory" required>
+      <option value="">Select Category</option>
+      <option value="Cars">Cars</option>
+      <option value="Mobiles">Mobiles</option>
+      <option value="Electronics">Electronics</option>
+      <option value="Property">Property</option>
+      <option value="Fashion">Fashion</option>
+      <option value="Jobs">Jobs</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <input
+      type="number"
+      id="productPrice"
+      placeholder="Price"
+      min="0"
+      required
+    >
+
+    <input
+      type="text"
+      id="productLocation"
+      placeholder="Location"
+      required
+    >
+
+    <input
+      type="url"
+      id="productImageUrl"
+      placeholder="Image URL (optional)"
+    >
+
+    <textarea
+      id="productDescription"
+      placeholder="Product description"
+      rows="5"
+      required
+    ></textarea>
+
+    <button
+      type="submit"
+      class="primary-btn"
+    >
+      Publish Product
+    </button>
+
+    <p id="sellStatus"></p>
+
+  </form>
+
+</div>
+
+  </div></section>
   </main>  <!-- ================================
        Footer
   ================================= -->  <footer class="footer"><div class="container footer-content">
