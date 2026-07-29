@@ -7,11 +7,9 @@
    Firebase Storage is NOT used.
 ========================================================= */
 
-
 import {
   initializeApp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
 
 import {
   getAuth,
@@ -21,14 +19,15 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-
 import {
   getFirestore,
   collection,
   addDoc,
   getDocs,
   query,
-  orderBy
+  orderBy,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
@@ -69,10 +68,8 @@ const firebaseConfig = {
 const CLOUDINARY_CLOUD_NAME =
   "bhpccaio";
 
-
 const CLOUDINARY_UPLOAD_PRESET =
   "mazad_upload";
-
 
 const CLOUDINARY_UPLOAD_URL =
   `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
@@ -85,10 +82,8 @@ const CLOUDINARY_UPLOAD_URL =
 const app =
   initializeApp(firebaseConfig);
 
-
 const auth =
   getAuth(app);
-
 
 const db =
   getFirestore(app);
@@ -109,33 +104,21 @@ document.addEventListener(
   "DOMContentLoaded",
   () => {
 
-
     /* =======================================================
        Elements
     ======================================================= */
 
     const searchInput =
-      document.getElementById(
-        "searchInput"
-      );
-
+      document.getElementById("searchInput");
 
     const categorySelect =
-      document.getElementById(
-        "categorySelect"
-      );
-
+      document.getElementById("categorySelect");
 
     const searchBtn =
-      document.getElementById(
-        "searchBtn"
-      );
-
+      document.getElementById("searchBtn");
 
     const productsContainer =
-      document.getElementById(
-        "productsContainer"
-      );
+      document.getElementById("productsContainer");
 
 
     /* =======================================================
@@ -143,45 +126,25 @@ document.addEventListener(
     ======================================================= */
 
     const loginForm =
-      document.getElementById(
-        "loginForm"
-      );
-
+      document.getElementById("loginForm");
 
     const registerForm =
-      document.getElementById(
-        "registerForm"
-      );
-
+      document.getElementById("registerForm");
 
     const showRegisterBtn =
-      document.getElementById(
-        "showRegisterBtn"
-      );
-
+      document.getElementById("showRegisterBtn");
 
     const showLoginBtn =
-      document.getElementById(
-        "showLoginBtn"
-      );
-
+      document.getElementById("showLoginBtn");
 
     const authTitle =
-      document.getElementById(
-        "authTitle"
-      );
-
+      document.getElementById("authTitle");
 
     const authMessage =
-      document.getElementById(
-        "authMessage"
-      );
-
+      document.getElementById("authMessage");
 
     const authStatus =
-      document.getElementById(
-        "authStatus"
-      );
+      document.getElementById("authStatus");
 
 
     /* =======================================================
@@ -189,45 +152,102 @@ document.addEventListener(
     ======================================================= */
 
     const sellProductForm =
-      document.getElementById(
-        "sellProductForm"
-      );
-
+      document.getElementById("sellProductForm");
 
     const sellStatus =
-      document.getElementById(
-        "sellStatus"
-      );
-
+      document.getElementById("sellStatus");
 
     const imageStatus =
-      document.getElementById(
-        "imageStatus"
-      );
-
+      document.getElementById("imageStatus");
 
     const publishProductBtn =
-      document.getElementById(
-        "publishProductBtn"
-      );
-
+      document.getElementById("publishProductBtn");
 
     const productImageFile =
-      document.getElementById(
-        "productImageFile"
-      );
-
+      document.getElementById("productImageFile");
 
     const headerSellBtn =
-      document.getElementById(
-        "headerSellBtn"
-      );
-
+      document.getElementById("headerSellBtn");
 
     const heroSellBtn =
-      document.getElementById(
-        "heroSellBtn"
+      document.getElementById("heroSellBtn");
+
+
+    /* =======================================================
+       Product Modal Elements
+    ======================================================= */
+
+    const productModal =
+      document.getElementById("productModal");
+
+    const productModalOverlay =
+      document.querySelector(".product-modal-overlay");
+
+    const closeProductModal =
+      document.getElementById("closeProductModal");
+
+    const modalProductImage =
+      document.getElementById("modalProductImage");
+
+    const modalProductCategory =
+      document.getElementById("modalProductCategory");
+
+    const modalProductTitle =
+      document.getElementById("modalProductTitle");
+
+    const modalProductPrice =
+      document.getElementById("modalProductPrice");
+
+    const modalProductLocation =
+      document.getElementById("modalProductLocation");
+
+    const modalProductDescription =
+      document.getElementById("modalProductDescription");
+
+    const modalSellerEmail =
+      document.getElementById("modalSellerEmail");
+
+    const sellerActions =
+      document.getElementById("sellerActions");
+
+
+    /* =======================================================
+       Helpers
+    ======================================================= */
+
+    function escapeHTML(value) {
+
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    function formatPrice(price) {
+
+      const number =
+        Number(price);
+
+      if (!Number.isFinite(number)) {
+        return "0";
+      }
+
+      return number.toLocaleString(
+        "en-US",
+        {
+          minimumFractionDigits:
+            Number.isInteger(number)
+              ? 0
+              : 2,
+          maximumFractionDigits: 2
+        }
       );
+
+    }
 
 
     /* =======================================================
@@ -243,21 +263,15 @@ document.addEventListener(
           const file =
             productImageFile.files[0];
 
-
           if (!file) {
 
             if (imageStatus) {
-
-              imageStatus.textContent =
-                "";
-
+              imageStatus.textContent = "";
             }
 
             return;
           }
 
-
-          /* Maximum 10 MB */
 
           if (
             file.size >
@@ -273,20 +287,14 @@ document.addEventListener(
                 "red";
             }
 
-
-            productImageFile.value =
-              "";
+            productImageFile.value = "";
 
             return;
           }
 
 
-          /* Check image type */
-
           if (
-            !file.type.startsWith(
-              "image/"
-            )
+            !file.type.startsWith("image/")
           ) {
 
             if (imageStatus) {
@@ -298,9 +306,7 @@ document.addEventListener(
                 "red";
             }
 
-
-            productImageFile.value =
-              "";
+            productImageFile.value = "";
 
             return;
           }
@@ -332,23 +338,17 @@ document.addEventListener(
 
       if (!authStatus) return;
 
-
       authStatus.textContent =
         message;
-
 
       authStatus.style.marginTop =
         "15px";
 
-
       authStatus.style.fontWeight =
         "600";
 
-
       authStatus.style.color =
-        success
-          ? "green"
-          : "red";
+        success ? "green" : "red";
 
     }
 
@@ -357,9 +357,7 @@ document.addEventListener(
        Firebase Error Messages
     ======================================================= */
 
-    function getFirebaseErrorMessage(
-      error
-    ) {
+    function getFirebaseErrorMessage(error) {
 
       switch (error.code) {
 
@@ -393,6 +391,320 @@ document.addEventListener(
 
 
     /* =======================================================
+       Product Details Modal
+    ======================================================= */
+
+    function closeProductDetails() {
+
+      if (!productModal) return;
+
+      productModal.classList.remove("active");
+
+      productModal.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      document.body.classList.remove(
+        "modal-open"
+      );
+
+    }
+
+
+    function openProductDetails(product) {
+
+      if (!productModal || !product) {
+        return;
+      }
+
+
+      const image =
+        product.image ||
+        "https://via.placeholder.com/800x500?text=Mazad+Product";
+
+
+      if (modalProductImage) {
+
+        modalProductImage.src =
+          image;
+
+        modalProductImage.alt =
+          product.title || "Mazad Product";
+
+      }
+
+
+      if (modalProductCategory) {
+
+        modalProductCategory.textContent =
+          product.category || "Others";
+
+      }
+
+
+      if (modalProductTitle) {
+
+        modalProductTitle.textContent =
+          product.title || "Untitled Product";
+
+      }
+
+
+      if (modalProductPrice) {
+
+        modalProductPrice.textContent =
+          `$${formatPrice(product.price)}`;
+
+      }
+
+
+      if (modalProductLocation) {
+
+        modalProductLocation.textContent =
+          product.location || "Unknown";
+
+      }
+
+
+      if (modalProductDescription) {
+
+        modalProductDescription.textContent =
+          product.description ||
+          "No description available.";
+
+      }
+
+
+      if (modalSellerEmail) {
+
+        modalSellerEmail.textContent =
+          product.sellerEmail ||
+          "Seller information unavailable";
+
+      }
+
+
+      if (sellerActions) {
+
+        sellerActions.innerHTML = "";
+
+        const currentUser =
+          auth.currentUser;
+
+
+        if (
+          currentUser &&
+          product.sellerId === currentUser.uid
+        ) {
+
+          const deleteButton =
+            document.createElement("button");
+
+          deleteButton.type =
+            "button";
+
+          deleteButton.className =
+            "delete-product-btn";
+
+          deleteButton.textContent =
+            "Delete Product";
+
+          deleteButton.addEventListener(
+            "click",
+            async () => {
+
+              await deleteProduct(
+                product.id
+              );
+
+            }
+          );
+
+          sellerActions.appendChild(
+            deleteButton
+          );
+
+        } else if (product.sellerEmail) {
+
+          const contactLink =
+            document.createElement("a");
+
+          contactLink.className =
+            "contact-seller-btn";
+
+          contactLink.href =
+            `mailto:${product.sellerEmail}?subject=${encodeURIComponent(
+              `Mazad inquiry: ${product.title || "Product"}`
+            )}`;
+
+          contactLink.textContent =
+            "Contact Seller";
+
+          sellerActions.appendChild(
+            contactLink
+          );
+
+        }
+
+      }
+
+
+      productModal.classList.add(
+        "active"
+      );
+
+      productModal.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      document.body.classList.add(
+        "modal-open"
+      );
+
+    }
+
+
+    if (closeProductModal) {
+
+      closeProductModal.addEventListener(
+        "click",
+        closeProductDetails
+      );
+
+    }
+
+
+    if (productModalOverlay) {
+
+      productModalOverlay.addEventListener(
+        "click",
+        closeProductDetails
+      );
+
+    }
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape" &&
+          productModal &&
+          productModal.classList.contains("active")
+        ) {
+
+          closeProductDetails();
+
+        }
+
+      }
+    );
+
+
+    /* =======================================================
+       Delete Product
+    ======================================================= */
+
+    async function deleteProduct(
+      productId
+    ) {
+
+      const currentUser =
+        auth.currentUser;
+
+
+      if (!currentUser) {
+
+        alert(
+          "Please login first."
+        );
+
+        return;
+      }
+
+
+      const product =
+        products.find(
+          item =>
+            item.id === productId
+        );
+
+
+      if (!product) {
+
+        alert(
+          "Product not found."
+        );
+
+        return;
+      }
+
+
+      if (
+        product.sellerId !==
+        currentUser.uid
+      ) {
+
+        alert(
+          "You can only delete your own products."
+        );
+
+        return;
+      }
+
+
+      const confirmed =
+        confirm(
+          "Are you sure you want to delete this product?"
+        );
+
+
+      if (!confirmed) {
+        return;
+      }
+
+
+      try {
+
+        await deleteDoc(
+          doc(
+            db,
+            "products",
+            productId
+          )
+        );
+
+
+        closeProductDetails();
+
+        alert(
+          "Product deleted successfully."
+        );
+
+
+        await loadProducts();
+
+
+      } catch (error) {
+
+        console.error(
+          "Delete error:",
+          error
+        );
+
+        alert(
+          "Could not delete the product. Please try again."
+        );
+
+      }
+
+    }
+
+
+    /* =======================================================
        Display Products
     ======================================================= */
 
@@ -400,8 +712,9 @@ document.addEventListener(
       productList
     ) {
 
-      if (!productsContainer)
+      if (!productsContainer) {
         return;
+      }
 
 
       if (
@@ -429,7 +742,6 @@ document.addEventListener(
         `;
 
         return;
-
       }
 
 
@@ -451,8 +763,11 @@ document.addEventListener(
                   <div class="product-image">
 
                     <img
-                      src="${image}"
-                      alt="${product.title || "Mazad Product"}"
+                      src="${escapeHTML(image)}"
+                      alt="${escapeHTML(
+                        product.title ||
+                        "Mazad Product"
+                      )}"
                       loading="lazy"
                     >
 
@@ -462,24 +777,37 @@ document.addEventListener(
                   <div class="product-info">
 
                     <span class="product-category">
-                      ${product.category || "Others"}
+                      ${escapeHTML(
+                        product.category ||
+                        "Others"
+                      )}
                     </span>
 
                     <h3>
-                      ${product.title || "Untitled Product"}
+                      ${escapeHTML(
+                        product.title ||
+                        "Untitled Product"
+                      )}
                     </h3>
 
                     <div class="product-price">
-                      $${product.price || "0"}
+                      $${formatPrice(
+                        product.price
+                      )}
                     </div>
 
                     <p class="product-location">
-                      📍 ${product.location || "Unknown"}
+                      📍 ${escapeHTML(
+                        product.location ||
+                        "Unknown"
+                      )}
                     </p>
 
                     <button
                       class="view-product-btn"
-                      data-id="${product.id}"
+                      data-id="${escapeHTML(
+                        product.id
+                      )}"
                       type="button"
                     >
                       View Details
@@ -502,13 +830,62 @@ document.addEventListener(
 
 
     /* =======================================================
+       Product Events
+    ======================================================= */
+
+    function addProductEvents() {
+
+      const buttons =
+        document.querySelectorAll(
+          ".view-product-btn"
+        );
+
+
+      buttons.forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              const productId =
+                button.dataset.id;
+
+
+              const product =
+                products.find(
+                  item =>
+                    item.id === productId
+                );
+
+
+              if (!product) {
+                return;
+              }
+
+
+              openProductDetails(
+                product
+              );
+
+            }
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =======================================================
        Load Products From Firestore
     ======================================================= */
 
     async function loadProducts() {
 
-      if (!productsContainer)
+      if (!productsContainer) {
         return;
+      }
 
 
       productsContainer.innerHTML = `
@@ -561,13 +938,14 @@ document.addEventListener(
 
 
         snapshot.forEach(
-          doc => {
+          productDoc => {
 
             products.push({
 
-              id: doc.id,
+              id:
+                productDoc.id,
 
-              ...doc.data()
+              ...productDoc.data()
 
             });
 
@@ -645,19 +1023,22 @@ document.addEventListener(
 
             const title =
               (
-                product.title || ""
+                product.title ||
+                ""
               ).toLowerCase();
 
 
             const category =
               (
-                product.category || ""
+                product.category ||
+                ""
               ).toLowerCase();
 
 
             const location =
               (
-                product.location || ""
+                product.location ||
+                ""
               ).toLowerCase();
 
 
@@ -701,7 +1082,7 @@ document.addEventListener(
 
 
     /* =======================================================
-       Search Button
+       Search Events
     ======================================================= */
 
     if (searchBtn) {
@@ -714,10 +1095,6 @@ document.addEventListener(
     }
 
 
-    /* =======================================================
-       Search While Typing
-    ======================================================= */
-
     if (searchInput) {
 
       searchInput.addEventListener(
@@ -725,36 +1102,13 @@ document.addEventListener(
         searchProducts
       );
 
-    }
-
-
-    /* =======================================================
-       Category Filter
-    ======================================================= */
-
-    if (categorySelect) {
-
-      categorySelect.addEventListener(
-        "change",
-        searchProducts
-      );
-
-    }
-
-
-    /* =======================================================
-       Enter Key Search
-    ======================================================= */
-
-    if (searchInput) {
 
       searchInput.addEventListener(
         "keydown",
         event => {
 
           if (
-            event.key ===
-            "Enter"
+            event.key === "Enter"
           ) {
 
             event.preventDefault();
@@ -769,65 +1123,61 @@ document.addEventListener(
     }
 
 
-    /* =======================================================
-       Product Details
-    ======================================================= */
+    if (categorySelect) {
 
-    function addProductEvents() {
-
-      const buttons =
-        document.querySelectorAll(
-          ".view-product-btn"
-        );
-
-
-      buttons.forEach(
-        button => {
-
-          button.addEventListener(
-            "click",
-            () => {
-
-              const productId =
-                button.dataset.id;
-
-
-              const product =
-                products.find(
-                  item =>
-                    item.id ===
-                    productId
-                );
-
-
-              if (!product)
-                return;
-
-
-              alert(
-
-                `${product.title || "Product"}\n\n` +
-
-                `Category: ${product.category || "N/A"}\n` +
-
-                `Price: $${product.price || "0"}\n` +
-
-                `Location: ${product.location || "N/A"}\n\n` +
-
-                `${
-                  product.description ||
-                  "No description available."
-                }`
-
-              );
-
-            }
-          );
-
-        }
+      categorySelect.addEventListener(
+        "change",
+        searchProducts
       );
 
     }
+
+
+    /* =======================================================
+       Category Cards
+    ======================================================= */
+
+    const categoryCards =
+      document.querySelectorAll(
+        ".category-card"
+      );
+
+
+    categoryCards.forEach(
+      card => {
+
+        card.addEventListener(
+          "click",
+          () => {
+
+            const category =
+              card.dataset.category;
+
+
+            if (categorySelect) {
+
+              categorySelect.value =
+                category;
+
+            }
+
+
+            searchProducts();
+
+
+            document
+              .getElementById(
+                "listings"
+              )
+              ?.scrollIntoView({
+                behavior: "smooth"
+              });
+
+          }
+        );
+
+      }
+    );
 
 
     /* =======================================================
@@ -840,33 +1190,48 @@ document.addEventListener(
         "click",
         () => {
 
-          if (loginForm)
+          if (loginForm) {
+
             loginForm.style.display =
               "none";
 
+          }
 
-          if (registerForm)
+
+          if (registerForm) {
+
             registerForm.style.display =
               "block";
+
+          }
 
 
           showRegisterBtn.style.display =
             "none";
 
 
-          if (showLoginBtn)
+          if (showLoginBtn) {
+
             showLoginBtn.style.display =
               "inline-block";
 
+          }
 
-          if (authTitle)
+
+          if (authTitle) {
+
             authTitle.textContent =
               "Create Mazad Account";
 
+          }
 
-          if (authMessage)
+
+          if (authMessage) {
+
             authMessage.textContent =
               "Register to start buying and selling.";
+
+          }
 
 
           showAuthMessage("");
@@ -887,33 +1252,48 @@ document.addEventListener(
         "click",
         () => {
 
-          if (registerForm)
+          if (registerForm) {
+
             registerForm.style.display =
               "none";
 
+          }
 
-          if (loginForm)
+
+          if (loginForm) {
+
             loginForm.style.display =
               "block";
+
+          }
 
 
           showLoginBtn.style.display =
             "none";
 
 
-          if (showRegisterBtn)
+          if (showRegisterBtn) {
+
             showRegisterBtn.style.display =
               "inline-block";
 
+          }
 
-          if (authTitle)
+
+          if (authTitle) {
+
             authTitle.textContent =
               "Welcome to Mazad";
 
+          }
 
-          if (authMessage)
+
+          if (authMessage) {
+
             authMessage.textContent =
               "Login to start buying and selling.";
+
+          }
 
 
           showAuthMessage("");
@@ -1089,39 +1469,26 @@ document.addEventListener(
         );
 
 
-        const loginSection =
-          document.getElementById(
+        document
+          .getElementById(
             "login"
-          );
-
-
-        if (loginSection) {
-
-          loginSection.scrollIntoView({
+          )
+          ?.scrollIntoView({
             behavior: "smooth"
           });
 
-        }
-
 
         return;
-
       }
 
 
-      const sellSection =
-        document.getElementById(
+      document
+        .getElementById(
           "sell"
-        );
-
-
-      if (sellSection) {
-
-        sellSection.scrollIntoView({
+        )
+        ?.scrollIntoView({
           behavior: "smooth"
         });
-
-      }
 
     }
 
@@ -1155,13 +1522,9 @@ document.addEventListener(
     ) {
 
       if (!file) {
-
         return "";
-
       }
 
-
-      /* Maximum 10 MB */
 
       if (
         file.size >
@@ -1174,8 +1537,6 @@ document.addEventListener(
 
       }
 
-
-      /* Image type validation */
 
       if (
         !file.type.startsWith(
@@ -1221,11 +1582,8 @@ document.addEventListener(
         await fetch(
           CLOUDINARY_UPLOAD_URL,
           {
-
             method: "POST",
-
             body: formData
-
           }
         );
 
@@ -1254,9 +1612,7 @@ document.addEventListener(
 
         } catch (e) {
 
-          console.error(
-            e
-          );
+          console.error(e);
 
         }
 
@@ -1272,9 +1628,7 @@ document.addEventListener(
         await response.json();
 
 
-      if (
-        !data.secure_url
-      ) {
+      if (!data.secure_url) {
 
         throw new Error(
           "Cloudinary did not return an image URL."
@@ -1300,7 +1654,7 @@ document.addEventListener(
 
 
     /* =======================================================
-       Publish Product To Firestore
+       Publish Product
     ======================================================= */
 
     if (sellProductForm) {
@@ -1403,8 +1757,6 @@ document.addEventListener(
           }
 
 
-          /* Disable publish button */
-
           if (publishProductBtn) {
 
             publishProductBtn.disabled =
@@ -1418,10 +1770,6 @@ document.addEventListener(
 
           try {
 
-            /* =============================================
-               Upload image
-            ============================================= */
-
             let imageUrl = "";
 
 
@@ -1434,10 +1782,6 @@ document.addEventListener(
 
             }
 
-
-            /* =============================================
-               Save product to Firestore
-            ============================================= */
 
             if (sellStatus) {
 
@@ -1484,10 +1828,6 @@ document.addEventListener(
               }
             );
 
-
-            /* =============================================
-               Success
-            ============================================= */
 
             if (sellStatus) {
 
@@ -1543,8 +1883,6 @@ document.addEventListener(
             }
 
           } finally {
-
-            /* Enable publish button */
 
             if (publishProductBtn) {
 
@@ -1605,14 +1943,11 @@ document.addEventListener(
             logoutBtn.id =
               "logoutBtn";
 
-
             logoutBtn.type =
               "button";
 
-
             logoutBtn.textContent =
               "Logout";
-
 
             logoutBtn.className =
               "secondary-btn";
@@ -1687,7 +2022,7 @@ document.addEventListener(
 
 
     /* =======================================================
-       Load Firestore Products
+       Initial Load
     ======================================================= */
 
     loadProducts();
