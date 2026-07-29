@@ -1,6 +1,7 @@
 /* =========================================
 MAZAD - Main JavaScript
 Firebase Authentication + Firestore
+Products + Search
 ========================================= */
 
 import {
@@ -11,6 +12,7 @@ import {
 getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword,
+signOut,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
@@ -18,6 +20,9 @@ import {
 getFirestore,
 collection,
 addDoc,
+getDocs,
+query,
+orderBy,
 serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
@@ -26,13 +31,21 @@ Firebase Configuration
 ========================================= */
 
 const firebaseConfig = {
+
 apiKey: "AIzaSyBfiON-27mz4OlD2Hl8uGNMk_2iS2cp2Qw",
+
 authDomain: "mazad-b8b34.firebaseapp.com",
+
 projectId: "mazad-b8b34",
+
 storageBucket: "mazad-b8b34.firebasestorage.app",
+
 messagingSenderId: "720192718299",
+
 appId: "1:720192718299:web:703589b39b9ef03e5a13fe",
+
 measurementId: "G-6HKL7P0H83"
+
 };
 
 /* =========================================
@@ -51,9 +64,9 @@ Website Start
 
 document.addEventListener("DOMContentLoaded", () => {
 
-/* =========================================
+/* =======================================
 Elements
-========================================= */
+======================================= */
 
 const searchInput =
 document.getElementById("searchInput");
@@ -90,7 +103,7 @@ document.getElementById("authMessage");
 const authStatus =
 document.getElementById("authStatus");
 
-/* Sell Product */
+/* Sell */
 
 const sellProductForm =
 document.getElementById("sellProductForm");
@@ -104,57 +117,59 @@ document.getElementById("headerSellBtn");
 const heroSellBtn =
 document.getElementById("heroSellBtn");
 
-/* =========================================
-Demo Products
-========================================= */
+/* =======================================
+Products
+======================================= */
 
-const products = [
+let products = [];
 
-{
-  id: 1,
-  title: "Toyota Camry 2020",
-  category: "Cars",
-  price: "$18,500",
-  location: "Dhaka",
-  image:
-    "https://images.unsplash.com/photo-1550355291-bbee04a92027?auto=format&fit=crop&w=800&q=80"
-},
+/* =======================================
+Authentication Message
+======================================= */
 
-{
-  id: 2,
-  title: "iPhone 15 Pro",
-  category: "Mobiles",
-  price: "$850",
-  location: "Chattogram",
-  image:
-    "https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=800&q=80"
-},
+function showAuthMessage(
+message,
+success = false
+) {
 
-{
-  id: 3,
-  title: "Laptop Computer",
-  category: "Electronics",
-  price: "$650",
-  location: "Dhaka",
-  image:
-    "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80"
-},
+if (!authStatus) return;
 
-{
-  id: 4,
-  title: "Modern Apartment",
-  category: "Property",
-  price: "$75,000",
-  location: "Chattogram",
-  image:
-    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=800&q=80"
+authStatus.textContent = message;
+
+authStatus.style.marginTop = "15px";
+
+authStatus.style.fontWeight = "600";
+
+authStatus.style.color =
+  success ? "green" : "red";
+
 }
 
-];
+/* =======================================
+Sell Message
+======================================= */
 
-/* =========================================
+function showSellMessage(
+message,
+success = false
+) {
+
+if (!sellStatus) return;
+
+sellStatus.textContent = message;
+
+sellStatus.style.marginTop = "15px";
+
+sellStatus.style.fontWeight = "600";
+
+sellStatus.style.color =
+  success ? "green" : "red";
+
+}
+
+/* =======================================
 Display Products
-========================================= */
+======================================= */
 
 function displayProducts(productList) {
 
@@ -164,19 +179,21 @@ if (!productsContainer) return;
 if (productList.length === 0) {
 
   productsContainer.innerHTML = `
+
     <div class="empty-state">
 
-      <div>🔍</div>
+      <div>📦</div>
 
       <h3>
-        No products found
+        No listings found
       </h3>
 
       <p>
-        Try another search or category.
+        Try another search or add a product.
       </p>
 
     </div>
+
   `;
 
   return;
@@ -187,15 +204,26 @@ productsContainer.innerHTML =
   productList.map(product => {
 
     return `
+
       <article class="product-card">
 
         <div class="product-image">
 
-          <img
-            src="${product.image}"
-            alt="${product.title}"
-            loading="lazy"
-          >
+          ${
+            product.image
+              ? `
+                <img
+                  src="${escapeHTML(product.image)}"
+                  alt="${escapeHTML(product.title)}"
+                  loading="lazy"
+                >
+              `
+              : `
+                <div class="no-image">
+                  📦
+                </div>
+              `
+          }
 
         </div>
 
@@ -203,24 +231,34 @@ productsContainer.innerHTML =
         <div class="product-info">
 
           <span class="product-category">
-            ${product.category}
+            ${escapeHTML(product.category)}
           </span>
 
+
           <h3>
-            ${product.title}
+            ${escapeHTML(product.title)}
           </h3>
 
+
           <div class="product-price">
-            ${product.price}
+            $${escapeHTML(String(product.price))}
           </div>
 
+
           <p class="product-location">
-            📍 ${product.location}
+            📍 ${escapeHTML(product.location)}
           </p>
+
+
+          <p>
+            ${escapeHTML(product.description)}
+          </p>
+
 
           <button
             class="view-product-btn"
             data-id="${product.id}"
+            type="button"
           >
             View Details
           </button>
@@ -228,6 +266,7 @@ productsContainer.innerHTML =
         </div>
 
       </article>
+
     `;
 
   }).join("");
@@ -237,15 +276,92 @@ addProductEvents();
 
 }
 
-/* =========================================
-Search
-========================================= */
+/* =======================================
+Escape HTML
+======================================= */
+
+function escapeHTML(value) {
+
+return String(value ?? "")
+  .replace(/&/g, "&amp;")
+  .replace(/</g, "&lt;")
+  .replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;")
+  .replace(/'/g, "&#039;");
+
+}
+
+/* =======================================
+Load Products From Firestore
+======================================= */
+
+async function loadProducts() {
+
+try {
+
+  const productsRef =
+    collection(db, "products");
+
+
+  const productsQuery =
+    query(
+      productsRef,
+      orderBy("createdAt", "desc")
+    );
+
+
+  const snapshot =
+    await getDocs(productsQuery);
+
+
+  products = [];
+
+
+  snapshot.forEach(doc => {
+
+    products.push({
+
+      id: doc.id,
+
+      ...doc.data()
+
+    });
+
+  });
+
+
+  displayProducts(products);
+
+
+} catch (error) {
+
+  console.error(
+    "Firestore loading error:",
+    error
+  );
+
+
+  /* Fallback if database is empty */
+
+  products = [];
+
+  displayProducts(products);
+
+}
+
+}
+
+/* =======================================
+Search Products
+======================================= */
 
 function searchProducts() {
 
 const searchText =
   searchInput
-    ? searchInput.value.toLowerCase().trim()
+    ? searchInput.value
+        .toLowerCase()
+        .trim()
     : "";
 
 
@@ -258,18 +374,25 @@ const selectedCategory =
 const filteredProducts =
   products.filter(product => {
 
+    const title =
+      String(product.title || "")
+        .toLowerCase();
+
+
+    const category =
+      String(product.category || "")
+        .toLowerCase();
+
+
+    const location =
+      String(product.location || "")
+        .toLowerCase();
+
+
     const matchesText =
-      product.title
-        .toLowerCase()
-        .includes(searchText) ||
-
-      product.category
-        .toLowerCase()
-        .includes(searchText) ||
-
-      product.location
-        .toLowerCase()
-        .includes(searchText);
+      title.includes(searchText) ||
+      category.includes(searchText) ||
+      location.includes(searchText);
 
 
     const matchesCategory =
@@ -277,7 +400,10 @@ const filteredProducts =
       product.category === selectedCategory;
 
 
-    return matchesText && matchesCategory;
+    return (
+      matchesText &&
+      matchesCategory
+    );
 
   });
 
@@ -285,6 +411,10 @@ const filteredProducts =
 displayProducts(filteredProducts);
 
 }
+
+/* =======================================
+Search Button
+======================================= */
 
 if (searchBtn) {
 
@@ -295,6 +425,10 @@ searchBtn.addEventListener(
 
 }
 
+/* =======================================
+Search While Typing
+======================================= */
+
 if (searchInput) {
 
 searchInput.addEventListener(
@@ -304,6 +438,10 @@ searchInput.addEventListener(
 
 }
 
+/* =======================================
+Category Filter
+======================================= */
+
 if (categorySelect) {
 
 categorySelect.addEventListener(
@@ -312,6 +450,10 @@ categorySelect.addEventListener(
 );
 
 }
+
+/* =======================================
+Enter Key Search
+======================================= */
 
 if (searchInput) {
 
@@ -330,9 +472,9 @@ searchInput.addEventListener(
 
 }
 
-/* =========================================
+/* =======================================
 Product Details
-========================================= */
+======================================= */
 
 function addProductEvents() {
 
@@ -349,12 +491,13 @@ buttons.forEach(button => {
     () => {
 
       const productId =
-        Number(button.dataset.id);
+        button.dataset.id;
 
 
       const product =
         products.find(
-          item => item.id === productId
+          item =>
+            item.id === productId
         );
 
 
@@ -362,10 +505,17 @@ buttons.forEach(button => {
 
 
       alert(
+
         `${product.title}\n\n` +
+
         `Category: ${product.category}\n` +
-        `Price: ${product.price}\n` +
-        `Location: ${product.location}`
+
+        `Price: $${product.price}\n` +
+
+        `Location: ${product.location}\n\n` +
+
+        `${product.description}`
+
       );
 
     }
@@ -375,32 +525,9 @@ buttons.forEach(button => {
 
 }
 
-/* =========================================
-Authentication Message
-========================================= */
-
-function showAuthMessage(
-message,
-success = false
-) {
-
-if (!authStatus) return;
-
-
-authStatus.textContent = message;
-
-authStatus.style.marginTop = "15px";
-
-authStatus.style.fontWeight = "600";
-
-authStatus.style.color =
-  success ? "green" : "red";
-
-}
-
-/* =========================================
-Show Register
-========================================= */
+/* =======================================
+Register Form
+======================================= */
 
 if (showRegisterBtn) {
 
@@ -408,29 +535,34 @@ showRegisterBtn.addEventListener(
   "click",
   () => {
 
-    if (loginForm) {
-      loginForm.style.display = "none";
-    }
+    if (loginForm)
+      loginForm.style.display =
+        "none";
 
-    if (registerForm) {
-      registerForm.style.display = "block";
-    }
 
-    showRegisterBtn.style.display = "none";
+    if (registerForm)
+      registerForm.style.display =
+        "block";
 
-    if (showLoginBtn) {
-      showLoginBtn.style.display = "inline-block";
-    }
 
-    if (authTitle) {
+    showRegisterBtn.style.display =
+      "none";
+
+
+    if (showLoginBtn)
+      showLoginBtn.style.display =
+        "inline-block";
+
+
+    if (authTitle)
       authTitle.textContent =
         "Create Mazad Account";
-    }
 
-    if (authMessage) {
+
+    if (authMessage)
       authMessage.textContent =
         "Register to start buying and selling.";
-    }
+
 
     showAuthMessage("");
 
@@ -439,9 +571,9 @@ showRegisterBtn.addEventListener(
 
 }
 
-/* =========================================
-Show Login
-========================================= */
+/* =======================================
+Login Form Switch
+======================================= */
 
 if (showLoginBtn) {
 
@@ -449,30 +581,34 @@ showLoginBtn.addEventListener(
   "click",
   () => {
 
-    if (registerForm) {
-      registerForm.style.display = "none";
-    }
+    if (registerForm)
+      registerForm.style.display =
+        "none";
 
-    if (loginForm) {
-      loginForm.style.display = "block";
-    }
 
-    showLoginBtn.style.display = "none";
+    if (loginForm)
+      loginForm.style.display =
+        "block";
 
-    if (showRegisterBtn) {
+
+    showLoginBtn.style.display =
+      "none";
+
+
+    if (showRegisterBtn)
       showRegisterBtn.style.display =
         "inline-block";
-    }
 
-    if (authTitle) {
+
+    if (authTitle)
       authTitle.textContent =
         "Welcome to Mazad";
-    }
 
-    if (authMessage) {
+
+    if (authMessage)
       authMessage.textContent =
         "Login to start buying and selling.";
-    }
+
 
     showAuthMessage("");
 
@@ -481,9 +617,9 @@ showLoginBtn.addEventListener(
 
 }
 
-/* =========================================
+/* =======================================
 Register
-========================================= */
+======================================= */
 
 if (registerForm) {
 
@@ -534,6 +670,7 @@ registerForm.addEventListener(
 
       console.error(error);
 
+
       showAuthMessage(
         getFirebaseErrorMessage(error)
       );
@@ -545,9 +682,9 @@ registerForm.addEventListener(
 
 }
 
-/* =========================================
+/* =======================================
 Login
-========================================= */
+======================================= */
 
 if (loginForm) {
 
@@ -598,6 +735,7 @@ loginForm.addEventListener(
 
       console.error(error);
 
+
       showAuthMessage(
         getFirebaseErrorMessage(error)
       );
@@ -609,102 +747,9 @@ loginForm.addEventListener(
 
 }
 
-/* =========================================
-Firebase Authentication State
-========================================= */
-
-onAuthStateChanged(
-auth,
-user => {
-
-  if (user) {
-
-    console.log(
-      "Logged in user:",
-      user.email
-    );
-
-
-    if (authMessage) {
-
-      authMessage.textContent =
-        `Logged in as ${user.email}`;
-
-    }
-
-
-    if (sellStatus) {
-
-      sellStatus.textContent =
-        `Logged in as ${user.email}. You can publish a product.`;
-
-      sellStatus.style.color = "green";
-
-    }
-
-  } else {
-
-    console.log(
-      "No user currently logged in."
-    );
-
-
-    if (sellStatus) {
-
-      sellStatus.textContent =
-        "Please login before publishing a product.";
-
-      sellStatus.style.color = "red";
-
-    }
-
-  }
-
-}
-
-);
-
-/* =========================================
-Sell Product - Scroll
-========================================= */
-
-function openSellSection() {
-
-const sellSection =
-  document.getElementById("sell");
-
-
-if (sellSection) {
-
-  sellSection.scrollIntoView({
-    behavior: "smooth"
-  });
-
-}
-
-}
-
-if (headerSellBtn) {
-
-headerSellBtn.addEventListener(
-  "click",
-  openSellSection
-);
-
-}
-
-if (heroSellBtn) {
-
-heroSellBtn.addEventListener(
-  "click",
-  openSellSection
-);
-
-}
-
-/* =========================================
-Sell Product → Firestore
-========================================= */
+/* =======================================
+Sell Product
+======================================= */
 
 if (sellProductForm) {
 
@@ -715,36 +760,26 @@ sellProductForm.addEventListener(
     event.preventDefault();
 
 
-    /* Check Login */
-
     const user = auth.currentUser;
 
 
+    /* User must login first */
+
     if (!user) {
 
-      if (sellStatus) {
-
-        sellStatus.textContent =
-          "Please login first to publish a product.";
-
-        sellStatus.style.color = "red";
-
-      }
+      showSellMessage(
+        "Please login first to sell a product."
+      );
 
 
-      document
-        .getElementById("login")
-        ?.scrollIntoView({
-          behavior: "smooth"
-        });
+      window.location.hash =
+        "login";
 
 
       return;
 
     }
 
-
-    /* Get Form Values */
 
     const title =
       document
@@ -772,6 +807,13 @@ sellProductForm.addEventListener(
         .trim();
 
 
+    const image =
+      document
+        .getElementById("productImageUrl")
+        .value
+        .trim();
+
+
     const description =
       document
         .getElementById("productDescription")
@@ -779,95 +821,68 @@ sellProductForm.addEventListener(
         .trim();
 
 
-    const imageUrl =
-      document
-        .getElementById("productImageUrl")
-        .value
-        .trim();
+    showSellMessage(
+      "Publishing product..."
+    );
 
-
-    if (sellStatus) {
-
-      sellStatus.textContent =
-        "Publishing product...";
-
-      sellStatus.style.color =
-        "black";
-
-    }
-
-
-    /* =====================================
-       Save to Firestore
-       Collection: products
-    ===================================== */
 
     try {
 
-      const docRef =
-        await addDoc(
-          collection(db, "products"),
-          {
+      await addDoc(
+        collection(db, "products"),
+        {
 
-            title: title,
+          title: title,
 
-            category: category,
+          category: category,
 
-            price: Number(price),
+          price: price,
 
-            location: location,
+          location: location,
 
-            description: description,
+          image: image,
 
-            imageUrl: imageUrl,
+          description: description,
 
-            sellerId: user.uid,
+          sellerId: user.uid,
 
-            sellerEmail: user.email,
+          sellerEmail:
+            user.email,
 
-            createdAt: serverTimestamp()
+          createdAt:
+            serverTimestamp()
 
-          }
-        );
-
-
-      console.log(
-        "Product created:",
-        docRef.id
+        }
       );
 
 
-      if (sellStatus) {
-
-        sellStatus.textContent =
-          "Product published successfully! 🎉";
-
-        sellStatus.style.color =
-          "green";
-
-      }
+      showSellMessage(
+        "Product published successfully! 🎉",
+        true
+      );
 
 
       sellProductForm.reset();
 
 
+      await loadProducts();
+
+
+      window.location.hash =
+        "listings";
+
+
     } catch (error) {
 
       console.error(
-        "Firestore error:",
+        "Product publish error:",
         error
       );
 
 
-      if (sellStatus) {
-
-        sellStatus.textContent =
-          getFirestoreErrorMessage(error);
-
-        sellStatus.style.color =
-          "red";
-
-      }
+      showSellMessage(
+        "Product publish failed. Please try again."
+      );
 
     }
 
@@ -876,91 +891,159 @@ sellProductForm.addEventListener(
 
 }
 
-/* =========================================
-Firestore Error Messages
-========================================= */
+/* =======================================
+Sell Button Navigation
+======================================= */
 
-function getFirestoreErrorMessage(error) {
+function openSellSection() {
 
-if (
-  error.code ===
-  "permission-denied"
-) {
+const user =
+  auth.currentUser;
 
-  return (
-    "Permission denied. " +
-    "Please check your Firestore Rules."
+
+if (!user) {
+
+  showSellMessage(
+    "Please login first to sell a product."
   );
+
+
+  window.location.hash =
+    "login";
+
+
+  return;
 
 }
 
 
-if (
-  error.code ===
-  "unavailable"
-) {
-
-  return (
-    "Firestore is temporarily unavailable. " +
-    "Please try again."
-  );
+window.location.hash =
+  "sell";
 
 }
 
+if (headerSellBtn) {
 
-return (
-  "Could not publish product. " +
-  "Please try again."
+headerSellBtn.addEventListener(
+  "click",
+  openSellSection
 );
 
 }
 
-/* =========================================
+if (heroSellBtn) {
+
+heroSellBtn.addEventListener(
+  "click",
+  openSellSection
+);
+
+}
+
+/* =======================================
+Firebase Auth State
+======================================= */
+
+onAuthStateChanged(
+auth,
+user => {
+
+  if (user) {
+
+    console.log(
+      "Logged in user:",
+      user.email
+    );
+
+
+    if (authMessage) {
+
+      authMessage.textContent =
+        `Logged in as ${user.email}`;
+
+    }
+
+
+    if (sellStatus) {
+
+      sellStatus.textContent =
+        "You are logged in and can publish products.";
+
+      sellStatus.style.color =
+        "green";
+
+    }
+
+  } else {
+
+    console.log(
+      "No user currently logged in."
+    );
+
+  }
+
+}
+
+);
+
+/* =======================================
 Firebase Error Messages
-========================================= */
+======================================= */
 
 function getFirebaseErrorMessage(error) {
 
 switch (error.code) {
 
   case "auth/email-already-in-use":
+
     return "This email is already registered.";
 
+
   case "auth/invalid-email":
+
     return "Please enter a valid email address.";
 
+
   case "auth/weak-password":
+
     return "Password must be at least 6 characters.";
 
+
   case "auth/invalid-credential":
+
     return "Email or password is incorrect.";
 
+
   case "auth/user-not-found":
+
     return "No account found with this email.";
 
+
   case "auth/wrong-password":
+
     return "Incorrect password.";
 
+
   case "auth/too-many-requests":
-    return (
-      "Too many attempts. " +
-      "Please try again later."
-    );
+
+    return "Too many attempts. Please try again later.";
+
 
   default:
+
     return (
-      "Something went wrong. " +
-      "Please try again."
+      error.message ||
+      "Something went wrong. Please try again."
     );
 
 }
 
 }
 
-/* =========================================
+/* =======================================
 Start Website
-========================================= */
+======================================= */
 
-displayProducts(products);
+loadProducts();
 
 });
