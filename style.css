@@ -1,1 +1,461 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
 
+html {
+scroll-behavior: smooth;
+}
+
+body {
+font-family: Arial, Helvetica, sans-serif;
+background: #f7f8fa;
+color: #1f2937;
+line-height: 1.6;
+}
+
+a {
+text-decoration: none;
+color: inherit;
+}
+
+button,
+input,
+select {
+font: inherit;
+}
+
+.container {
+width: min(1180px, 92%);
+margin: auto;
+}
+
+/* Header */
+
+.header {
+background: #ffffff;
+border-bottom: 1px solid #e5e7eb;
+position: sticky;
+top: 0;
+z-index: 1000;
+}
+
+.header-content {
+min-height: 72px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 25px;
+}
+
+.logo {
+font-size: 30px;
+font-weight: 800;
+letter-spacing: -1px;
+}
+
+.nav {
+display: flex;
+align-items: center;
+gap: 25px;
+}
+
+.nav a {
+font-size: 15px;
+font-weight: 600;
+transition: 0.2s;
+}
+
+.nav a:hover {
+opacity: 0.65;
+}
+
+.sell-btn,
+.primary-btn,
+.secondary-btn,
+#searchBtn {
+border: none;
+cursor: pointer;
+border-radius: 10px;
+padding: 12px 20px;
+font-weight: 700;
+transition: 0.2s;
+}
+
+.sell-btn,
+.primary-btn,
+#searchBtn {
+background: #111827;
+color: #ffffff;
+}
+
+.sell-btn:hover,
+.primary-btn:hover,
+#searchBtn:hover {
+transform: translateY(-2px);
+opacity: 0.9;
+}
+
+/* Hero */
+
+.hero {
+background: #ffffff;
+padding: 90px 0;
+}
+
+.hero-content {
+min-height: 440px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 60px;
+}
+
+.hero-text {
+max-width: 650px;
+}
+
+.hero-small {
+font-weight: 700;
+margin-bottom: 12px;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+.hero h1 {
+font-size: clamp(44px, 7vw, 78px);
+line-height: 1.05;
+letter-spacing: -3px;
+margin-bottom: 25px;
+}
+
+.hero h1 span {
+opacity: 0.55;
+}
+
+.hero-text > p {
+max-width: 550px;
+color: #6b7280;
+font-size: 18px;
+margin-bottom: 30px;
+}
+
+.hero-buttons {
+display: flex;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.secondary-btn {
+background: #ffffff;
+border: 1px solid #d1d5db;
+color: #111827;
+}
+
+.secondary-btn:hover {
+background: #f3f4f6;
+}
+
+.hero-card {
+width: 310px;
+min-height: 310px;
+border: 1px solid #e5e7eb;
+border-radius: 24px;
+background: #f9fafb;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+}
+
+.hero-icon {
+font-size: 80px;
+margin-bottom: 15px;
+}
+
+.hero-card h2 {
+font-size: 28px;
+margin-bottom: 5px;
+}
+
+.hero-card p {
+color: #6b7280;
+}
+
+/* Search */
+
+.search-section {
+padding: 25px 0;
+background: #f7f8fa;
+}
+
+.search-box {
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 16px;
+padding: 12px;
+display: grid;
+grid-template-columns: 1fr 220px 120px;
+gap: 10px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.search-box input,
+.search-box select {
+width: 100%;
+border: 1px solid #e5e7eb;
+background: #ffffff;
+padding: 14px;
+border-radius: 10px;
+outline: none;
+}
+
+.search-box input:focus,
+.search-box select:focus {
+border-color: #9ca3af;
+}
+
+/* Sections */
+
+.section {
+padding: 85px 0;
+}
+
+.section-title {
+margin-bottom: 35px;
+}
+
+.section-title p {
+font-size: 14px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 1px;
+color: #6b7280;
+}
+
+.section-title h2 {
+font-size: 38px;
+letter-spacing: -1px;
+}
+
+/* Categories */
+
+.categories-grid {
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 15px;
+}
+
+.category-card {
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 16px;
+padding: 25px 15px;
+text-align: center;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.category-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+}
+
+.category-icon {
+font-size: 38px;
+margin-bottom: 12px;
+}
+
+.category-card h3 {
+font-size: 17px;
+margin-bottom: 4px;
+}
+
+.category-card p {
+color: #6b7280;
+font-size: 13px;
+}
+
+/* Listings */
+
+.listings-section {
+background: #ffffff;
+}
+
+.products-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 20px;
+}
+
+.empty-state {
+grid-column: 1 / -1;
+padding: 70px 20px;
+text-align: center;
+border: 1px dashed #d1d5db;
+border-radius: 18px;
+background: #f9fafb;
+}
+
+.empty-state > div {
+font-size: 55px;
+margin-bottom: 15px;
+}
+
+.empty-state h3 {
+font-size: 22px;
+margin-bottom: 6px;
+}
+
+.empty-state p {
+color: #6b7280;
+}
+
+/* Login */
+
+.login-section {
+padding: 80px 0;
+}
+
+.login-card {
+max-width: 650px;
+margin: auto;
+text-align: center;
+padding: 55px 25px;
+background: #ffffff;
+border: 1px solid #e5e7eb;
+border-radius: 22px;
+}
+
+.login-card h2 {
+font-size: 32px;
+margin-bottom: 8px;
+}
+
+.login-card p {
+color: #6b7280;
+margin-bottom: 25px;
+}
+
+/* Footer */
+
+.footer {
+background: #111827;
+color: #ffffff;
+padding: 45px 0;
+}
+
+.footer-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 20px;
+}
+
+.footer p {
+color: #d1d5db;
+}
+
+/* Responsive */
+
+@media (max-width: 950px) {
+.categories-grid {
+grid-template-columns: repeat(3, 1fr);
+}
+
+.products-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+
+.hero-content {
+flex-direction: column;
+text-align: center;
+}
+
+.hero-text > p {
+margin-left: auto;
+margin-right: auto;
+}
+
+.hero-buttons {
+justify-content: center;
+}
+}
+
+@media (max-width: 700px) {
+.header-content {
+flex-wrap: wrap;
+padding: 12px 0;
+}
+
+.nav {
+order: 3;
+width: 100%;
+justify-content: center;
+gap: 15px;
+}
+
+.nav a {
+font-size: 13px;
+}
+
+.sell-btn {
+padding: 10px 14px;
+}
+
+.hero {
+padding: 60px 0;
+}
+
+.hero h1 {
+letter-spacing: -2px;
+}
+
+.hero-card {
+width: 100%;
+max-width: 310px;
+}
+
+.search-box {
+grid-template-columns: 1fr;
+}
+
+.categories-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+
+.products-grid {
+grid-template-columns: 1fr;
+}
+
+.section {
+padding: 60px 0;
+}
+
+.section-title h2 {
+font-size: 30px;
+}
+
+.footer-content {
+flex-direction: column;
+text-align: center;
+}
+}
+
+@media (max-width: 420px) {
+.categories-grid {
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+
+.category-card {
+padding: 18px 8px;
+}
+
+.hero h1 {
+font-size: 43px;
+}
+}
