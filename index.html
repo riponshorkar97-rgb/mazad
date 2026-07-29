@@ -155,18 +155,83 @@
 </section>
 
 
-<!-- Login Placeholder -->
-<section id="login" class="login-section">
-  <div class="container">
+<!-- Login / Register --><section id="login" class="login-section">
+  <div class="container"><div class="login-card">
 
-    <div class="login-card">
-      <h2>Welcome to Mazad</h2>
-      <p>Login or register to start buying and selling.</p>
+  <h2 id="authTitle">Welcome to Mazad</h2>
 
-      <button class="primary-btn" id="loginBtn">
-        Login / Register
-      </button>
-    </div>
+  <p id="authMessage">
+    Login or register to start buying and selling.
+  </p>
+
+  <!-- Login Form -->
+  <form id="loginForm">
+
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Email address"
+      required
+    >
+
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Password"
+      minlength="6"
+      required
+    >
+
+    <button type="submit" class="primary-btn">
+      Login
+    </button>
+
+  </form>
+
+  <!-- Register Form -->
+  <form id="registerForm" style="display: none;">
+
+    <input
+      type="email"
+      id="registerEmail"
+      placeholder="Email address"
+      required
+    >
+
+    <input
+      type="password"
+      id="registerPassword"
+      placeholder="Password (minimum 6 characters)"
+      minlength="6"
+      required
+    >
+
+    <button type="submit" class="primary-btn">
+      Create Account
+    </button>
+
+  </form>
+
+  <button
+    type="button"
+    id="showRegisterBtn"
+    class="secondary-btn"
+  >
+    Create new account
+  </button>
+
+  <button
+    type="button"
+    id="showLoginBtn"
+    class="secondary-btn"
+    style="display: none;"
+  >
+    Already have an account? Login
+  </button>
+
+  <p id="authStatus"></p>
+
+</div>
 
   </div>
 </section>
