@@ -1,9 +1,8 @@
 /* =========================================================
-MAZAD - Main JavaScript
-
+MAZAD - Step 12
 Firebase Authentication + Firestore
 Cloudinary Image Upload
-
+English + Arabic Language
 Firebase Storage is NOT used.
 ========================================================= */
 
@@ -35,7 +34,6 @@ Firebase Configuration
 ========================================================= */
 
 const firebaseConfig = {
-
 apiKey:
 "AIzaSyBfiON-27mz4OlD2Hl8uGNMk_2iS2cp2Qw",
 
@@ -56,7 +54,6 @@ appId:
 
 measurementId:
 "G-6HKL7P0H83"
-
 };
 
 /* =========================================================
@@ -86,18 +83,654 @@ const db =
 getFirestore(app);
 
 /* =========================================================
+Language System
+========================================================= */
+
+const translations = {
+
+en: {
+
+home: "Home",
+categories: "Categories",
+listings: "Listings",
+login: "Login",
+sellProduct: "Sell Product",
+
+welcome: "Welcome to Mazad",
+buySell: "Buy & Sell",
+anythingEasily: "Anything Easily",
+
+heroDescription:
+  "Find great products near you or sell your products quickly and easily on Mazad.",
+
+browseProducts: "Browse Products",
+sellSomething: "Sell Something",
+simpleFastSecure: "Simple • Fast • Secure",
+
+searchPlaceholder:
+  "What are you looking for?",
+
+allCategories:
+  "All Categories",
+
+search:
+  "Search",
+
+explore:
+  "Explore",
+
+popularCategories:
+  "Popular Categories",
+
+cars:
+  "Cars",
+
+mobiles:
+  "Mobiles",
+
+electronics:
+  "Electronics",
+
+property:
+  "Property",
+
+fashion:
+  "Fashion",
+
+jobs:
+  "Jobs",
+
+others:
+  "Others",
+
+findNextCar:
+  "Find your next car",
+
+phonesAccessories:
+  "Phones & accessories",
+
+devicesGadgets:
+  "Devices & gadgets",
+
+homesLand:
+  "Homes & land",
+
+clothesAccessories:
+  "Clothes & accessories",
+
+findOpportunities:
+  "Find opportunities",
+
+marketplace:
+  "Marketplace",
+
+latestListings:
+  "Latest Listings",
+
+loadingProducts:
+  "Loading products...",
+
+pleaseWait:
+  "Please wait.",
+
+sellYourProduct:
+  "Sell Your Product",
+
+productTitle:
+  "Product title",
+
+selectCategory:
+  "Select Category",
+
+price:
+  "Price",
+
+location:
+  "Location",
+
+productImage:
+  "Product Image",
+
+productDescription:
+  "Product description",
+
+publishProduct:
+  "Publish Product",
+
+welcomeMazad:
+  "Welcome to Mazad",
+
+loginRegisterMessage:
+  "Login or register to start buying and selling.",
+
+emailAddress:
+  "Email address",
+
+password:
+  "Password",
+
+passwordMin:
+  "Password (minimum 6 characters)",
+
+createAccount:
+  "Create Account",
+
+createNewAccount:
+  "Create new account",
+
+alreadyAccount:
+  "Already have an account? Login",
+
+description:
+  "Description",
+
+seller:
+  "Seller",
+
+buySellProducts:
+  "Buy and sell products easily.",
+
+allRightsReserved:
+  "All rights reserved.",
+
+viewDetails:
+  "View Details",
+
+noProducts:
+  "No products found",
+
+tryAnother:
+  "Try another search or category.",
+
+unknown:
+  "Unknown",
+
+noDescription:
+  "No description available.",
+
+sellerUnavailable:
+  "Seller information unavailable",
+
+contactSeller:
+  "Contact Seller",
+
+deleteProduct:
+  "Delete Product",
+
+loadingError:
+  "Could not load products",
+
+firestoreError:
+  "Please check your Firestore rules and try again.",
+
+imageTooLarge:
+  "Image must be less than 10 MB.",
+
+validImage:
+  "Please select a valid image.",
+
+imageUploaded:
+  "Image uploaded successfully! ✅",
+
+uploadingImage:
+  "Uploading image to Cloudinary...",
+
+preparingProduct:
+  "Preparing product...",
+
+savingProduct:
+  "Saving product...",
+
+published:
+  "Product published successfully! 🎉",
+
+loginBeforeSell:
+  "Please login or create an account before selling a product.",
+
+loginBeforePublish:
+  "Please login before publishing a product.",
+
+accountCreated:
+  "Account created successfully! 🎉",
+
+loginSuccessful:
+  "Login successful! 🎉",
+
+creatingAccount:
+  "Creating account...",
+
+loggingIn:
+  "Logging in...",
+
+loggedInAs:
+  "Logged in as",
+
+logout:
+  "Logout",
+
+loggedOut:
+  "Logged out successfully.",
+
+deleteConfirm:
+  "Are you sure you want to delete this product?",
+
+deleted:
+  "Product deleted successfully.",
+
+deleteFailed:
+  "Could not delete the product. Please try again.",
+
+productNotFound:
+  "Product not found.",
+
+ownProduct:
+  "You can only delete your own products.",
+
+loginFirst:
+  "Please login first.",
+
+uploadFailed:
+  "Cloudinary upload failed.",
+
+imageUrlFailed:
+  "Cloudinary did not return an image URL.",
+
+publishFailed:
+  "Failed to publish product. Please try again."
+
+},
+
+ar: {
+
+home: "الرئيسية",
+categories: "الفئات",
+listings: "الإعلانات",
+login: "تسجيل الدخول",
+sellProduct: "بيع منتج",
+
+welcome: "مرحباً بك في مزاد",
+buySell: "بيع وشراء",
+anythingEasily: "أي شيء بسهولة",
+
+heroDescription:
+  "اعثر على منتجات رائعة بالقرب منك أو قم ببيع منتجاتك بسرعة وسهولة على مزاد.",
+
+browseProducts: "تصفح المنتجات",
+sellSomething: "بيع شيء ما",
+simpleFastSecure: "بسيط • سريع • آمن",
+
+searchPlaceholder:
+  "ما الذي تبحث عنه؟",
+
+allCategories:
+  "جميع الفئات",
+
+search:
+  "بحث",
+
+explore:
+  "استكشف",
+
+popularCategories:
+  "الفئات الشائعة",
+
+cars:
+  "سيارات",
+
+mobiles:
+  "جوالات",
+
+electronics:
+  "إلكترونيات",
+
+property:
+  "عقارات",
+
+fashion:
+  "أزياء",
+
+jobs:
+  "وظائف",
+
+others:
+  "أخرى",
+
+findNextCar:
+  "اعثر على سيارتك القادمة",
+
+phonesAccessories:
+  "جوالات وإكسسوارات",
+
+devicesGadgets:
+  "أجهزة وأدوات",
+
+homesLand:
+  "منازل وأراضٍ",
+
+clothesAccessories:
+  "ملابس وإكسسوارات",
+
+findOpportunities:
+  "ابحث عن فرص",
+
+marketplace:
+  "السوق",
+
+latestListings:
+  "أحدث الإعلانات",
+
+loadingProducts:
+  "جاري تحميل المنتجات...",
+
+pleaseWait:
+  "يرجى الانتظار.",
+
+sellYourProduct:
+  "بيع منتجك",
+
+productTitle:
+  "عنوان المنتج",
+
+selectCategory:
+  "اختر الفئة",
+
+price:
+  "السعر",
+
+location:
+  "الموقع",
+
+productImage:
+  "صورة المنتج",
+
+productDescription:
+  "وصف المنتج",
+
+publishProduct:
+  "نشر المنتج",
+
+welcomeMazad:
+  "مرحباً بك في مزاد",
+
+loginRegisterMessage:
+  "سجل الدخول أو أنشئ حساباً لبدء البيع والشراء.",
+
+emailAddress:
+  "البريد الإلكتروني",
+
+password:
+  "كلمة المرور",
+
+passwordMin:
+  "كلمة المرور (6 أحرف على الأقل)",
+
+createAccount:
+  "إنشاء حساب",
+
+createNewAccount:
+  "إنشاء حساب جديد",
+
+alreadyAccount:
+  "لديك حساب بالفعل؟ تسجيل الدخول",
+
+description:
+  "الوصف",
+
+seller:
+  "البائع",
+
+buySellProducts:
+  "اشترِ وبع المنتجات بسهولة.",
+
+allRightsReserved:
+  "جميع الحقوق محفوظة.",
+
+viewDetails:
+  "عرض التفاصيل",
+
+noProducts:
+  "لم يتم العثور على منتجات",
+
+tryAnother:
+  "جرب بحثاً أو فئة أخرى.",
+
+unknown:
+  "غير معروف",
+
+noDescription:
+  "لا يوجد وصف متاح.",
+
+sellerUnavailable:
+  "معلومات البائع غير متاحة",
+
+contactSeller:
+  "تواصل مع البائع",
+
+deleteProduct:
+  "حذف المنتج",
+
+loadingError:
+  "تعذر تحميل المنتجات",
+
+firestoreError:
+  "يرجى التحقق من إعدادات Firestore والمحاولة مرة أخرى.",
+
+imageTooLarge:
+  "يجب أن يكون حجم الصورة أقل من 10 ميجابايت.",
+
+validImage:
+  "يرجى اختيار صورة صالحة.",
+
+imageUploaded:
+  "تم رفع الصورة بنجاح! ✅",
+
+uploadingImage:
+  "جاري رفع الصورة إلى Cloudinary...",
+
+preparingProduct:
+  "جاري تجهيز المنتج...",
+
+savingProduct:
+  "جاري حفظ المنتج...",
+
+published:
+  "تم نشر المنتج بنجاح! 🎉",
+
+loginBeforeSell:
+  "يرجى تسجيل الدخول أو إنشاء حساب قبل بيع منتج.",
+
+loginBeforePublish:
+  "يرجى تسجيل الدخول قبل نشر المنتج.",
+
+accountCreated:
+  "تم إنشاء الحساب بنجاح! 🎉",
+
+loginSuccessful:
+  "تم تسجيل الدخول بنجاح! 🎉",
+
+creatingAccount:
+  "جاري إنشاء الحساب...",
+
+loggingIn:
+  "جاري تسجيل الدخول...",
+
+loggedInAs:
+  "تم تسجيل الدخول باسم",
+
+logout:
+  "تسجيل الخروج",
+
+loggedOut:
+  "تم تسجيل الخروج بنجاح.",
+
+deleteConfirm:
+  "هل أنت متأكد من رغبتك في حذف هذا المنتج؟",
+
+deleted:
+  "تم حذف المنتج بنجاح.",
+
+deleteFailed:
+  "تعذر حذف المنتج. يرجى المحاولة مرة أخرى.",
+
+productNotFound:
+  "لم يتم العثور على المنتج.",
+
+ownProduct:
+  "يمكنك حذف منتجاتك فقط.",
+
+loginFirst:
+  "يرجى تسجيل الدخول أولاً.",
+
+uploadFailed:
+  "فشل رفع الصورة إلى Cloudinary.",
+
+imageUrlFailed:
+  "لم يُرجع Cloudinary رابط الصورة.",
+
+publishFailed:
+  "فشل نشر المنتج. يرجى المحاولة مرة أخرى."
+
+}
+
+};
+
+/* =========================================================
+Current Language
+========================================================= */
+
+let currentLanguage =
+localStorage.getItem("mazadLanguage") || "en";
+
+function t(key) {
+
+return (
+translations[currentLanguage]?.[key] ||
+translations.en[key] ||
+key
+);
+
+}
+
+/* =========================================================
+Apply Language
+========================================================= */
+
+function applyLanguage() {
+
+document.documentElement.lang =
+currentLanguage;
+
+document.documentElement.dir =
+currentLanguage === "ar"
+? "rtl"
+: "ltr";
+
+document.body.dir =
+currentLanguage === "ar"
+? "rtl"
+: "ltr";
+
+document
+.querySelectorAll("[data-i18n]")
+.forEach(element => {
+
+  const key =
+    element.dataset.i18n;
+
+  element.textContent =
+    t(key);
+
+});
+
+document
+.querySelectorAll("[data-i18n-placeholder]")
+.forEach(element => {
+
+  const key =
+    element.dataset.i18nPlaceholder;
+
+  element.placeholder =
+    t(key);
+
+});
+
+const languageBtn =
+document.getElementById(
+"languageBtn"
+);
+
+if (languageBtn) {
+
+languageBtn.textContent =
+  currentLanguage === "en"
+    ? "العربية"
+    : "English";
+
+}
+
+document.title =
+currentLanguage === "ar"
+? "مزاد — سوق البيع والشراء"
+: "Mazad — Buy & Sell Marketplace";
+
+}
+
+/* =========================================================
+Switch Language
+========================================================= */
+
+function switchLanguage() {
+
+currentLanguage =
+currentLanguage === "en"
+? "ar"
+: "en";
+
+localStorage.setItem(
+"mazadLanguage",
+currentLanguage
+);
+
+applyLanguage();
+
+if (typeof loadProducts === "function") {
+displayProducts(products);
+}
+
+}
+
+/* =========================================================
 Global Products
 ========================================================= */
 
 let products = [];
 
 /* =========================================================
-Website Start
+DOM Ready
 ========================================================= */
 
 document.addEventListener(
 "DOMContentLoaded",
 () => {
+
+applyLanguage();
+
+
+const languageBtn =
+  document.getElementById(
+    "languageBtn"
+  );
+
+
+if (languageBtn) {
+
+  languageBtn.addEventListener(
+    "click",
+    switchLanguage
+  );
+
+}
+
 
 /* =======================================================
    Elements
@@ -169,7 +802,7 @@ const heroSellBtn =
 
 
 /* =======================================================
-   Product Modal Elements
+   Modal Elements
 ======================================================= */
 
 const productModal =
@@ -238,9 +871,7 @@ function formatPrice(price) {
         Number.isInteger(number)
           ? 0
           : 2,
-
-      maximumFractionDigits:
-        2
+      maximumFractionDigits: 2
     }
   );
 
@@ -248,7 +879,7 @@ function formatPrice(price) {
 
 
 /* =======================================================
-   Image File Selection Status
+   Image Selection
 ======================================================= */
 
 if (productImageFile) {
@@ -262,11 +893,10 @@ if (productImageFile) {
 
       if (!file) {
 
-        if (imageStatus) {
-          imageStatus.textContent = "";
-        }
+        imageStatus.textContent = "";
 
         return;
+
       }
 
 
@@ -275,19 +905,16 @@ if (productImageFile) {
         10 * 1024 * 1024
       ) {
 
-        if (imageStatus) {
+        imageStatus.textContent =
+          t("imageTooLarge");
 
-          imageStatus.textContent =
-            "Image must be less than 10 MB.";
-
-          imageStatus.style.color =
-            "red";
-
-        }
+        imageStatus.style.color =
+          "red";
 
         productImageFile.value = "";
 
         return;
+
       }
 
 
@@ -295,31 +922,24 @@ if (productImageFile) {
         !file.type.startsWith("image/")
       ) {
 
-        if (imageStatus) {
+        imageStatus.textContent =
+          t("validImage");
 
-          imageStatus.textContent =
-            "Please select a valid image.";
-
-          imageStatus.style.color =
-            "red";
-
-        }
+        imageStatus.style.color =
+          "red";
 
         productImageFile.value = "";
 
         return;
-      }
-
-
-      if (imageStatus) {
-
-        imageStatus.textContent =
-          `Selected: ${file.name}`;
-
-        imageStatus.style.color =
-          "green";
 
       }
+
+
+      imageStatus.textContent =
+        `${file.name}`;
+
+      imageStatus.style.color =
+        "green";
 
     }
   );
@@ -336,9 +956,7 @@ function showAuthMessage(
   success = false
 ) {
 
-  if (!authStatus) {
-    return;
-  }
+  if (!authStatus) return;
 
   authStatus.textContent =
     message;
@@ -350,9 +968,7 @@ function showAuthMessage(
     "600";
 
   authStatus.style.color =
-    success
-      ? "green"
-      : "red";
+    success ? "green" : "red";
 
 }
 
@@ -366,31 +982,44 @@ function getFirebaseErrorMessage(error) {
   switch (error.code) {
 
     case "auth/email-already-in-use":
-      return "This email is already registered.";
+      return currentLanguage === "ar"
+        ? "هذا البريد الإلكتروني مسجل بالفعل."
+        : "This email is already registered.";
 
     case "auth/invalid-email":
-      return "Please enter a valid email address.";
+      return currentLanguage === "ar"
+        ? "يرجى إدخال بريد إلكتروني صالح."
+        : "Please enter a valid email address.";
 
     case "auth/weak-password":
-      return "Password must be at least 6 characters.";
+      return currentLanguage === "ar"
+        ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
+        : "Password must be at least 6 characters.";
 
     case "auth/invalid-credential":
-      return "Email or password is incorrect.";
+      return currentLanguage === "ar"
+        ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+        : "Email or password is incorrect.";
 
     case "auth/user-not-found":
-      return "No account found with this email.";
+      return currentLanguage === "ar"
+        ? "لا يوجد حساب بهذا البريد الإلكتروني."
+        : "No account found with this email.";
 
     case "auth/wrong-password":
-      return "Incorrect password.";
+      return currentLanguage === "ar"
+        ? "كلمة المرور غير صحيحة."
+        : "Incorrect password.";
 
     case "auth/too-many-requests":
-      return "Too many attempts. Please try again later.";
-
-    case "auth/network-request-failed":
-      return "Network error. Please check your internet connection.";
+      return currentLanguage === "ar"
+        ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
+        : "Too many attempts. Please try again later.";
 
     default:
-      return "Something went wrong. Please try again.";
+      return currentLanguage === "ar"
+        ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        : "Something went wrong. Please try again.";
 
   }
 
@@ -398,16 +1027,16 @@ function getFirebaseErrorMessage(error) {
 
 
 /* =======================================================
-   Product Details Modal
+   Close Modal
 ======================================================= */
 
 function closeProductDetails() {
 
-  if (!productModal) {
-    return;
-  }
+  if (!productModal) return;
 
-  productModal.classList.remove("active");
+  productModal.classList.remove(
+    "active"
+  );
 
   productModal.setAttribute(
     "aria-hidden",
@@ -421,6 +1050,10 @@ function closeProductDetails() {
 }
 
 
+/* =======================================================
+   Open Product Details
+======================================================= */
+
 function openProductDetails(product) {
 
   if (!productModal || !product) {
@@ -433,139 +1066,101 @@ function openProductDetails(product) {
     "https://via.placeholder.com/800x500?text=Mazad+Product";
 
 
-  if (modalProductImage) {
+  modalProductImage.src =
+    image;
 
-    modalProductImage.src =
-      image;
-
-    modalProductImage.alt =
-      product.title ||
-      "Mazad Product";
-
-  }
+  modalProductImage.alt =
+    product.title ||
+    "Mazad Product";
 
 
-  if (modalProductCategory) {
-
-    modalProductCategory.textContent =
-      product.category ||
-      "Others";
-
-  }
+  modalProductCategory.textContent =
+    product.category ||
+    t("others");
 
 
-  if (modalProductTitle) {
-
-    modalProductTitle.textContent =
-      product.title ||
-      "Untitled Product";
-
-  }
+  modalProductTitle.textContent =
+    product.title ||
+    "Untitled Product";
 
 
-  if (modalProductPrice) {
-
-    modalProductPrice.textContent =
-      `$${formatPrice(product.price)}`;
-
-  }
+  modalProductPrice.textContent =
+    `$${formatPrice(product.price)}`;
 
 
-  if (modalProductLocation) {
-
-    modalProductLocation.textContent =
-      product.location ||
-      "Unknown";
-
-  }
+  modalProductLocation.textContent =
+    product.location ||
+    t("unknown");
 
 
-  if (modalProductDescription) {
-
-    modalProductDescription.textContent =
-      product.description ||
-      "No description available.";
-
-  }
+  modalProductDescription.textContent =
+    product.description ||
+    t("noDescription");
 
 
-  if (modalSellerEmail) {
-
-    modalSellerEmail.textContent =
-      product.sellerEmail ||
-      "Seller information unavailable";
-
-  }
+  modalSellerEmail.textContent =
+    product.sellerEmail ||
+    t("sellerUnavailable");
 
 
-  if (sellerActions) {
-
-    sellerActions.innerHTML = "";
-
-    const currentUser =
-      auth.currentUser;
+  sellerActions.innerHTML = "";
 
 
-    if (
-      currentUser &&
-      product.sellerId ===
-        currentUser.uid
-    ) {
-
-      const deleteButton =
-        document.createElement("button");
-
-      deleteButton.type =
-        "button";
-
-      deleteButton.className =
-        "delete-product-btn";
-
-      deleteButton.textContent =
-        "Delete Product";
-
-      deleteButton.addEventListener(
-        "click",
-        async () => {
-
-          await deleteProduct(
-            product.id
-          );
-
-        }
-      );
-
-      sellerActions.appendChild(
-        deleteButton
-      );
+  const currentUser =
+    auth.currentUser;
 
 
-    } else if (
-      product.sellerEmail
-    ) {
+  if (
+    currentUser &&
+    product.sellerId === currentUser.uid
+  ) {
 
-      const contactLink =
-        document.createElement("a");
+    const deleteButton =
+      document.createElement("button");
 
-      contactLink.className =
-        "contact-seller-btn";
+    deleteButton.type =
+      "button";
 
-      contactLink.href =
-        `mailto:${product.sellerEmail}?subject=${encodeURIComponent(
-          `Mazad inquiry: ${
-            product.title ||
-            "Product"
-          }`
-        )}`;
+    deleteButton.className =
+      "delete-product-btn";
 
-      contactLink.textContent =
-        "Contact Seller";
+    deleteButton.textContent =
+      t("deleteProduct");
 
-      sellerActions.appendChild(
-        contactLink
-      );
+    deleteButton.addEventListener(
+      "click",
+      async () => {
 
-    }
+        await deleteProduct(
+          product.id
+        );
+
+      }
+    );
+
+    sellerActions.appendChild(
+      deleteButton
+    );
+
+  } else if (product.sellerEmail) {
+
+    const contactLink =
+      document.createElement("a");
+
+    contactLink.className =
+      "contact-seller-btn";
+
+    contactLink.href =
+      `mailto:${product.sellerEmail}?subject=${encodeURIComponent(
+        `Mazad inquiry: ${product.title || "Product"}`
+      )}`;
+
+    contactLink.textContent =
+      t("contactSeller");
+
+    sellerActions.appendChild(
+      contactLink
+    );
 
   }
 
@@ -638,11 +1233,10 @@ async function deleteProduct(
 
   if (!currentUser) {
 
-    alert(
-      "Please login first."
-    );
+    alert(t("loginFirst"));
 
     return;
+
   }
 
 
@@ -655,11 +1249,10 @@ async function deleteProduct(
 
   if (!product) {
 
-    alert(
-      "Product not found."
-    );
+    alert(t("productNotFound"));
 
     return;
+
   }
 
 
@@ -668,17 +1261,16 @@ async function deleteProduct(
     currentUser.uid
   ) {
 
-    alert(
-      "You can only delete your own products."
-    );
+    alert(t("ownProduct"));
 
     return;
+
   }
 
 
   const confirmed =
     confirm(
-      "Are you sure you want to delete this product?"
+      t("deleteConfirm")
     );
 
 
@@ -700,10 +1292,7 @@ async function deleteProduct(
 
     closeProductDetails();
 
-    alert(
-      "Product deleted successfully."
-    );
-
+    alert(t("deleted"));
 
     await loadProducts();
 
@@ -716,7 +1305,7 @@ async function deleteProduct(
     );
 
     alert(
-      "Could not delete the product. Please try again."
+      t("deleteFailed")
     );
 
   }
@@ -745,16 +1334,14 @@ function displayProducts(
 
       <div class="empty-state">
 
-        <div>
-          📦
-        </div>
+        <div>📦</div>
 
         <h3>
-          No products found
+          ${escapeHTML(t("noProducts"))}
         </h3>
 
         <p>
-          Try another search or category.
+          ${escapeHTML(t("tryAnother"))}
         </p>
 
       </div>
@@ -762,6 +1349,7 @@ function displayProducts(
     `;
 
     return;
+
   }
 
 
@@ -793,16 +1381,14 @@ function displayProducts(
 
               </div>
 
-
               <div class="product-info">
 
                 <span class="product-category">
                   ${escapeHTML(
                     product.category ||
-                    "Others"
+                    t("others")
                   )}
                 </span>
-
 
                 <h3>
                   ${escapeHTML(
@@ -811,21 +1397,18 @@ function displayProducts(
                   )}
                 </h3>
 
-
                 <div class="product-price">
                   $${formatPrice(
                     product.price
                   )}
                 </div>
 
-
                 <p class="product-location">
                   📍 ${escapeHTML(
                     product.location ||
-                    "Unknown"
+                    t("unknown")
                   )}
                 </p>
-
 
                 <button
                   class="view-product-btn"
@@ -834,7 +1417,7 @@ function displayProducts(
                   )}"
                   type="button"
                 >
-                  View Details
+                  ${escapeHTML(t("viewDetails"))}
                 </button>
 
               </div>
@@ -859,51 +1442,47 @@ function displayProducts(
 
 function addProductEvents() {
 
-  const buttons =
-    document.querySelectorAll(
+  document
+    .querySelectorAll(
       ".view-product-btn"
-    );
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const productId =
+              button.dataset.id;
 
 
-  buttons.forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const productId =
-            button.dataset.id;
+            const product =
+              products.find(
+                item =>
+                  item.id === productId
+              );
 
 
-          const product =
-            products.find(
-              item =>
-                item.id ===
-                productId
-            );
+            if (product) {
 
+              openProductDetails(
+                product
+              );
 
-          if (!product) {
-            return;
+            }
+
           }
+        );
 
-
-          openProductDetails(
-            product
-          );
-
-        }
-      );
-
-    }
-  );
+      }
+    );
 
 }
 
 
 /* =======================================================
-   Load Products From Firestore
+   Load Products
 ======================================================= */
 
 async function loadProducts() {
@@ -917,16 +1496,14 @@ async function loadProducts() {
 
     <div class="empty-state">
 
-      <div>
-        ⏳
-      </div>
+      <div>⏳</div>
 
       <h3>
-        Loading products...
+        ${escapeHTML(t("loadingProducts"))}
       </h3>
 
       <p>
-        Please wait.
+        ${escapeHTML(t("pleaseWait"))}
       </p>
 
     </div>
@@ -983,12 +1560,6 @@ async function loadProducts() {
     );
 
 
-    console.log(
-      "Products loaded:",
-      products.length
-    );
-
-
   } catch (error) {
 
     console.error(
@@ -1001,16 +1572,14 @@ async function loadProducts() {
 
       <div class="empty-state">
 
-        <div>
-          ⚠️
-        </div>
+        <div>⚠️</div>
 
         <h3>
-          Could not load products
+          ${escapeHTML(t("loadingError"))}
         </h3>
 
         <p>
-          Please check your Firestore rules and try again.
+          ${escapeHTML(t("firestoreError"))}
         </p>
 
       </div>
@@ -1023,7 +1592,7 @@ async function loadProducts() {
 
 
 /* =======================================================
-   Search Products
+   Search
 ======================================================= */
 
 function searchProducts() {
@@ -1106,10 +1675,6 @@ function searchProducts() {
 }
 
 
-/* =======================================================
-   Search Events
-======================================================= */
-
 if (searchBtn) {
 
   searchBtn.addEventListener(
@@ -1162,75 +1727,49 @@ if (categorySelect) {
    Category Cards
 ======================================================= */
 
-const categoryCards =
-  document.querySelectorAll(
+document
+  .querySelectorAll(
     ".category-card"
+  )
+  .forEach(
+    card => {
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          const category =
+            card.dataset.category;
+
+
+          if (categorySelect) {
+
+            categorySelect.value =
+              category;
+
+          }
+
+
+          searchProducts();
+
+
+          document
+            .getElementById(
+              "listings"
+            )
+            ?.scrollIntoView({
+              behavior: "smooth"
+            });
+
+        }
+      );
+
+    }
   );
 
 
-categoryCards.forEach(
-  card => {
-
-    const selectCategory =
-      () => {
-
-        const category =
-          card.dataset.category;
-
-
-        if (categorySelect) {
-
-          categorySelect.value =
-            category;
-
-        }
-
-
-        searchProducts();
-
-
-        document
-          .getElementById(
-            "listings"
-          )
-          ?.scrollIntoView({
-            behavior:
-              "smooth"
-          });
-
-      };
-
-
-    card.addEventListener(
-      "click",
-      selectCategory
-    );
-
-
-    card.addEventListener(
-      "keydown",
-      event => {
-
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
-
-          event.preventDefault();
-
-          selectCategory();
-
-        }
-
-      }
-    );
-
-  }
-);
-
-
 /* =======================================================
-   Show Register Form
+   Register/Login Toggle
 ======================================================= */
 
 if (showRegisterBtn) {
@@ -1239,49 +1778,27 @@ if (showRegisterBtn) {
     "click",
     () => {
 
-      if (loginForm) {
+      loginForm.style.display =
+        "none";
 
-        loginForm.style.display =
-          "none";
-
-      }
-
-
-      if (registerForm) {
-
-        registerForm.style.display =
-          "block";
-
-      }
-
+      registerForm.style.display =
+        "block";
 
       showRegisterBtn.style.display =
         "none";
 
+      showLoginBtn.style.display =
+        "inline-block";
 
-      if (showLoginBtn) {
+      authTitle.textContent =
+        currentLanguage === "ar"
+          ? "إنشاء حساب مزاد"
+          : "Create Mazad Account";
 
-        showLoginBtn.style.display =
-          "inline-block";
-
-      }
-
-
-      if (authTitle) {
-
-        authTitle.textContent =
-          "Create Mazad Account";
-
-      }
-
-
-      if (authMessage) {
-
-        authMessage.textContent =
-          "Register to start buying and selling.";
-
-      }
-
+      authMessage.textContent =
+        currentLanguage === "ar"
+          ? "سجل لإنشاء حساب والبدء بالبيع والشراء."
+          : "Register to start buying and selling.";
 
       showAuthMessage("");
 
@@ -1290,10 +1807,6 @@ if (showRegisterBtn) {
 
 }
 
-
-/* =======================================================
-   Show Login Form
-======================================================= */
 
 if (showLoginBtn) {
 
@@ -1301,49 +1814,23 @@ if (showLoginBtn) {
     "click",
     () => {
 
-      if (registerForm) {
+      registerForm.style.display =
+        "none";
 
-        registerForm.style.display =
-          "none";
-
-      }
-
-
-      if (loginForm) {
-
-        loginForm.style.display =
-          "block";
-
-      }
-
+      loginForm.style.display =
+        "block";
 
       showLoginBtn.style.display =
         "none";
 
+      showRegisterBtn.style.display =
+        "inline-block";
 
-      if (showRegisterBtn) {
+      authTitle.textContent =
+        t("welcomeMazad");
 
-        showRegisterBtn.style.display =
-          "inline-block";
-
-      }
-
-
-      if (authTitle) {
-
-        authTitle.textContent =
-          "Welcome to Mazad";
-
-      }
-
-
-      if (authMessage) {
-
-        authMessage.textContent =
-          "Login to start buying and selling.";
-
-      }
-
+      authMessage.textContent =
+        t("loginRegisterMessage");
 
       showAuthMessage("");
 
@@ -1354,7 +1841,7 @@ if (showLoginBtn) {
 
 
 /* =======================================================
-   Register Account
+   Register
 ======================================================= */
 
 if (registerForm) {
@@ -1384,7 +1871,7 @@ if (registerForm) {
 
 
       showAuthMessage(
-        "Creating account..."
+        t("creatingAccount")
       );
 
 
@@ -1398,7 +1885,7 @@ if (registerForm) {
 
 
         showAuthMessage(
-          "Account created successfully! 🎉",
+          t("accountCreated"),
           true
         );
 
@@ -1408,10 +1895,7 @@ if (registerForm) {
 
       } catch (error) {
 
-        console.error(
-          error
-        );
-
+        console.error(error);
 
         showAuthMessage(
           getFirebaseErrorMessage(
@@ -1458,7 +1942,7 @@ if (loginForm) {
 
 
       showAuthMessage(
-        "Logging in..."
+        t("loggingIn")
       );
 
 
@@ -1472,7 +1956,7 @@ if (loginForm) {
 
 
         showAuthMessage(
-          "Login successful! 🎉",
+          t("loginSuccessful"),
           true
         );
 
@@ -1482,10 +1966,7 @@ if (loginForm) {
 
       } catch (error) {
 
-        console.error(
-          error
-        );
-
+        console.error(error);
 
         showAuthMessage(
           getFirebaseErrorMessage(
@@ -1502,7 +1983,7 @@ if (loginForm) {
 
 
 /* =======================================================
-   Sell Button Navigation
+   Sell Navigation
 ======================================================= */
 
 function openSellSection() {
@@ -1514,7 +1995,7 @@ function openSellSection() {
   if (!currentUser) {
 
     alert(
-      "Please login or create an account before selling a product."
+      t("loginBeforeSell")
     );
 
 
@@ -1523,12 +2004,12 @@ function openSellSection() {
         "login"
       )
       ?.scrollIntoView({
-        behavior:
-          "smooth"
+        behavior: "smooth"
       });
 
 
     return;
+
   }
 
 
@@ -1537,8 +2018,7 @@ function openSellSection() {
       "sell"
     )
     ?.scrollIntoView({
-      behavior:
-        "smooth"
+      behavior: "smooth"
     });
 
 }
@@ -1565,7 +2045,7 @@ if (heroSellBtn) {
 
 
 /* =======================================================
-   Upload Image To Cloudinary
+   Cloudinary Upload
 ======================================================= */
 
 async function uploadImageToCloudinary(
@@ -1583,34 +2063,28 @@ async function uploadImageToCloudinary(
   ) {
 
     throw new Error(
-      "Image size must be less than 10 MB."
+      t("imageTooLarge")
     );
 
   }
 
 
   if (
-    !file.type.startsWith(
-      "image/"
-    )
+    !file.type.startsWith("image/")
   ) {
 
     throw new Error(
-      "Please select a valid image file."
+      t("validImage")
     );
 
   }
 
 
-  if (imageStatus) {
+  imageStatus.textContent =
+    t("uploadingImage");
 
-    imageStatus.textContent =
-      "Uploading image to Cloudinary...";
-
-    imageStatus.style.color =
-      "black";
-
-  }
+  imageStatus.style.color =
+    "black";
 
 
   const formData =
@@ -1633,11 +2107,8 @@ async function uploadImageToCloudinary(
     await fetch(
       CLOUDINARY_UPLOAD_URL,
       {
-        method:
-          "POST",
-
-        body:
-          formData
+        method: "POST",
+        body: formData
       }
     );
 
@@ -1645,7 +2116,7 @@ async function uploadImageToCloudinary(
   if (!response.ok) {
 
     let errorMessage =
-      "Cloudinary upload failed.";
+      t("uploadFailed");
 
 
     try {
@@ -1664,9 +2135,9 @@ async function uploadImageToCloudinary(
 
       }
 
-    } catch (e) {
+    } catch (error) {
 
-      console.error(e);
+      console.error(error);
 
     }
 
@@ -1685,21 +2156,17 @@ async function uploadImageToCloudinary(
   if (!data.secure_url) {
 
     throw new Error(
-      "Cloudinary did not return an image URL."
+      t("imageUrlFailed")
     );
 
   }
 
 
-  if (imageStatus) {
+  imageStatus.textContent =
+    t("imageUploaded");
 
-    imageStatus.textContent =
-      "Image uploaded successfully! ✅";
-
-    imageStatus.style.color =
-      "green";
-
-  }
+  imageStatus.style.color =
+    "green";
 
 
   return data.secure_url;
@@ -1726,15 +2193,11 @@ if (sellProductForm) {
 
       if (!currentUser) {
 
-        if (sellStatus) {
+        sellStatus.textContent =
+          t("loginBeforePublish");
 
-          sellStatus.textContent =
-            "Please login before publishing a product.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
+        sellStatus.style.color =
+          "red";
 
 
         document
@@ -1742,8 +2205,7 @@ if (sellProductForm) {
             "login"
           )
           ?.scrollIntoView({
-            behavior:
-              "smooth"
+            behavior: "smooth"
           });
 
 
@@ -1801,109 +2263,20 @@ if (sellProductForm) {
           : null;
 
 
-      if (!title) {
+      sellStatus.textContent =
+        t("preparingProduct");
 
-        if (sellStatus) {
-
-          sellStatus.textContent =
-            "Please enter a product title.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
-
-        return;
-      }
+      sellStatus.style.color =
+        "black";
 
 
-      if (!category) {
+      publishProductBtn.disabled =
+        true;
 
-        if (sellStatus) {
-
-          sellStatus.textContent =
-            "Please select a category.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
-
-        return;
-      }
-
-
-      if (
-        price === "" ||
-        Number(price) < 0
-      ) {
-
-        if (sellStatus) {
-
-          sellStatus.textContent =
-            "Please enter a valid price.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
-
-        return;
-      }
-
-
-      if (!location) {
-
-        if (sellStatus) {
-
-          sellStatus.textContent =
-            "Please enter a location.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
-
-        return;
-      }
-
-
-      if (!description) {
-
-        if (sellStatus) {
-
-          sellStatus.textContent =
-            "Please enter a product description.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
-
-        return;
-      }
-
-
-      if (sellStatus) {
-
-        sellStatus.textContent =
-          "Preparing product...";
-
-        sellStatus.style.color =
-          "black";
-
-      }
-
-
-      if (publishProductBtn) {
-
-        publishProductBtn.disabled =
-          true;
-
-        publishProductBtn.textContent =
-          "Publishing...";
-
-      }
+      publishProductBtn.textContent =
+        currentLanguage === "ar"
+          ? "جاري النشر..."
+          : "Publishing...";
 
 
       try {
@@ -1921,12 +2294,8 @@ if (sellProductForm) {
         }
 
 
-        if (sellStatus) {
-
-          sellStatus.textContent =
-            "Saving product...";
-
-        }
+        sellStatus.textContent =
+          t("savingProduct");
 
 
         await addDoc(
@@ -1967,23 +2336,15 @@ if (sellProductForm) {
         );
 
 
-        if (sellStatus) {
+        sellStatus.textContent =
+          t("published");
 
-          sellStatus.textContent =
-            "Product published successfully! 🎉";
-
-          sellStatus.style.color =
-            "green";
-
-        }
+        sellStatus.style.color =
+          "green";
 
 
-        if (imageStatus) {
-
-          imageStatus.textContent =
-            "";
-
-        }
+        imageStatus.textContent =
+          "";
 
 
         sellProductForm.reset();
@@ -1997,8 +2358,7 @@ if (sellProductForm) {
             "listings"
           )
           ?.scrollIntoView({
-            behavior:
-              "smooth"
+            behavior: "smooth"
           });
 
 
@@ -2010,28 +2370,20 @@ if (sellProductForm) {
         );
 
 
-        if (sellStatus) {
+        sellStatus.textContent =
+          error.message ||
+          t("publishFailed");
 
-          sellStatus.textContent =
-            error.message ||
-            "Failed to publish product. Please try again.";
-
-          sellStatus.style.color =
-            "red";
-
-        }
+        sellStatus.style.color =
+          "red";
 
       } finally {
 
-        if (publishProductBtn) {
+        publishProductBtn.disabled =
+          false;
 
-          publishProductBtn.disabled =
-            false;
-
-          publishProductBtn.textContent =
-            "Publish Product";
-
-        }
+        publishProductBtn.textContent =
+          t("publishProduct");
 
       }
 
@@ -2057,12 +2409,8 @@ onAuthStateChanged(
       );
 
 
-      if (authMessage) {
-
-        authMessage.textContent =
-          `Logged in as ${user.email}`;
-
-      }
+      authMessage.textContent =
+        `${t("loggedInAs")} ${user.email}`;
 
 
       let logoutBtn =
@@ -2085,9 +2433,6 @@ onAuthStateChanged(
         logoutBtn.type =
           "button";
 
-        logoutBtn.textContent =
-          "Logout";
-
         logoutBtn.className =
           "secondary-btn";
 
@@ -2108,24 +2453,17 @@ onAuthStateChanged(
 
             try {
 
-              await signOut(
-                auth
-              );
-
+              await signOut(auth);
 
               alert(
-                "Logged out successfully."
+                t("loggedOut")
               );
-
 
               location.reload();
 
-
             } catch (error) {
 
-              console.error(
-                error
-              );
+              console.error(error);
 
             }
 
@@ -2135,12 +2473,11 @@ onAuthStateChanged(
       }
 
 
+      logoutBtn.textContent =
+        t("logout");
+
+
     } else {
-
-      console.log(
-        "No user currently logged in."
-      );
-
 
       const logoutBtn =
         document.getElementById(
