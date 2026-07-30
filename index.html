@@ -1,769 +1,397 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Mazad — Buy & Sell Marketplace</title>
+    <title>Mazad</title>
 
-  <meta
-    name="description"
-    content="Mazad is an online marketplace to buy and sell products easily."
-  >
+    <meta
+        name="description"
+        content="Mazad - A modern online marketplace for buyers and sellers."
+    >
 
-  <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="container header-content">
+    <!-- Header -->
+    <header class="site-header">
 
-      <a href="#home" class="logo">Mazad</a>
+        <div class="header-container">
 
-      <nav class="nav">
-        <a href="#home" data-i18n="home">Home</a>
-        <a href="#categories" data-i18n="categories">Categories</a>
-        <a href="#listings" data-i18n="listings">Listings</a>
-        <a href="#login" data-i18n="login">Login</a>
-        <a href="#profile" id="profileNavBtn" data-i18n="profile">Profile</a>
-      </nav>
-
-      <div class="header-actions">
-
-        <button id="languageBtn" class="language-btn" type="button">
-          العربية
-        </button>
-
-        <button class="sell-btn" id="headerSellBtn" type="button">
-          + <span data-i18n="sellProduct">Sell Product</span>
-        </button>
-
-      </div>
-
-    </div>
-  </header>
-
-
-  <main>
-
-    <!-- HERO -->
-    <section id="home" class="hero">
-      <div class="container hero-content">
-
-        <div class="hero-text">
-
-          <p class="hero-small" data-i18n="welcome">
-            Welcome to Mazad
-          </p>
-
-          <h1>
-            <span data-i18n="buySell">Buy & Sell</span><br>
-            <span data-i18n="anythingEasily">Anything Easily</span>
-          </h1>
-
-          <p data-i18n="heroDescription">
-            Find great products near you or sell your products quickly and easily on Mazad.
-          </p>
-
-          <div class="hero-buttons">
-
-            <a
-              href="#listings"
-              class="primary-btn"
-              data-i18n="browseProducts"
-            >
-              Browse Products
+            <a href="#" class="logo">
+                Mazad
             </a>
 
-            <button
-              class="secondary-btn"
-              id="heroSellBtn"
-              type="button"
-              data-i18n="sellSomething"
-            >
-              Sell Something
-            </button>
+            <nav class="main-nav">
+                <a href="#" class="nav-link active">Home</a>
+                <a href="#" class="nav-link">Products</a>
+                <a href="#" class="nav-link">Categories</a>
+                <a href="#" class="nav-link">Messages</a>
+                <a href="#" class="nav-link">Profile</a>
+            </nav>
+
+            <div class="header-actions">
+
+                <button
+                    type="button"
+                    id="languageButton"
+                    class="header-button"
+                >
+                    EN
+                </button>
+
+                <button
+                    type="button"
+                    id="loginButton"
+                    class="header-button primary-button"
+                >
+                    Login
+                </button>
 
-          </div>
-
-        </div>
-
-        <div class="hero-card">
-          <div class="hero-icon">🛍️</div>
-          <h2 data-i18n="buySell">Buy & Sell</h2>
-          <p data-i18n="simpleFastSecure">Simple • Fast • Secure</p>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- SEARCH -->
-    <section class="search-section">
-      <div class="container">
-
-        <div class="search-box">
-
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="What are you looking for?"
-            data-i18n-placeholder="searchPlaceholder"
-          >
-
-          <select id="categorySelect">
-            <option value="" data-i18n="allCategories">
-              All Categories
-            </option>
-
-            <option value="Cars" data-i18n="cars">Cars</option>
-            <option value="Mobiles" data-i18n="mobiles">Mobiles</option>
-            <option value="Electronics" data-i18n="electronics">
-              Electronics
-            </option>
-            <option value="Property" data-i18n="property">
-              Property
-            </option>
-            <option value="Fashion" data-i18n="fashion">
-              Fashion
-            </option>
-            <option value="Jobs" data-i18n="jobs">Jobs</option>
-            <option value="Others" data-i18n="others">Others</option>
-          </select>
-
-          <button id="searchBtn" type="button" data-i18n="search">
-            Search
-          </button>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- CATEGORIES -->
-    <section id="categories" class="section">
-      <div class="container">
-
-        <div class="section-title">
-          <p data-i18n="explore">Explore</p>
-          <h2 data-i18n="popularCategories">
-            Popular Categories
-          </h2>
-        </div>
-
-        <div class="categories-grid">
-
-          <div class="category-card" data-category="Cars">
-            <div class="category-icon">🚗</div>
-            <h3 data-i18n="cars">Cars</h3>
-            <p data-i18n="findNextCar">Find your next car</p>
-          </div>
-
-          <div class="category-card" data-category="Mobiles">
-            <div class="category-icon">📱</div>
-            <h3 data-i18n="mobiles">Mobiles</h3>
-            <p data-i18n="phonesAccessories">Phones & accessories</p>
-          </div>
-
-          <div class="category-card" data-category="Electronics">
-            <div class="category-icon">💻</div>
-            <h3 data-i18n="electronics">Electronics</h3>
-            <p data-i18n="devicesGadgets">Devices & gadgets</p>
-          </div>
-
-          <div class="category-card" data-category="Property">
-            <div class="category-icon">🏠</div>
-            <h3 data-i18n="property">Property</h3>
-            <p data-i18n="homesLand">Homes & land</p>
-          </div>
-
-          <div class="category-card" data-category="Fashion">
-            <div class="category-icon">👕</div>
-            <h3 data-i18n="fashion">Fashion</h3>
-            <p data-i18n="clothesAccessories">Clothes & accessories</p>
-          </div>
-
-          <div class="category-card" data-category="Jobs">
-            <div class="category-icon">💼</div>
-            <h3 data-i18n="jobs">Jobs</h3>
-            <p data-i18n="findOpportunities">Find opportunities</p>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- LISTINGS -->
-    <section id="listings" class="section listings-section">
-      <div class="container">
-
-        <div class="section-title">
-          <p data-i18n="marketplace">Marketplace</p>
-          <h2 data-i18n="latestListings">Latest Listings</h2>
-        </div>
-
-        <div id="productsContainer" class="products-grid">
-
-          <div class="empty-state">
-            <div>📦</div>
-            <h3 data-i18n="loadingProducts">Loading products...</h3>
-            <p data-i18n="pleaseWait">Please wait.</p>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- SELL PRODUCT -->
-    <section id="sell" class="sell-section">
-      <div class="container">
-
-        <div class="section-title">
-          <p data-i18n="marketplace">Marketplace</p>
-          <h2 data-i18n="sellYourProduct">Sell Your Product</h2>
-        </div>
-
-        <div class="login-card">
-
-          <form id="sellProductForm">
-
-            <input
-              type="text"
-              id="productTitle"
-              placeholder="Product title"
-              data-i18n-placeholder="productTitle"
-              required
-            >
-
-            <select id="productCategory" required>
-              <option value="" data-i18n="selectCategory">
-                Select Category
-              </option>
-
-              <option value="Cars" data-i18n="cars">Cars</option>
-              <option value="Mobiles" data-i18n="mobiles">Mobiles</option>
-              <option value="Electronics" data-i18n="electronics">
-                Electronics
-              </option>
-              <option value="Property" data-i18n="property">Property</option>
-              <option value="Fashion" data-i18n="fashion">Fashion</option>
-              <option value="Jobs" data-i18n="jobs">Jobs</option>
-              <option value="Others" data-i18n="others">Others</option>
-            </select>
-
-            <input
-              type="number"
-              id="productPrice"
-              placeholder="Price"
-              data-i18n-placeholder="price"
-              min="0"
-              step="0.01"
-              required
-            >
-
-            <input
-              type="text"
-              id="productLocation"
-              placeholder="Location"
-              data-i18n-placeholder="location"
-              required
-            >
-
-            <label
-              for="productImageFile"
-              class="file-label"
-              data-i18n="productImage"
-            >
-              Product Image
-            </label>
-
-            <input
-              type="file"
-              id="productImageFile"
-              accept="image/*"
-            >
-
-            <p id="imageStatus"></p>
-
-            <textarea
-              id="productDescription"
-              placeholder="Product description"
-              data-i18n-placeholder="productDescription"
-              rows="5"
-              required
-            ></textarea>
-
-            <button
-              type="submit"
-              class="primary-btn"
-              id="publishProductBtn"
-              data-i18n="publishProduct"
-            >
-              Publish Product
-            </button>
-
-            <p id="sellStatus"></p>
-
-          </form>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- LOGIN / REGISTER -->
-    <section id="login" class="login-section">
-      <div class="container">
-
-        <div class="login-card">
-
-          <h2 id="authTitle" data-i18n="welcomeMazad">
-            Welcome to Mazad
-          </h2>
-
-          <p id="authMessage" data-i18n="loginRegisterMessage">
-            Login or register to start buying and selling.
-          </p>
-
-          <form id="loginForm">
-
-            <input
-              type="email"
-              id="loginEmail"
-              placeholder="Email address"
-              data-i18n-placeholder="emailAddress"
-              required
-            >
-
-            <input
-              type="password"
-              id="loginPassword"
-              placeholder="Password"
-              data-i18n-placeholder="password"
-              minlength="6"
-              required
-            >
-
-            <button
-              type="submit"
-              class="primary-btn"
-              data-i18n="login"
-            >
-              Login
-            </button>
-
-          </form>
-
-
-          <form id="registerForm" style="display: none;">
-
-            <input
-              type="email"
-              id="registerEmail"
-              placeholder="Email address"
-              data-i18n-placeholder="emailAddress"
-              required
-            >
-
-            <input
-              type="password"
-              id="registerPassword"
-              placeholder="Password (minimum 6 characters)"
-              data-i18n-placeholder="passwordMin"
-              minlength="6"
-              required
-            >
-
-            <button
-              type="submit"
-              class="primary-btn"
-              data-i18n="createAccount"
-            >
-              Create Account
-            </button>
-
-          </form>
-
-
-          <button
-            type="button"
-            id="showRegisterBtn"
-            class="secondary-btn"
-            data-i18n="createNewAccount"
-          >
-            Create new account
-          </button>
-
-
-          <button
-            type="button"
-            id="showLoginBtn"
-            class="secondary-btn"
-            style="display: none;"
-            data-i18n="alreadyAccount"
-          >
-            Already have an account? Login
-          </button>
-
-
-          <p id="authStatus"></p>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- PROFILE SECTION -->
-    <section id="profile" class="profile-section">
-      <div class="container">
-
-        <div class="section-title">
-          <p data-i18n="account">Account</p>
-          <h2 data-i18n="myProfile">My Profile</h2>
-        </div>
-
-        <div id="profileContent"></div>
-
-      </div>
-    </section>
-
-
-    <!-- MESSAGES -->
-    <section id="messages" class="messages-section">
-      <div class="container">
-
-        <div class="section-title">
-          <p data-i18n="communication">Communication</p>
-          <h2 data-i18n="messages">Messages</h2>
-        </div>
-
-        <div class="messages-layout">
-
-          <div class="conversation-list" id="conversationList">
-            <div class="chat-empty">
-              💬
-              <p data-i18n="noConversations">
-                No conversations yet.
-              </p>
-            </div>
-          </div>
-
-          <div class="chat-panel">
-
-            <div class="chat-header" id="chatHeader">
-              <span data-i18n="selectConversation">
-                Select a conversation
-              </span>
             </div>
 
-            <div
-              class="chat-messages"
-              id="chatMessages"
-            ></div>
+        </div>
 
-            <form
-              class="chat-form"
-              id="chatForm"
-            >
+    </header>
 
-              <input
-                type="text"
-                id="chatInput"
-                placeholder="Write a message..."
-                data-i18n-placeholder="writeMessage"
-                autocomplete="off"
-              >
 
-              <button
-                type="submit"
-                class="primary-btn"
-                data-i18n="send"
-              >
-                Send
-              </button>
+    <!-- Main Content -->
+    <main>
 
-            </form>
+        <!-- Hero Section -->
+        <section class="hero-section">
 
-          </div>
+            <div class="hero-container">
+
+                <div class="hero-content">
+
+                    <span class="hero-label">
+                        Welcome to Mazad
+                    </span>
+
+                    <h1>
+                        Buy and Sell
+                        <br>
+                        Everything You Need
+                    </h1>
+
+                    <p>
+                        Discover products, connect with sellers,
+                        and find great deals on Mazad.
+                    </p>
+
+                    <div class="hero-actions">
+
+                        <button
+                            type="button"
+                            id="browseProductsButton"
+                            class="hero-button primary-button"
+                        >
+                            Browse Products
+                        </button>
+
+                        <button
+                            type="button"
+                            id="sellProductButton"
+                            class="hero-button secondary-button"
+                        >
+                            Sell a Product
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Search Section -->
+        <section class="search-section">
+
+            <div class="search-container">
+
+                <form id="searchForm" class="search-form">
+
+                    <input
+                        type="search"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Search products..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="submit"
+                        class="search-button"
+                    >
+                        Search
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- Categories -->
+        <section class="categories-section">
+
+            <div class="section-container">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            Explore
+                        </span>
+
+                        <h2>
+                            Popular Categories
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="categories-grid">
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Electronics"
+                    >
+                        <span class="category-icon">📱</span>
+                        <span class="category-name">
+                            Electronics
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Vehicles"
+                    >
+                        <span class="category-icon">🚗</span>
+                        <span class="category-name">
+                            Vehicles
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Fashion"
+                    >
+                        <span class="category-icon">👕</span>
+                        <span class="category-name">
+                            Fashion
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Home"
+                    >
+                        <span class="category-icon">🏠</span>
+                        <span class="category-name">
+                            Home
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Mobile"
+                    >
+                        <span class="category-icon">📲</span>
+                        <span class="category-name">
+                            Mobile
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Other"
+                    >
+                        <span class="category-icon">🛍️</span>
+                        <span class="category-name">
+                            Other
+                        </span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Products -->
+        <section class="products-section">
+
+            <div class="section-container">
+
+                <div class="section-heading">
+
+                    <div>
+                        <span class="section-label">
+                            Marketplace
+                        </span>
+
+                        <h2>
+                            Latest Products
+                        </h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="viewAllProductsButton"
+                        class="text-button"
+                    >
+                        View All
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="productsContainer"
+                    class="products-grid"
+                >
+
+                    <div class="empty-products">
+                        <h3>
+                            No products yet
+                        </h3>
+
+                        <p>
+                            Products will appear here when sellers
+                            start listing items.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Sell CTA -->
+        <section class="sell-section">
+
+            <div class="section-container">
+
+                <div class="sell-card">
+
+                    <div class="sell-content">
+
+                        <span class="section-label">
+                            Start Selling
+                        </span>
+
+                        <h2>
+                            Have something to sell?
+                        </h2>
+
+                        <p>
+                            Create your seller account and list
+                            your products on Mazad.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="startSellingButton"
+                        class="hero-button primary-button"
+                    >
+                        Start Selling
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+            <div class="footer-brand">
+
+                <a href="#" class="logo">
+                    Mazad
+                </a>
+
+                <p>
+                    A modern marketplace for buyers and sellers.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <a href="#">
+                    Home
+                </a>
+
+                <a href="#">
+                    Products
+                </a>
+
+                <a href="#">
+                    About
+                </a>
+
+                <a href="#">
+                    Contact
+                </a>
+
+                <a href="#">
+                    Privacy
+                </a>
+
+            </div>
 
         </div>
 
-      </div>
-    </section>
 
-  </main>
+        <div class="footer-bottom">
 
-
-  <!-- PRODUCT DETAILS MODAL -->
-  <div
-    id="productModal"
-    class="product-modal"
-    aria-hidden="true"
-  >
-
-    <div class="product-modal-overlay"></div>
-
-    <div
-      class="product-modal-box"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modalProductTitle"
-    >
-
-      <button
-        id="closeProductModal"
-        class="modal-close"
-        type="button"
-        aria-label="Close"
-      >
-        ×
-      </button>
-
-      <div class="modal-image-wrapper">
-        <img
-          id="modalProductImage"
-          src=""
-          alt="Product"
-        >
-      </div>
-
-      <div class="modal-product-content">
-
-        <span
-          id="modalProductCategory"
-          class="product-category"
-        >
-          Category
-        </span>
-
-        <h2 id="modalProductTitle">Product</h2>
-
-        <div id="modalProductPrice" class="modal-price">
-          $0
-        </div>
-
-        <div class="modal-location">
-          📍
-          <span id="modalProductLocation">Unknown</span>
-        </div>
-
-        <div class="modal-divider"></div>
-
-        <h3 data-i18n="description">Description</h3>
-
-        <p
-          id="modalProductDescription"
-          class="modal-description"
-        >
-          No description available.
-        </p>
-
-        <!-- SELLER -->
-        <div class="seller-box">
-
-          <img
-            id="modalSellerPhoto"
-            class="seller-avatar-image"
-            src=""
-            alt="Seller"
-          >
-
-          <div class="seller-details">
-
-            <span data-i18n="seller">Seller</span>
-
-            <strong id="modalSellerName">
-              Seller
-            </strong>
-
-            <small id="modalSellerEmail">
-              Seller information
-            </small>
-
-          </div>
+            <p>
+                © 2026 Mazad. All rights reserved.
+            </p>
 
         </div>
 
-        <div
-          id="sellerActions"
-          class="seller-actions"
-        ></div>
-
-      </div>
-
-    </div>
-
-  </div>
+    </footer>
 
 
-  <!-- PROFILE MODAL -->
-  <div
-    id="profileModal"
-    class="profile-modal"
-    aria-hidden="true"
-  >
-
-    <div class="profile-modal-overlay"></div>
-
-    <div
-      class="profile-modal-box"
-      role="dialog"
-      aria-modal="true"
-    >
-
-      <button
-        id="closeProfileModal"
-        class="modal-close"
-        type="button"
-      >
-        ×
-      </button>
-
-      <div id="profileModalContent"></div>
-
-    </div>
-
-  </div>
-
-
-  <!-- EDIT PROFILE MODAL -->
-  <div
-    id="editProfileModal"
-    class="profile-modal"
-    aria-hidden="true"
-  >
-
-    <div class="profile-modal-overlay"></div>
-
-    <div
-      class="profile-modal-box edit-profile-box"
-      role="dialog"
-      aria-modal="true"
-    >
-
-      <button
-        id="closeEditProfileModal"
-        class="modal-close"
-        type="button"
-      >
-        ×
-      </button>
-
-      <div class="edit-profile-content">
-
-        <h2 data-i18n="editProfile">
-          Edit Profile
-        </h2>
-
-        <form id="editProfileForm">
-
-          <label
-            for="profilePhotoFile"
-            data-i18n="profilePhoto"
-          >
-            Profile Photo
-          </label>
-
-          <input
-            type="file"
-            id="profilePhotoFile"
-            accept="image/*"
-          >
-
-          <p id="profileImageStatus"></p>
-
-          <input
-            type="text"
-            id="profileNameInput"
-            placeholder="Your name"
-            data-i18n-placeholder="yourName"
-            maxlength="80"
-          >
-
-          <input
-            type="tel"
-            id="profilePhoneInput"
-            placeholder="Phone number"
-            data-i18n-placeholder="phoneNumber"
-            maxlength="30"
-          >
-
-          <input
-            type="text"
-            id="profileLocationInput"
-            placeholder="Location"
-            data-i18n-placeholder="location"
-            maxlength="100"
-          >
-
-          <textarea
-            id="profileBioInput"
-            placeholder="About you"
-            data-i18n-placeholder="aboutBio"
-            rows="5"
-            maxlength="500"
-          ></textarea>
-
-          <button
-            type="submit"
-            class="primary-btn"
-            id="saveProfileBtn"
-            data-i18n="saveProfile"
-          >
-            Save Profile
-          </button>
-
-          <p id="profileSaveStatus"></p>
-
-        </form>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- FOOTER -->
-  <footer class="footer">
-
-    <div class="container footer-content">
-
-      <div>
-        <h2>Mazad</h2>
-
-        <p data-i18n="buySellProducts">
-          Buy and sell products easily.
-        </p>
-      </div>
-
-      <div>
-        <p>
-          © 2026 Mazad.
-          <span data-i18n="allRightsReserved">
-            All rights reserved.
-          </span>
-        </p>
-      </div>
-
-    </div>
-
-  </footer>
-
-
-  <script
-    type="module"
-    src="./script.js"
-  ></script>
+    <!-- JavaScript -->
+    <script
+        type="module"
+        src="script.js"
+    ></script>
 
 </body>
 </html>
