@@ -1,14 +1,14 @@
 /* =================================
    MAZAD PREMIUM JAVASCRIPT
-   VERSION 2.0
+   VERSION 3.0
 ================================= */
 
 
-// App Loaded
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log("Mazad Premium Loaded");
+
+    console.log("Mazad v3 Loaded");
+
 
 
     /* =========================
@@ -33,24 +33,104 @@ document.addEventListener("DOMContentLoaded", () => {
             icon.classList.toggle("fa-solid");
 
 
-
             if(icon.classList.contains("fa-solid")){
 
-                icon.style.color = "#ff3b5c";
+                icon.style.color="#ff3b5c";
 
             }else{
 
-                icon.style.color = "#ffffff";
+                icon.style.color="#ffffff";
 
             }
-
 
 
         });
 
 
-
     });
+
+
+
+
+
+    /* =========================
+       Banner Slider
+    ========================= */
+
+
+    const banners = document.querySelectorAll(".banner-card");
+
+    const dots = document.querySelectorAll(".dot");
+
+
+    let currentBanner = 0;
+
+
+
+    function showBanner(index){
+
+
+        banners.forEach((banner)=>{
+
+            banner.classList.remove("active");
+
+        });
+
+
+
+        dots.forEach((dot)=>{
+
+            dot.classList.remove("active");
+
+        });
+
+
+
+        if(banners[index]){
+
+            banners[index].classList.add("active");
+
+        }
+
+
+
+        if(dots[index]){
+
+            dots[index].classList.add("active");
+
+        }
+
+
+    }
+
+
+
+
+    if(banners.length > 0){
+
+
+        setInterval(()=>{
+
+
+            currentBanner++;
+
+
+            if(currentBanner >= banners.length){
+
+                currentBanner = 0;
+
+            }
+
+
+            showBanner(currentBanner);
+
+
+
+        },4000);
+
+
+
+    }
 
 
 
@@ -61,24 +141,24 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================= */
 
 
-    const searchInput = document.querySelector(".premium-search input");
+    const searchInput =
+    document.querySelector(".premium-search input");
+
 
 
     if(searchInput){
 
 
-        searchInput.addEventListener("keyup", function(){
+        searchInput.addEventListener("input",()=>{
 
 
-            let value = this.value.trim();
-
-
-            console.log("Searching:", value);
-
+            console.log(
+                "Search:",
+                searchInput.value
+            );
 
 
         });
-
 
 
     }
@@ -92,66 +172,28 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================= */
 
 
-    const navItems = document.querySelectorAll(".bottom-navigation a");
+    const navItems =
+    document.querySelectorAll(".bottom-navigation a");
 
 
 
-    navItems.forEach(item => {
+    navItems.forEach(item=>{
 
 
-        item.addEventListener("click", function(){
+        item.addEventListener("click",()=>{
 
 
-
-            navItems.forEach(nav => {
-
+            navItems.forEach(nav=>{
 
                 nav.classList.remove("active");
-
 
             });
 
 
-
-            this.classList.add("active");
-
+            item.classList.add("active");
 
 
         });
-
-
-
-    });
-
-
-
-
-
-
-    /* =========================
-       Category Click
-    ========================= */
-
-
-    const categories = document.querySelectorAll(".category-card");
-
-
-
-    categories.forEach(category => {
-
-
-        category.addEventListener("click",()=>{
-
-
-            let name = category.innerText;
-
-
-            console.log("Category:",name);
-
-
-
-        });
-
 
 
     });
