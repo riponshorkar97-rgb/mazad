@@ -921,3 +921,241 @@ img{
     --muted:#9ca3af;
 
 }
+/* ==============================
+   PREMIUM BANNER SLIDER
+============================== */
+
+
+.banner-section{
+
+    padding:20px;
+
+}
+
+
+.banner-slider{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+
+.banner-card{
+
+    display:none;
+
+
+    min-height:220px;
+
+
+    padding:30px;
+
+
+    border-radius:30px;
+
+
+    background:
+
+    linear-gradient(135deg,#1e88e5,#0b0f16);
+
+
+    align-items:center;
+
+    justify-content:space-between;
+
+
+    gap:20px;
+
+
+    border:1px solid rgba(255,255,255,.12);
+
+
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+
+
+}
+
+
+
+.banner-card.active{
+
+    display:flex;
+
+    animation:slideFade .5s ease;
+
+}
+
+
+
+@keyframes slideFade{
+
+
+    from{
+
+        opacity:0;
+
+        transform:translateX(30px);
+
+    }
+
+
+    to{
+
+        opacity:1;
+
+        transform:translateX(0);
+
+    }
+
+
+}
+
+
+
+
+.banner-content{
+
+    max-width:70%;
+
+}
+
+
+
+.banner-content span{
+
+
+    display:inline-block;
+
+
+    padding:6px 12px;
+
+
+    border-radius:20px;
+
+
+    background:rgba(255,255,255,.15);
+
+
+    font-size:13px;
+
+
+    margin-bottom:12px;
+
+}
+
+
+
+.banner-content h2{
+
+    font-size:28px;
+
+    margin-bottom:10px;
+
+}
+
+
+
+.banner-content p{
+
+    color:#dbeafe;
+
+    margin-bottom:18px;
+
+}
+
+
+
+.banner-content button{
+
+    padding:10px 20px;
+
+    border-radius:14px;
+
+    background:#fff;
+
+    color:#111827;
+
+    font-weight:700;
+
+}
+
+
+
+.banner-icon{
+
+    font-size:70px;
+
+}
+
+
+
+.slider-dots{
+
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:8px;
+
+    margin-top:15px;
+
+}
+
+
+
+.dot{
+
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:#6b7280;
+
+}
+
+
+
+.dot.active{
+
+    background:#1e88e5;
+
+}
+
+
+
+/* Mobile */
+
+@media(max-width:600px){
+
+
+    .banner-card{
+
+        min-height:190px;
+
+        padding:22px;
+
+    }
+
+
+    .banner-content h2{
+
+        font-size:22px;
+
+    }
+
+
+    .banner-icon{
+
+        font-size:50px;
+
+    }
+
+
+}
