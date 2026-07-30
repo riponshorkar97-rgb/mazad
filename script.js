@@ -1,14 +1,13 @@
 /* =========================================================
-MAZAD — Profile + Buyer/Seller + Messenger
-Firebase Authentication + Firestore
-Cloudinary Image Upload
-English + Arabic Language
-Firebase Storage is NOT used.
+   MAZAD — Step 12 Complete
+   Profile + Buyer/Seller + Messenger
+   Firebase Authentication + Firestore
+   Cloudinary Image Upload
+   English + Arabic Language
+   Firebase Storage is NOT used.
 ========================================================= */
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
   getAuth,
@@ -27,17 +26,15 @@ import {
   setDoc,
   query,
   where,
-  orderBy,
   deleteDoc,
   doc,
   serverTimestamp,
-  onSnapshot,
-  limit
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
 /* =========================================================
-Firebase Configuration
+   Firebase Configuration
 ========================================================= */
 
 const firebaseConfig = {
@@ -52,11 +49,10 @@ const firebaseConfig = {
 
 
 /* =========================================================
-Cloudinary
+   Cloudinary
 ========================================================= */
 
 const CLOUDINARY_CLOUD_NAME = "bhpccaio";
-
 const CLOUDINARY_UPLOAD_PRESET = "mazad_upload";
 
 const CLOUDINARY_UPLOAD_URL =
@@ -64,7 +60,7 @@ const CLOUDINARY_UPLOAD_URL =
 
 
 /* =========================================================
-Initialize Firebase
+   Initialize Firebase
 ========================================================= */
 
 const app = initializeApp(firebaseConfig);
@@ -75,7 +71,7 @@ const db = getFirestore(app);
 
 
 /* =========================================================
-Translations
+   Translations
 ========================================================= */
 
 const translations = {
@@ -140,6 +136,7 @@ const translations = {
     publishProduct: "Publish Product",
 
     welcomeMazad: "Welcome to Mazad",
+
     loginRegisterMessage:
       "Login or register to start buying and selling.",
 
@@ -261,7 +258,10 @@ const translations = {
     phoneNumber: "Phone number",
     aboutBio: "About you",
     saveProfile: "Save Profile",
-    profileSaved: "Profile updated successfully! 🎉",
+
+    profileSaved:
+      "Profile updated successfully! 🎉",
+
     profileRequired:
       "Please login to view your profile.",
 
@@ -269,6 +269,7 @@ const translations = {
     phone: "Phone",
     email: "Email",
     bio: "About",
+
     myListings: "My Listings",
     noListings: "No listings yet.",
 
@@ -283,15 +284,26 @@ const translations = {
     writeMessage: "Write a message...",
     send: "Send",
 
-    profileNotFound: "Profile not found.",
+    profileNotFound:
+      "Profile not found.",
+
     loginToMessage:
       "Please login to send a message.",
+
     cannotMessageSelf:
       "You cannot message yourself.",
-    messageSent: "Message sent.",
-    noMessages: "No messages yet.",
-    loading: "Loading...",
-    member: "Member",
+
+    messageSent:
+      "Message sent.",
+
+    noMessages:
+      "No messages yet.",
+
+    loading:
+      "Loading...",
+
+    member:
+      "Member",
 
     editProfileLogin:
       "Please login before editing your profile.",
@@ -398,7 +410,8 @@ const translations = {
     contactSeller: "تواصل مع البائع",
     deleteProduct: "حذف المنتج",
 
-    loadingError: "تعذر تحميل المنتجات",
+    loadingError:
+      "تعذر تحميل المنتجات",
 
     firestoreError:
       "يرجى التحقق من إعدادات Firestore والمحاولة مرة أخرى.",
@@ -486,7 +499,9 @@ const translations = {
     phoneNumber: "رقم الهاتف",
     aboutBio: "نبذة عنك",
     saveProfile: "حفظ الملف الشخصي",
-    profileSaved: "تم تحديث الملف الشخصي بنجاح! 🎉",
+
+    profileSaved:
+      "تم تحديث الملف الشخصي بنجاح! 🎉",
 
     profileRequired:
       "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
@@ -495,6 +510,7 @@ const translations = {
     phone: "الهاتف",
     email: "البريد الإلكتروني",
     bio: "نبذة",
+
     myListings: "إعلاناتي",
     noListings: "لا توجد إعلانات بعد.",
 
@@ -509,15 +525,26 @@ const translations = {
     writeMessage: "اكتب رسالة...",
     send: "إرسال",
 
-    profileNotFound: "لم يتم العثور على الملف الشخصي.",
+    profileNotFound:
+      "لم يتم العثور على الملف الشخصي.",
+
     loginToMessage:
       "يرجى تسجيل الدخول لإرسال رسالة.",
+
     cannotMessageSelf:
       "لا يمكنك إرسال رسالة إلى نفسك.",
-    messageSent: "تم إرسال الرسالة.",
-    noMessages: "لا توجد رسائل بعد.",
-    loading: "جاري التحميل...",
-    member: "عضو",
+
+    messageSent:
+      "تم إرسال الرسالة.",
+
+    noMessages:
+      "لا توجد رسائل بعد.",
+
+    loading:
+      "جاري التحميل...",
+
+    member:
+      "عضو",
 
     editProfileLogin:
       "يرجى تسجيل الدخول قبل تعديل ملفك الشخصي.",
@@ -533,11 +560,12 @@ const translations = {
 
 
 /* =========================================================
-Language
+   Language
 ========================================================= */
 
 let currentLanguage =
   localStorage.getItem("mazadLanguage") || "en";
+
 
 function t(key) {
 
@@ -587,7 +615,10 @@ function applyLanguage() {
 
 
   const languageBtn =
-    document.getElementById("languageBtn");
+    document.getElementById(
+      "languageBtn"
+    );
+
 
   if (languageBtn) {
 
@@ -608,7 +639,7 @@ function applyLanguage() {
 
 
 /* =========================================================
-Global
+   Global
 ========================================================= */
 
 let products = [];
@@ -623,7 +654,7 @@ let unsubscribeMessages = null;
 
 
 /* =========================================================
-DOM Ready
+   DOM Ready
 ========================================================= */
 
 document.addEventListener(
@@ -638,130 +669,199 @@ document.addEventListener(
     ======================================================= */
 
     const languageBtn =
-      document.getElementById("languageBtn");
+      document.getElementById(
+        "languageBtn"
+      );
 
     const searchInput =
-      document.getElementById("searchInput");
+      document.getElementById(
+        "searchInput"
+      );
 
     const categorySelect =
-      document.getElementById("categorySelect");
+      document.getElementById(
+        "categorySelect"
+      );
 
     const searchBtn =
-      document.getElementById("searchBtn");
+      document.getElementById(
+        "searchBtn"
+      );
 
     const productsContainer =
-      document.getElementById("productsContainer");
-
+      document.getElementById(
+        "productsContainer"
+      );
 
     const loginForm =
-      document.getElementById("loginForm");
+      document.getElementById(
+        "loginForm"
+      );
 
     const registerForm =
-      document.getElementById("registerForm");
+      document.getElementById(
+        "registerForm"
+      );
 
     const showRegisterBtn =
-      document.getElementById("showRegisterBtn");
+      document.getElementById(
+        "showRegisterBtn"
+      );
 
     const showLoginBtn =
-      document.getElementById("showLoginBtn");
+      document.getElementById(
+        "showLoginBtn"
+      );
 
     const authTitle =
-      document.getElementById("authTitle");
+      document.getElementById(
+        "authTitle"
+      );
 
     const authMessage =
-      document.getElementById("authMessage");
+      document.getElementById(
+        "authMessage"
+      );
 
     const authStatus =
-      document.getElementById("authStatus");
-
+      document.getElementById(
+        "authStatus"
+      );
 
     const sellProductForm =
-      document.getElementById("sellProductForm");
+      document.getElementById(
+        "sellProductForm"
+      );
 
     const sellStatus =
-      document.getElementById("sellStatus");
+      document.getElementById(
+        "sellStatus"
+      );
 
     const imageStatus =
-      document.getElementById("imageStatus");
+      document.getElementById(
+        "imageStatus"
+      );
 
     const publishProductBtn =
-      document.getElementById("publishProductBtn");
+      document.getElementById(
+        "publishProductBtn"
+      );
 
     const productImageFile =
-      document.getElementById("productImageFile");
-
+      document.getElementById(
+        "productImageFile"
+      );
 
     const headerSellBtn =
-      document.getElementById("headerSellBtn");
+      document.getElementById(
+        "headerSellBtn"
+      );
 
     const heroSellBtn =
-      document.getElementById("heroSellBtn");
-
+      document.getElementById(
+        "heroSellBtn"
+      );
 
     const profileNavBtn =
-      document.getElementById("profileNavBtn");
+      document.getElementById(
+        "profileNavBtn"
+      );
 
     const profileContent =
-      document.getElementById("profileContent");
-
+      document.getElementById(
+        "profileContent"
+      );
 
     const productModal =
-      document.getElementById("productModal");
+      document.getElementById(
+        "productModal"
+      );
 
     const productModalOverlay =
-      document.querySelector(".product-modal-overlay");
+      document.querySelector(
+        ".product-modal-overlay"
+      );
 
     const closeProductModal =
-      document.getElementById("closeProductModal");
+      document.getElementById(
+        "closeProductModal"
+      );
 
     const modalProductImage =
-      document.getElementById("modalProductImage");
+      document.getElementById(
+        "modalProductImage"
+      );
 
     const modalProductCategory =
-      document.getElementById("modalProductCategory");
+      document.getElementById(
+        "modalProductCategory"
+      );
 
     const modalProductTitle =
-      document.getElementById("modalProductTitle");
+      document.getElementById(
+        "modalProductTitle"
+      );
 
     const modalProductPrice =
-      document.getElementById("modalProductPrice");
+      document.getElementById(
+        "modalProductPrice"
+      );
 
     const modalProductLocation =
-      document.getElementById("modalProductLocation");
+      document.getElementById(
+        "modalProductLocation"
+      );
 
     const modalProductDescription =
-      document.getElementById("modalProductDescription");
+      document.getElementById(
+        "modalProductDescription"
+      );
 
     const modalSellerPhoto =
-      document.getElementById("modalSellerPhoto");
+      document.getElementById(
+        "modalSellerPhoto"
+      );
 
     const modalSellerName =
-      document.getElementById("modalSellerName");
+      document.getElementById(
+        "modalSellerName"
+      );
 
     const modalSellerEmail =
-      document.getElementById("modalSellerEmail");
+      document.getElementById(
+        "modalSellerEmail"
+      );
 
     const sellerActions =
-      document.getElementById("sellerActions");
-
+      document.getElementById(
+        "sellerActions"
+      );
 
     const profileModal =
-      document.getElementById("profileModal");
+      document.getElementById(
+        "profileModal"
+      );
 
     const profileModalOverlay =
       document.querySelector(
         "#profileModal .profile-modal-overlay"
       );
 
-    const closeProfileModal =
-      document.getElementById("closeProfileModal");
+    const closeProfileModalBtn =
+      document.getElementById(
+        "closeProfileModal"
+      );
 
     const profileModalContent =
-      document.getElementById("profileModalContent");
-
+      document.getElementById(
+        "profileModalContent"
+      );
 
     const editProfileModal =
-      document.getElementById("editProfileModal");
+      document.getElementById(
+        "editProfileModal"
+      );
 
     const editProfileModalOverlay =
       document.querySelector(
@@ -769,52 +869,79 @@ document.addEventListener(
       );
 
     const closeEditProfileModal =
-      document.getElementById("closeEditProfileModal");
+      document.getElementById(
+        "closeEditProfileModal"
+      );
 
     const editProfileForm =
-      document.getElementById("editProfileForm");
-
+      document.getElementById(
+        "editProfileForm"
+      );
 
     const profilePhotoFile =
-      document.getElementById("profilePhotoFile");
+      document.getElementById(
+        "profilePhotoFile"
+      );
 
     const profileImageStatus =
-      document.getElementById("profileImageStatus");
+      document.getElementById(
+        "profileImageStatus"
+      );
 
     const profileSaveStatus =
-      document.getElementById("profileSaveStatus");
-
+      document.getElementById(
+        "profileSaveStatus"
+      );
 
     const profileNameInput =
-      document.getElementById("profileNameInput");
+      document.getElementById(
+        "profileNameInput"
+      );
 
     const profilePhoneInput =
-      document.getElementById("profilePhoneInput");
+      document.getElementById(
+        "profilePhoneInput"
+      );
 
     const profileLocationInput =
-      document.getElementById("profileLocationInput");
+      document.getElementById(
+        "profileLocationInput"
+      );
 
     const profileBioInput =
-      document.getElementById("profileBioInput");
+      document.getElementById(
+        "profileBioInput"
+      );
 
     const saveProfileBtn =
-      document.getElementById("saveProfileBtn");
-
+      document.getElementById(
+        "saveProfileBtn"
+      );
 
     const conversationList =
-      document.getElementById("conversationList");
+      document.getElementById(
+        "conversationList"
+      );
 
     const chatHeader =
-      document.getElementById("chatHeader");
+      document.getElementById(
+        "chatHeader"
+      );
 
     const chatMessages =
-      document.getElementById("chatMessages");
+      document.getElementById(
+        "chatMessages"
+      );
 
     const chatForm =
-      document.getElementById("chatForm");
+      document.getElementById(
+        "chatForm"
+      );
 
     const chatInput =
-      document.getElementById("chatInput");
+      document.getElementById(
+        "chatInput"
+      );
 
 
     /* =======================================================
@@ -835,8 +962,7 @@ document.addEventListener(
 
     function formatPrice(price) {
 
-      const number =
-        Number(price);
+      const number = Number(price);
 
       if (!Number.isFinite(number)) {
         return "0";
@@ -849,7 +975,6 @@ document.addEventListener(
             Number.isInteger(number)
               ? 0
               : 2,
-
           maximumFractionDigits: 2
         }
       );
@@ -873,7 +998,8 @@ document.addEventListener(
       let date;
 
       if (
-        typeof value.toDate === "function"
+        typeof value.toDate ===
+        "function"
       ) {
 
         date = value.toDate();
@@ -890,8 +1016,14 @@ document.addEventListener(
 
       }
 
-      if (Number.isNaN(date.getTime())) {
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+
         return t("unknown");
+
       }
 
       return date.toLocaleDateString(
@@ -929,8 +1061,11 @@ document.addEventListener(
       displayProducts(products);
 
       if (auth.currentUser) {
+
         renderMyProfile();
+
         loadConversations();
+
       }
 
     }
@@ -955,7 +1090,9 @@ document.addEventListener(
       success = false
     ) {
 
-      if (!authStatus) return;
+      if (!authStatus) {
+        return;
+      }
 
       authStatus.textContent =
         message;
@@ -1071,11 +1208,11 @@ document.addEventListener(
     }
 
 
-    async function createUserProfile(
-      user
-    ) {
+    async function createUserProfile(user) {
 
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       const profileRef =
         doc(
@@ -1095,23 +1232,14 @@ document.addEventListener(
         profileRef,
         {
           uid: user.uid,
-
           name: "",
-
           phone: "",
-
-          email:
-            user.email || "",
-
+          email: user.email || "",
           location: "",
-
           bio: "",
-
           photoURL: "",
-
           createdAt:
             serverTimestamp(),
-
           updatedAt:
             serverTimestamp()
         }
@@ -1225,6 +1353,7 @@ document.addEventListener(
             <div class="profile-info-grid">
 
               <div class="profile-info-item">
+
                 <span>
                   ${escapeHTML(
                     t("email")
@@ -1234,10 +1363,12 @@ document.addEventListener(
                 <strong>
                   ${escapeHTML(email)}
                 </strong>
+
               </div>
 
 
               <div class="profile-info-item">
+
                 <span>
                   ${escapeHTML(
                     t("phone")
@@ -1247,10 +1378,12 @@ document.addEventListener(
                 <strong>
                   ${escapeHTML(phone)}
                 </strong>
+
               </div>
 
 
               <div class="profile-info-item">
+
                 <span>
                   ${escapeHTML(
                     t("location")
@@ -1260,10 +1393,12 @@ document.addEventListener(
                 <strong>
                   ${escapeHTML(location)}
                 </strong>
+
               </div>
 
 
               <div class="profile-info-item">
+
                 <span>
                   ${escapeHTML(
                     t("joinDate")
@@ -1273,6 +1408,7 @@ document.addEventListener(
                 <strong>
                   ${escapeHTML(joined)}
                 </strong>
+
               </div>
 
             </div>
@@ -1355,12 +1491,15 @@ document.addEventListener(
                   `
                   : `
                     <div class="empty-state">
+
                       <div>📦</div>
+
                       <p>
                         ${escapeHTML(
                           t("noListings")
                         )}
                       </p>
+
                     </div>
                   `
               }
@@ -1378,7 +1517,9 @@ document.addEventListener(
 
     async function renderMyProfile() {
 
-      if (!profileContent) return;
+      if (!profileContent) {
+        return;
+      }
 
       const user =
         auth.currentUser;
@@ -1407,11 +1548,19 @@ document.addEventListener(
 
       }
 
+
       profileContent.innerHTML = `
 
         <div class="empty-state">
+
           <div>⏳</div>
-          <p>${escapeHTML(t("loading"))}</p>
+
+          <p>
+            ${escapeHTML(
+              t("loading")
+            )}
+          </p>
+
         </div>
 
       `;
@@ -1454,6 +1603,7 @@ document.addEventListener(
           "openEditProfileBtn"
         );
 
+
       if (editBtn) {
 
         editBtn.addEventListener(
@@ -1476,7 +1626,8 @@ document.addEventListener(
               () => {
 
                 const id =
-                  card.dataset.profileProductId;
+                  card.dataset
+                    .profileProductId;
 
                 const product =
                   products.find(
@@ -1485,9 +1636,11 @@ document.addEventListener(
                   );
 
                 if (product) {
+
                   openProductDetails(
                     product
                   );
+
                 }
 
               }
@@ -1503,19 +1656,25 @@ document.addEventListener(
        Public Profile
     ======================================================= */
 
-    async function openPublicProfile(
-      uid
-    ) {
+    async function openPublicProfile(uid) {
 
       if (!profileModalContent) {
         return;
       }
 
+
       profileModalContent.innerHTML = `
 
         <div class="empty-state">
+
           <div>⏳</div>
-          <p>${escapeHTML(t("loading"))}</p>
+
+          <p>
+            ${escapeHTML(
+              t("loading")
+            )}
+          </p>
+
         </div>
 
       `;
@@ -1544,11 +1703,13 @@ document.addEventListener(
         profileModalContent.innerHTML = `
 
           <div class="not-logged-profile">
+
             <h3>
               ${escapeHTML(
                 t("profileNotFound")
               )}
             </h3>
+
           </div>
 
         `;
@@ -1558,12 +1719,11 @@ document.addEventListener(
       }
 
 
-      const user =
-        {
-          uid,
-          email:
-            profile.email || ""
-        };
+      const user = {
+        uid,
+        email:
+          profile.email || ""
+      };
 
 
       const userProducts =
@@ -1620,8 +1780,11 @@ document.addEventListener(
             <div class="public-info">
 
               <div class="public-info-item">
+
                 <span>
-                  ${escapeHTML(t("email"))}
+                  ${escapeHTML(
+                    t("email")
+                  )}
                 </span>
 
                 <strong>
@@ -1629,11 +1792,16 @@ document.addEventListener(
                     profile.email || ""
                   )}
                 </strong>
+
               </div>
 
+
               <div class="public-info-item">
+
                 <span>
-                  ${escapeHTML(t("phone"))}
+                  ${escapeHTML(
+                    t("phone")
+                  )}
                 </span>
 
                 <strong>
@@ -1642,11 +1810,16 @@ document.addEventListener(
                     t("unknown")
                   )}
                 </strong>
+
               </div>
 
+
               <div class="public-info-item">
+
                 <span>
-                  ${escapeHTML(t("location"))}
+                  ${escapeHTML(
+                    t("location")
+                  )}
                 </span>
 
                 <strong>
@@ -1655,11 +1828,16 @@ document.addEventListener(
                     t("unknown")
                   )}
                 </strong>
+
               </div>
 
+
               <div class="public-info-item">
+
                 <span>
-                  ${escapeHTML(t("joinDate"))}
+                  ${escapeHTML(
+                    t("joinDate")
+                  )}
                 </span>
 
                 <strong>
@@ -1669,6 +1847,7 @@ document.addEventListener(
                     )
                   )}
                 </strong>
+
               </div>
 
             </div>
@@ -1677,7 +1856,9 @@ document.addEventListener(
             <div class="public-bio">
 
               <h3>
-                ${escapeHTML(t("bio"))}
+                ${escapeHTML(
+                  t("bio")
+                )}
               </h3>
 
               <p>
@@ -1709,6 +1890,7 @@ document.addEventListener(
                   : ""
               }
 
+
               <button
                 type="button"
                 class="primary-btn"
@@ -1731,9 +1913,11 @@ document.addEventListener(
                 (${userProducts.length})
               </h3>
 
+
               ${
                 userProducts.length
                   ? `
+
                     <div class="mini-products">
 
                       ${userProducts
@@ -1782,16 +1966,22 @@ document.addEventListener(
                         .join("")}
 
                     </div>
+
                   `
                   : `
+
                     <div class="empty-state">
+
                       <div>📦</div>
+
                       <p>
                         ${escapeHTML(
                           t("noListings")
                         )}
                       </p>
+
                     </div>
+
                   `
               }
 
@@ -1808,6 +1998,7 @@ document.addEventListener(
         document.getElementById(
           "publicMessageBtn"
         );
+
 
       if (messageBtn) {
 
@@ -1827,6 +2018,7 @@ document.addEventListener(
               return;
 
             }
+
 
             closeProfileModal();
 
@@ -1852,7 +2044,8 @@ document.addEventListener(
               () => {
 
                 const id =
-                  card.dataset.publicProductId;
+                  card.dataset
+                    .publicProductId;
 
                 const product =
                   products.find(
@@ -1861,10 +2054,13 @@ document.addEventListener(
                   );
 
                 if (product) {
+
                   closeProfileModal();
+
                   openProductDetails(
                     product
                   );
+
                 }
 
               }
@@ -1894,14 +2090,15 @@ document.addEventListener(
     }
 
 
-    if (closeProfileModal) {
+    if (closeProfileModalBtn) {
 
-      closeProfileModal.addEventListener(
+      closeProfileModalBtn.addEventListener(
         "click",
         closeProfileModal
       );
 
     }
+
 
     if (profileModalOverlay) {
 
@@ -1921,6 +2118,7 @@ document.addEventListener(
 
       const user =
         auth.currentUser;
+
 
       if (!user) {
 
@@ -2000,6 +2198,7 @@ document.addEventListener(
 
     }
 
+
     if (editProfileModalOverlay) {
 
       editProfileModalOverlay.addEventListener(
@@ -2066,6 +2265,7 @@ document.addEventListener(
         "file",
         file
       );
+
 
       formData.append(
         "upload_preset",
@@ -2134,9 +2334,11 @@ document.addEventListener(
           const file =
             profilePhotoFile.files[0];
 
+
           if (!file) {
             return;
           }
+
 
           if (
             file.size >
@@ -2149,11 +2351,13 @@ document.addEventListener(
             profileImageStatus.style.color =
               "red";
 
-            profilePhotoFile.value = "";
+            profilePhotoFile.value =
+              "";
 
             return;
 
           }
+
 
           if (
             !file.type.startsWith("image/")
@@ -2165,11 +2369,13 @@ document.addEventListener(
             profileImageStatus.style.color =
               "red";
 
-            profilePhotoFile.value = "";
+            profilePhotoFile.value =
+              "";
 
             return;
 
           }
+
 
           profileImageStatus.textContent =
             file.name;
@@ -2317,7 +2523,10 @@ document.addEventListener(
 
 
             if (profilePhotoFile) {
-              profilePhotoFile.value = "";
+
+              profilePhotoFile.value =
+                "";
+
             }
 
 
@@ -2338,6 +2547,7 @@ document.addEventListener(
               "Profile save error:",
               error
             );
+
 
             profileSaveStatus.textContent =
               error.message ||
@@ -2375,6 +2585,7 @@ document.addEventListener(
           const file =
             productImageFile.files[0];
 
+
           if (!file) {
 
             imageStatus.textContent =
@@ -2383,6 +2594,7 @@ document.addEventListener(
             return;
 
           }
+
 
           if (
             file.size >
@@ -2402,6 +2614,7 @@ document.addEventListener(
 
           }
 
+
           if (
             !file.type.startsWith("image/")
           ) {
@@ -2418,6 +2631,7 @@ document.addEventListener(
             return;
 
           }
+
 
           imageStatus.textContent =
             file.name;
@@ -2453,9 +2667,7 @@ document.addEventListener(
     }
 
 
-    async function openProductDetails(
-      product
-    ) {
+    async function openProductDetails(product) {
 
       if (!product) {
         return;
@@ -2479,16 +2691,20 @@ document.addEventListener(
         product.category ||
         t("others");
 
+
       modalProductTitle.textContent =
         product.title ||
         "Untitled Product";
 
+
       modalProductPrice.textContent =
         `$${formatPrice(product.price)}`;
+
 
       modalProductLocation.textContent =
         product.location ||
         t("unknown");
+
 
       modalProductDescription.textContent =
         product.description ||
@@ -2526,40 +2742,52 @@ document.addEventListener(
         auth.currentUser;
 
 
+      const viewProfileButton =
+        document.createElement(
+          "button"
+        );
+
+
+      viewProfileButton.type =
+        "button";
+
+      viewProfileButton.className =
+        "profile-view-btn";
+
+      viewProfileButton.textContent =
+        t("viewProfile");
+
+
+      viewProfileButton.addEventListener(
+        "click",
+        () => {
+
+          closeProductDetails();
+
+          openPublicProfile(
+            product.sellerId
+          );
+
+        }
+      );
+
+
+      sellerActions.appendChild(
+        viewProfileButton
+      );
+
+
       if (
         currentUser &&
         product.sellerId ===
         currentUser.uid
       ) {
 
-        const viewProfileButton =
-          document.createElement("button");
-
-        viewProfileButton.type =
-          "button";
-
-        viewProfileButton.className =
-          "profile-view-btn";
-
-        viewProfileButton.textContent =
-          t("viewProfile");
-
-        viewProfileButton.addEventListener(
-          "click",
-          () => {
-
-            closeProductDetails();
-
-            openPublicProfile(
-              product.sellerId
-            );
-
-          }
-        );
-
-
         const deleteButton =
-          document.createElement("button");
+          document.createElement(
+            "button"
+          );
+
 
         deleteButton.type =
           "button";
@@ -2569,6 +2797,7 @@ document.addEventListener(
 
         deleteButton.textContent =
           t("deleteProduct");
+
 
         deleteButton.addEventListener(
           "click",
@@ -2583,44 +2812,17 @@ document.addEventListener(
 
 
         sellerActions.appendChild(
-          viewProfileButton
-        );
-
-        sellerActions.appendChild(
           deleteButton
         );
 
 
       } else {
 
-        const viewProfileButton =
-          document.createElement("button");
-
-        viewProfileButton.type =
-          "button";
-
-        viewProfileButton.className =
-          "profile-view-btn";
-
-        viewProfileButton.textContent =
-          t("viewProfile");
-
-        viewProfileButton.addEventListener(
-          "click",
-          () => {
-
-            closeProductDetails();
-
-            openPublicProfile(
-              product.sellerId
-            );
-
-          }
-        );
-
-
         const messageButton =
-          document.createElement("button");
+          document.createElement(
+            "button"
+          );
+
 
         messageButton.type =
           "button";
@@ -2658,10 +2860,6 @@ document.addEventListener(
 
 
         sellerActions.appendChild(
-          viewProfileButton
-        );
-
-        sellerActions.appendChild(
           messageButton
         );
 
@@ -2669,7 +2867,10 @@ document.addEventListener(
         if (sellerProfile?.phone) {
 
           const callLink =
-            document.createElement("a");
+            document.createElement(
+              "a"
+            );
+
 
           callLink.className =
             "contact-seller-btn";
@@ -2679,6 +2880,7 @@ document.addEventListener(
 
           callLink.textContent =
             `📞 ${t("call")}`;
+
 
           sellerActions.appendChild(
             callLink
@@ -2729,16 +2931,17 @@ document.addEventListener(
        Delete Product
     ======================================================= */
 
-    async function deleteProduct(
-      productId
-    ) {
+    async function deleteProduct(productId) {
 
       const currentUser =
         auth.currentUser;
 
+
       if (!currentUser) {
 
-        alert(t("loginFirst"));
+        alert(
+          t("loginFirst")
+        );
 
         return;
 
@@ -2754,7 +2957,9 @@ document.addEventListener(
 
       if (!product) {
 
-        alert(t("productNotFound"));
+        alert(
+          t("productNotFound")
+        );
 
         return;
 
@@ -2766,7 +2971,9 @@ document.addEventListener(
         currentUser.uid
       ) {
 
-        alert(t("ownProduct"));
+        alert(
+          t("ownProduct")
+        );
 
         return;
 
@@ -2797,13 +3004,18 @@ document.addEventListener(
 
         closeProductDetails();
 
-        alert(t("deleted"));
+        alert(
+          t("deleted")
+        );
+
 
         await loadProducts();
 
 
         if (auth.currentUser) {
+
           await renderMyProfile();
+
         }
 
 
@@ -2813,6 +3025,7 @@ document.addEventListener(
           "Delete error:",
           error
         );
+
 
         alert(
           t("deleteFailed")
@@ -2827,9 +3040,7 @@ document.addEventListener(
        Display Products
     ======================================================= */
 
-    function displayProducts(
-      productList
-    ) {
+    function displayProducts(productList) {
 
       if (!productsContainer) {
         return;
@@ -2868,7 +3079,6 @@ document.addEventListener(
 
 
       productsContainer.innerHTML =
-
         productList
           .map(
             product => {
@@ -2895,34 +3105,47 @@ document.addEventListener(
 
                   </div>
 
+
                   <div class="product-info">
 
                     <span class="product-category">
+
                       ${escapeHTML(
                         product.category ||
                         t("others")
                       )}
+
                     </span>
 
+
                     <h3>
+
                       ${escapeHTML(
                         product.title ||
                         "Untitled Product"
                       )}
+
                     </h3>
 
+
                     <div class="product-price">
+
                       $${formatPrice(
                         product.price
                       )}
+
                     </div>
 
+
                     <p class="product-location">
+
                       📍 ${escapeHTML(
                         product.location ||
                         t("unknown")
                       )}
+
                     </p>
+
 
                     <button
                       class="view-product-btn"
@@ -2931,9 +3154,11 @@ document.addEventListener(
                       )}"
                       type="button"
                     >
+
                       ${escapeHTML(
                         t("viewDetails")
                       )}
+
                     </button>
 
                   </div>
@@ -2972,6 +3197,7 @@ document.addEventListener(
                       button.dataset.id
                   );
 
+
                 if (product) {
 
                   openProductDetails(
@@ -2994,6 +3220,11 @@ document.addEventListener(
     ======================================================= */
 
     async function loadProducts() {
+
+      if (!productsContainer) {
+        return;
+      }
+
 
       productsContainer.innerHTML = `
 
@@ -3025,10 +3256,6 @@ document.addEventListener(
             collection(
               db,
               "products"
-            ),
-            orderBy(
-              "createdAt",
-              "desc"
             )
           );
 
@@ -3058,13 +3285,34 @@ document.addEventListener(
         );
 
 
+        products.sort(
+          (a, b) => {
+
+            const aTime =
+              a.createdAt?.toMillis
+                ? a.createdAt.toMillis()
+                : 0;
+
+            const bTime =
+              b.createdAt?.toMillis
+                ? b.createdAt.toMillis()
+                : 0;
+
+            return bTime - aTime;
+
+          }
+        );
+
+
         displayProducts(
           products
         );
 
 
         if (auth.currentUser) {
+
           renderMyProfile();
+
         }
 
 
@@ -3149,9 +3397,15 @@ document.addEventListener(
 
 
             const matchesText =
-              title.includes(searchText) ||
-              category.includes(searchText) ||
-              location.includes(searchText);
+              title.includes(
+                searchText
+              ) ||
+              category.includes(
+                searchText
+              ) ||
+              location.includes(
+                searchText
+              );
 
 
             const matchesCategory =
@@ -3330,8 +3584,10 @@ document.addEventListener(
           authTitle.textContent =
             t("welcomeMazad");
 
+
           authMessage.textContent =
             t("loginRegisterMessage");
+
 
           showAuthMessage("");
 
@@ -3404,6 +3660,7 @@ document.addEventListener(
 
             console.error(error);
 
+
             showAuthMessage(
               getFirebaseErrorMessage(
                 error
@@ -3474,6 +3731,7 @@ document.addEventListener(
           } catch (error) {
 
             console.error(error);
+
 
             showAuthMessage(
               getFirebaseErrorMessage(
@@ -3565,9 +3823,11 @@ document.addEventListener(
 
             event.preventDefault();
 
+
             alert(
               t("profileRequired")
             );
+
 
             document
               .getElementById(
@@ -3577,13 +3837,17 @@ document.addEventListener(
                 behavior: "smooth"
               });
 
+
             return;
 
           }
 
+
           setTimeout(
             () => {
+
               renderMyProfile();
+
             },
             100
           );
@@ -3899,26 +4163,35 @@ document.addEventListener(
       };
 
 
-      chatHeader.innerHTML = `
+      if (chatHeader) {
 
-        <img
-          src="${escapeHTML(
-            selectedChatUser.photoURL
-          )}"
-          class="conversation-avatar"
-          alt=""
-        >
+        chatHeader.innerHTML = `
 
-        <span>
-          ${escapeHTML(
-            selectedChatUser.name
-          )}
-        </span>
+          <img
+            src="${escapeHTML(
+              selectedChatUser.photoURL
+            )}"
+            class="conversation-avatar"
+            alt=""
+          >
 
-      `;
+          <span>
+            ${escapeHTML(
+              selectedChatUser.name
+            )}
+          </span>
+
+        `;
+
+      }
 
 
-      chatMessages.innerHTML = "";
+      if (chatMessages) {
+
+        chatMessages.innerHTML =
+          "";
+
+      }
 
 
       document
@@ -3937,6 +4210,13 @@ document.addEventListener(
 
     }
 
+
+    /* =======================================================
+       Listen To Messages
+       IMPORTANT:
+       No orderBy() here.
+       This avoids Firestore composite index problems.
+    ======================================================= */
 
     function listenToMessages() {
 
@@ -3969,10 +4249,6 @@ document.addEventListener(
             "conversationId",
             "==",
             selectedConversationId
-          ),
-          orderBy(
-            "createdAt",
-            "asc"
           )
         );
 
@@ -3982,13 +4258,16 @@ document.addEventListener(
           messagesQuery,
           snapshot => {
 
+            if (!chatMessages) {
+              return;
+            }
+
+
             chatMessages.innerHTML =
               "";
 
 
-            if (
-              snapshot.empty
-            ) {
+            if (snapshot.empty) {
 
               chatMessages.innerHTML = `
 
@@ -4011,12 +4290,47 @@ document.addEventListener(
             }
 
 
+            const messageList =
+              [];
+
+
             snapshot.forEach(
               messageDoc => {
 
-                const message =
-                  messageDoc.data();
+                messageList.push({
 
+                  id:
+                    messageDoc.id,
+
+                  ...messageDoc.data()
+
+                });
+
+              }
+            );
+
+
+            messageList.sort(
+              (a, b) => {
+
+                const aTime =
+                  a.createdAt?.toMillis
+                    ? a.createdAt.toMillis()
+                    : 0;
+
+                const bTime =
+                  b.createdAt?.toMillis
+                    ? b.createdAt.toMillis()
+                    : 0;
+
+                return aTime - bTime;
+
+              }
+            );
+
+
+            messageList.forEach(
+              message => {
 
                 const mine =
                   message.senderId ===
@@ -4042,6 +4356,7 @@ document.addEventListener(
                     "div"
                   );
 
+
                 text.textContent =
                   message.text || "";
 
@@ -4051,8 +4366,10 @@ document.addEventListener(
                     "small"
                   );
 
+
                 time.className =
                   "message-time";
+
 
                 time.textContent =
                   formatDateTime(
@@ -4063,6 +4380,7 @@ document.addEventListener(
                 bubble.appendChild(
                   text
                 );
+
 
                 bubble.appendChild(
                   time
@@ -4088,15 +4406,33 @@ document.addEventListener(
               error
             );
 
+            if (chatMessages) {
+
+              chatMessages.innerHTML = `
+
+                <div class="chat-empty">
+
+                  ⚠️
+
+                  <p>
+                    ${escapeHTML(
+                      t("firestoreError")
+                    )}
+                  </p>
+
+                </div>
+
+              `;
+
+            }
+
           }
         );
 
     }
 
 
-    function formatDateTime(
-      value
-    ) {
+    function formatDateTime(value) {
 
       if (!value) {
         return "";
@@ -4133,6 +4469,10 @@ document.addEventListener(
 
     }
 
+
+    /* =======================================================
+       Send Message
+    ======================================================= */
 
     if (chatForm) {
 
@@ -4183,6 +4523,10 @@ document.addEventListener(
 
           try {
 
+            /* -----------------------------------------------
+               Save Message
+            ------------------------------------------------ */
+
             await addDoc(
               collection(
                 db,
@@ -4213,6 +4557,10 @@ document.addEventListener(
             );
 
 
+            /* -----------------------------------------------
+               Save / Update Conversation
+            ------------------------------------------------ */
+
             const conversationRef =
               doc(
                 db,
@@ -4231,11 +4579,13 @@ document.addEventListener(
                 ],
 
                 participantEmails: {
+
                   [currentUser.uid]:
                     currentUser.email || "",
 
                   [selectedChatUser.uid]:
                     selectedChatUser.email || ""
+
                 },
 
                 lastMessage:
@@ -4268,6 +4618,13 @@ document.addEventListener(
               error
             );
 
+
+            alert(
+              currentLanguage === "ar"
+                ? "تعذر إرسال الرسالة. يرجى التحقق من إعدادات Firestore."
+                : "Message could not be sent. Please check your Firestore rules."
+            );
+
           } finally {
 
             chatInput.disabled =
@@ -4285,6 +4642,9 @@ document.addEventListener(
 
     /* =======================================================
        Load Conversations
+       IMPORTANT:
+       No orderBy() here.
+       This avoids Firestore composite index problems.
     ======================================================= */
 
     async function loadConversations() {
@@ -4303,11 +4663,13 @@ document.addEventListener(
         conversationList.innerHTML = `
 
           <div class="chat-empty">
+
             <p>
               ${escapeHTML(
                 t("profileRequired")
               )}
             </p>
+
           </div>
 
         `;
@@ -4329,10 +4691,6 @@ document.addEventListener(
               "participants",
               "array-contains",
               currentUser.uid
-            ),
-            orderBy(
-              "updatedAt",
-              "desc"
             )
           );
 
@@ -4372,17 +4730,47 @@ document.addEventListener(
         }
 
 
+        const conversationData =
+          snapshot.docs.map(
+            conversationDoc => ({
+
+              id:
+                conversationDoc.id,
+
+              ...conversationDoc.data()
+
+            })
+          );
+
+
+        /* Sort newest conversation first */
+
+        conversationData.sort(
+          (a, b) => {
+
+            const aTime =
+              a.updatedAt?.toMillis
+                ? a.updatedAt.toMillis()
+                : 0;
+
+            const bTime =
+              b.updatedAt?.toMillis
+                ? b.updatedAt.toMillis()
+                : 0;
+
+            return bTime - aTime;
+
+          }
+        );
+
+
         for (
-          const conversationDoc
-          of snapshot.docs
+          const conversation
+          of conversationData
         ) {
 
-          const conversation =
-            conversationDoc.data();
-
-
           const otherUid =
-            conversation.participants.find(
+            conversation.participants?.find(
               uid =>
                 uid !==
                 currentUser.uid
@@ -4412,7 +4800,7 @@ document.addEventListener(
 
           if (
             selectedConversationId ===
-            conversationDoc.id
+            conversation.id
           ) {
 
             item.classList.add(
@@ -4534,8 +4922,12 @@ document.addEventListener(
             );
 
 
-          authMessage.textContent =
-            `${t("loggedInAs")} ${user.email}`;
+          if (authMessage) {
+
+            authMessage.textContent =
+              `${t("loggedInAs")} ${user.email}`;
+
+          }
 
 
           let logoutBtn =
@@ -4555,17 +4947,25 @@ document.addEventListener(
             logoutBtn.id =
               "logoutBtn";
 
+
             logoutBtn.type =
               "button";
+
 
             logoutBtn.className =
               "secondary-btn";
 
 
-            loginForm.parentNode.insertBefore(
-              logoutBtn,
-              loginForm
-            );
+            if (
+              loginForm?.parentNode
+            ) {
+
+              loginForm.parentNode.insertBefore(
+                logoutBtn,
+                loginForm
+              );
+
+            }
 
 
             logoutBtn.addEventListener(
@@ -4624,6 +5024,25 @@ document.addEventListener(
 
         } else {
 
+          if (
+            unsubscribeMessages
+          ) {
+
+            unsubscribeMessages();
+
+            unsubscribeMessages =
+              null;
+
+          }
+
+
+          selectedConversationId =
+            null;
+
+          selectedChatUser =
+            null;
+
+
           const logoutBtn =
             document.getElementById(
               "logoutBtn"
@@ -4631,7 +5050,9 @@ document.addEventListener(
 
 
           if (logoutBtn) {
+
             logoutBtn.remove();
+
           }
 
 
@@ -4685,6 +5106,7 @@ document.addEventListener(
 
 
         if (
+          productModal &&
           productModal.classList.contains(
             "active"
           )
@@ -4696,6 +5118,7 @@ document.addEventListener(
 
 
         if (
+          profileModal &&
           profileModal.classList.contains(
             "active"
           )
@@ -4707,6 +5130,7 @@ document.addEventListener(
 
 
         if (
+          editProfileModal &&
           editProfileModal.classList.contains(
             "active"
           )
