@@ -1,13 +1,14 @@
 /* =========================================================
-   MAZAD â€” Step 12 Complete
-   Profile + Buyer/Seller + Messenger
-   Firebase Authentication + Firestore
-   Cloudinary Image Upload
-   English + Arabic Language
-   Firebase Storage is NOT used.
+MAZAD — Profile + Buyer/Seller + Messenger
+Firebase Authentication + Firestore
+Cloudinary Image Upload
+English + Arabic Language
+Firebase Storage is NOT used.
 ========================================================= */
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
   getAuth,
@@ -26,15 +27,17 @@ import {
   setDoc,
   query,
   where,
+  orderBy,
   deleteDoc,
   doc,
   serverTimestamp,
-  onSnapshot
+  onSnapshot,
+  limit
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
 /* =========================================================
-   Firebase Configuration
+Firebase Configuration
 ========================================================= */
 
 const firebaseConfig = {
@@ -49,10 +52,11 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   Cloudinary
+Cloudinary
 ========================================================= */
 
 const CLOUDINARY_CLOUD_NAME = "bhpccaio";
+
 const CLOUDINARY_UPLOAD_PRESET = "mazad_upload";
 
 const CLOUDINARY_UPLOAD_URL =
@@ -60,7 +64,7 @@ const CLOUDINARY_UPLOAD_URL =
 
 
 /* =========================================================
-   Initialize Firebase
+Initialize Firebase
 ========================================================= */
 
 const app = initializeApp(firebaseConfig);
@@ -71,7 +75,7 @@ const db = getFirestore(app);
 
 
 /* =========================================================
-   Translations
+Translations
 ========================================================= */
 
 const translations = {
@@ -94,7 +98,7 @@ const translations = {
 
     browseProducts: "Browse Products",
     sellSomething: "Sell Something",
-    simpleFastSecure: "Simple â€¢ Fast â€¢ Secure",
+    simpleFastSecure: "Simple • Fast • Secure",
 
     searchPlaceholder:
       "What are you looking for?",
@@ -136,7 +140,6 @@ const translations = {
     publishProduct: "Publish Product",
 
     welcomeMazad: "Welcome to Mazad",
-
     loginRegisterMessage:
       "Login or register to start buying and selling.",
 
@@ -182,7 +185,7 @@ const translations = {
       "Please select a valid image.",
 
     imageUploaded:
-      "Image uploaded successfully! âœ…",
+      "Image uploaded successfully! ✅",
 
     uploadingImage:
       "Uploading image to Cloudinary...",
@@ -194,7 +197,7 @@ const translations = {
       "Saving product...",
 
     published:
-      "Product published successfully! ðŸŽ‰",
+      "Product published successfully! 🎉",
 
     loginBeforeSell:
       "Please login or create an account before selling a product.",
@@ -203,10 +206,10 @@ const translations = {
       "Please login before publishing a product.",
 
     accountCreated:
-      "Account created successfully! ðŸŽ‰",
+      "Account created successfully! 🎉",
 
     loginSuccessful:
-      "Login successful! ðŸŽ‰",
+      "Login successful! 🎉",
 
     creatingAccount:
       "Creating account...",
@@ -258,10 +261,7 @@ const translations = {
     phoneNumber: "Phone number",
     aboutBio: "About you",
     saveProfile: "Save Profile",
-
-    profileSaved:
-      "Profile updated successfully! ðŸŽ‰",
-
+    profileSaved: "Profile updated successfully! 🎉",
     profileRequired:
       "Please login to view your profile.",
 
@@ -269,7 +269,6 @@ const translations = {
     phone: "Phone",
     email: "Email",
     bio: "About",
-
     myListings: "My Listings",
     noListings: "No listings yet.",
 
@@ -284,26 +283,15 @@ const translations = {
     writeMessage: "Write a message...",
     send: "Send",
 
-    profileNotFound:
-      "Profile not found.",
-
+    profileNotFound: "Profile not found.",
     loginToMessage:
       "Please login to send a message.",
-
     cannotMessageSelf:
       "You cannot message yourself.",
-
-    messageSent:
-      "Message sent.",
-
-    noMessages:
-      "No messages yet.",
-
-    loading:
-      "Loading...",
-
-    member:
-      "Member",
+    messageSent: "Message sent.",
+    noMessages: "No messages yet.",
+    loading: "Loading...",
+    member: "Member",
 
     editProfileLogin:
       "Please login before editing your profile.",
@@ -318,65 +306,238 @@ const translations = {
 
   ar: {
 
-    
-productNotFound: "لم يتم العثور على المنتج.",
-ownProduct: "يمكنك حذف منتجاتك فقط.",
-loginFirst: "يرجى تسجيل الدخول أولاً.",
-uploadFailed: "فشل رفع الصورة إلى Cloudinary.",
-imageUrlFailed: "لم يُرجع Cloudinary رابط الصورة.",
-publishFailed: "فشل نشر المنتج. يرجى المحاولة مرة أخرى.",
+    home: "الرئيسية",
+    categories: "الفئات",
+    listings: "الإعلانات",
+    login: "تسجيل الدخول",
+    profile: "الملف الشخصي",
+    sellProduct: "بيع منتج",
 
-account: "الحساب",
-myProfile: "ملفي الشخصي",
-editProfile: "تعديل الملف الشخصي",
-profilePhoto: "الصورة الشخصية",
-yourName: "اسمك",
-phoneNumber: "رقم الهاتف",
-aboutBio: "نبذة عنك",
-saveProfile: "حفظ الملف الشخصي",
+    welcome: "مرحباً بك في مزاد",
+    buySell: "بيع وشراء",
+    anythingEasily: "أي شيء بسهولة",
 
-profileSaved: "تم تحديث الملف الشخصي بنجاح! 🎉",
-profileRequired: "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
+    heroDescription:
+      "اعثر على منتجات رائعة بالقرب منك أو قم ببيع منتجاتك بسرعة وسهولة على مزاد.",
 
-joinDate: "تاريخ الانضمام",
-phone: "الهاتف",
-email: "البريد الإلكتروني",
-bio: "نبذة",
+    browseProducts: "تصفح المنتجات",
+    sellSomething: "بيع شيء ما",
+    simpleFastSecure: "بسيط • سريع • آمن",
 
-myListings: "إعلاناتي",
-noListings: "لا توجد إعلانات بعد.",
+    searchPlaceholder:
+      "ما الذي تبحث عنه؟",
 
-viewProfile: "عرض الملف الشخصي",
-message: "رسالة",
-call: "اتصال",
+    allCategories: "جميع الفئات",
+    search: "بحث",
+    explore: "استكشف",
 
-communication: "التواصل",
-messages: "الرسائل",
-noConversations: "لا توجد محادثات بعد.",
-selectConversation: "اختر محادثة",
-writeMessage: "اكتب رسالة...",
-send: "إرسال",
+    popularCategories: "الفئات الشائعة",
 
-profileNotFound: "لم يتم العثور على الملف الشخصي.",
-loginToMessage: "يرجى تسجيل الدخول لإرسال رسالة.",
-cannotMessageSelf: "لا يمكنك إرسال رسالة إلى نفسك.",
-messageSent: "تم إرسال الرسالة.",
-noMessages: "لا توجد رسائل بعد.",
+    cars: "سيارات",
+    mobiles: "جوالات",
+    electronics: "إلكترونيات",
+    property: "عقارات",
+    fashion: "أزياء",
+    jobs: "وظائف",
+    others: "أخرى",
 
-loading: "جارٍ التحميل...",
-member: "عضو",
+    findNextCar: "اعثر على سيارتك القادمة",
+    phonesAccessories: "جوالات وإكسسوارات",
+    devicesGadgets: "أجهزة وأدوات",
+    homesLand: "منازل وأراضٍ",
+    clothesAccessories: "ملابس وإكسسوارات",
+    findOpportunities: "ابحث عن فرص",
 
-editProfileLogin: "يرجى تسجيل الدخول قبل تعديل ملفك الشخصي.",
-profileImageUploaded: "تم رفع الصورة الشخصية بنجاح.",
-profileImageUploadFailed: "تعذر رفع الصورة الشخصية."
+    marketplace: "السوق",
+    latestListings: "أحدث الإعلانات",
+
+    loadingProducts: "جاري تحميل المنتجات...",
+    pleaseWait: "يرجى الانتظار.",
+
+    sellYourProduct: "بيع منتجك",
+    productTitle: "عنوان المنتج",
+    selectCategory: "اختر الفئة",
+    price: "السعر",
+    location: "الموقع",
+    productImage: "صورة المنتج",
+    productDescription: "وصف المنتج",
+    publishProduct: "نشر المنتج",
+
+    welcomeMazad: "مرحباً بك في مزاد",
+
+    loginRegisterMessage:
+      "سجل الدخول أو أنشئ حساباً لبدء البيع والشراء.",
+
+    emailAddress: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    passwordMin: "كلمة المرور (6 أحرف على الأقل)",
+
+    createAccount: "إنشاء حساب",
+    createNewAccount: "إنشاء حساب جديد",
+    alreadyAccount: "لديك حساب بالفعل؟ تسجيل الدخول",
+
+    description: "الوصف",
+    seller: "البائع",
+
+    buySellProducts:
+      "اشترِ وبع المنتجات بسهولة.",
+
+    allRightsReserved:
+      "جميع الحقوق محفوظة.",
+
+    viewDetails: "عرض التفاصيل",
+    noProducts: "لم يتم العثور على منتجات",
+    tryAnother: "جرب بحثاً أو فئة أخرى.",
+
+    unknown: "غير معروف",
+    noDescription: "لا يوجد وصف متاح.",
+
+    sellerUnavailable:
+      "معلومات البائع غير متاحة",
+
+    contactSeller: "تواصل مع البائع",
+    deleteProduct: "حذف المنتج",
+
+    loadingError: "تعذر تحميل المنتجات",
+
+    firestoreError:
+      "يرجى التحقق من إعدادات Firestore والمحاولة مرة أخرى.",
+
+    imageTooLarge:
+      "يجب أن يكون حجم الصورة أقل من 10 ميجابايت.",
+
+    validImage:
+      "يرجى اختيار صورة صالحة.",
+
+    imageUploaded:
+      "تم رفع الصورة بنجاح! ✅",
+
+    uploadingImage:
+      "جاري رفع الصورة إلى Cloudinary...",
+
+    preparingProduct:
+      "جاري تجهيز المنتج...",
+
+    savingProduct:
+      "جاري حفظ المنتج...",
+
+    published:
+      "تم نشر المنتج بنجاح! 🎉",
+
+    loginBeforeSell:
+      "يرجى تسجيل الدخول أو إنشاء حساب قبل بيع منتج.",
+
+    loginBeforePublish:
+      "يرجى تسجيل الدخول قبل نشر المنتج.",
+
+    accountCreated:
+      "تم إنشاء الحساب بنجاح! 🎉",
+
+    loginSuccessful:
+      "تم تسجيل الدخول بنجاح! 🎉",
+
+    creatingAccount:
+      "جاري إنشاء الحساب...",
+
+    loggingIn:
+      "جاري تسجيل الدخول...",
+
+    loggedInAs:
+      "تم تسجيل الدخول باسم",
+
+    logout:
+      "تسجيل الخروج",
+
+    loggedOut:
+      "تم تسجيل الخروج بنجاح.",
+
+    deleteConfirm:
+      "هل أنت متأكد من رغبتك في حذف هذا المنتج؟",
+
+    deleted:
+      "تم حذف المنتج بنجاح.",
+
+    deleteFailed:
+      "تعذر حذف المنتج. يرجى المحاولة مرة أخرى.",
+
+    productNotFound:
+      "لم يتم العثور على المنتج.",
+
+    ownProduct:
+      "يمكنك حذف منتجاتك فقط.",
+
+    loginFirst:
+      "يرجى تسجيل الدخول أولاً.",
+
+    uploadFailed:
+      "فشل رفع الصورة إلى Cloudinary.",
+
+    imageUrlFailed:
+      "لم يُرجع Cloudinary رابط الصورة.",
+
+    publishFailed:
+      "فشل نشر المنتج. يرجى المحاولة مرة أخرى.",
+
+    account: "الحساب",
+    myProfile: "ملفي الشخصي",
+    editProfile: "تعديل الملف الشخصي",
+    profilePhoto: "الصورة الشخصية",
+    yourName: "اسمك",
+    phoneNumber: "رقم الهاتف",
+    aboutBio: "نبذة عنك",
+    saveProfile: "حفظ الملف الشخصي",
+    profileSaved: "تم تحديث الملف الشخصي بنجاح! 🎉",
+
+    profileRequired:
+      "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
+
+    joinDate: "تاريخ الانضمام",
+    phone: "الهاتف",
+    email: "البريد الإلكتروني",
+    bio: "نبذة",
+    myListings: "إعلاناتي",
+    noListings: "لا توجد إعلانات بعد.",
+
+    viewProfile: "عرض الملف الشخصي",
+    message: "رسالة",
+    call: "اتصال",
+
+    communication: "التواصل",
+    messages: "الرسائل",
+    noConversations: "لا توجد محادثات بعد.",
+    selectConversation: "اختر محادثة",
+    writeMessage: "اكتب رسالة...",
+    send: "إرسال",
+
+    profileNotFound: "لم يتم العثور على الملف الشخصي.",
+    loginToMessage:
+      "يرجى تسجيل الدخول لإرسال رسالة.",
+    cannotMessageSelf:
+      "لا يمكنك إرسال رسالة إلى نفسك.",
+    messageSent: "تم إرسال الرسالة.",
+    noMessages: "لا توجد رسائل بعد.",
+    loading: "جاري التحميل...",
+    member: "عضو",
+
+    editProfileLogin:
+      "يرجى تسجيل الدخول قبل تعديل ملفك الشخصي.",
+
+    profileImageUploaded:
+      "تم رفع الصورة الشخصية بنجاح.",
+
+    profileImageUploadFailed:
+      "تعذر رفع الصورة الشخصية."
+  }
+
+};
+
 
 /* =========================================================
-   Language
+Language
 ========================================================= */
 
 let currentLanguage =
   localStorage.getItem("mazadLanguage") || "en";
-
 
 function t(key) {
 
@@ -426,16 +587,13 @@ function applyLanguage() {
 
 
   const languageBtn =
-    document.getElementById(
-      "languageBtn"
-    );
-
+    document.getElementById("languageBtn");
 
   if (languageBtn) {
 
     languageBtn.textContent =
       currentLanguage === "en"
-        ? "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©"
+        ? "العربية"
         : "English";
 
   }
@@ -443,14 +601,14 @@ function applyLanguage() {
 
   document.title =
     currentLanguage === "ar"
-      ? "Ù…Ø²Ø§Ø¯ â€” Ø³ÙˆÙ‚ Ø§Ù„Ø¨ÙŠØ¹ ÙˆØ§Ù„Ø´Ø±Ø§Ø¡"
-      : "Mazad â€” Buy & Sell Marketplace";
+      ? "مزاد — سوق البيع والشراء"
+      : "Mazad — Buy & Sell Marketplace";
 
 }
 
 
 /* =========================================================
-   Global
+Global
 ========================================================= */
 
 let products = [];
@@ -465,7 +623,7 @@ let unsubscribeMessages = null;
 
 
 /* =========================================================
-   DOM Ready
+DOM Ready
 ========================================================= */
 
 document.addEventListener(
@@ -480,199 +638,130 @@ document.addEventListener(
     ======================================================= */
 
     const languageBtn =
-      document.getElementById(
-        "languageBtn"
-      );
+      document.getElementById("languageBtn");
 
     const searchInput =
-      document.getElementById(
-        "searchInput"
-      );
+      document.getElementById("searchInput");
 
     const categorySelect =
-      document.getElementById(
-        "categorySelect"
-      );
+      document.getElementById("categorySelect");
 
     const searchBtn =
-      document.getElementById(
-        "searchBtn"
-      );
+      document.getElementById("searchBtn");
 
     const productsContainer =
-      document.getElementById(
-        "productsContainer"
-      );
+      document.getElementById("productsContainer");
+
 
     const loginForm =
-      document.getElementById(
-        "loginForm"
-      );
+      document.getElementById("loginForm");
 
     const registerForm =
-      document.getElementById(
-        "registerForm"
-      );
+      document.getElementById("registerForm");
 
     const showRegisterBtn =
-      document.getElementById(
-        "showRegisterBtn"
-      );
+      document.getElementById("showRegisterBtn");
 
     const showLoginBtn =
-      document.getElementById(
-        "showLoginBtn"
-      );
+      document.getElementById("showLoginBtn");
 
     const authTitle =
-      document.getElementById(
-        "authTitle"
-      );
+      document.getElementById("authTitle");
 
     const authMessage =
-      document.getElementById(
-        "authMessage"
-      );
+      document.getElementById("authMessage");
 
     const authStatus =
-      document.getElementById(
-        "authStatus"
-      );
+      document.getElementById("authStatus");
+
 
     const sellProductForm =
-      document.getElementById(
-        "sellProductForm"
-      );
+      document.getElementById("sellProductForm");
 
     const sellStatus =
-      document.getElementById(
-        "sellStatus"
-      );
+      document.getElementById("sellStatus");
 
     const imageStatus =
-      document.getElementById(
-        "imageStatus"
-      );
+      document.getElementById("imageStatus");
 
     const publishProductBtn =
-      document.getElementById(
-        "publishProductBtn"
-      );
+      document.getElementById("publishProductBtn");
 
     const productImageFile =
-      document.getElementById(
-        "productImageFile"
-      );
+      document.getElementById("productImageFile");
+
 
     const headerSellBtn =
-      document.getElementById(
-        "headerSellBtn"
-      );
+      document.getElementById("headerSellBtn");
 
     const heroSellBtn =
-      document.getElementById(
-        "heroSellBtn"
-      );
+      document.getElementById("heroSellBtn");
+
 
     const profileNavBtn =
-      document.getElementById(
-        "profileNavBtn"
-      );
+      document.getElementById("profileNavBtn");
 
     const profileContent =
-      document.getElementById(
-        "profileContent"
-      );
+      document.getElementById("profileContent");
+
 
     const productModal =
-      document.getElementById(
-        "productModal"
-      );
+      document.getElementById("productModal");
 
     const productModalOverlay =
-      document.querySelector(
-        ".product-modal-overlay"
-      );
+      document.querySelector(".product-modal-overlay");
 
     const closeProductModal =
-      document.getElementById(
-        "closeProductModal"
-      );
+      document.getElementById("closeProductModal");
 
     const modalProductImage =
-      document.getElementById(
-        "modalProductImage"
-      );
+      document.getElementById("modalProductImage");
 
     const modalProductCategory =
-      document.getElementById(
-        "modalProductCategory"
-      );
+      document.getElementById("modalProductCategory");
 
     const modalProductTitle =
-      document.getElementById(
-        "modalProductTitle"
-      );
+      document.getElementById("modalProductTitle");
 
     const modalProductPrice =
-      document.getElementById(
-        "modalProductPrice"
-      );
+      document.getElementById("modalProductPrice");
 
     const modalProductLocation =
-      document.getElementById(
-        "modalProductLocation"
-      );
+      document.getElementById("modalProductLocation");
 
     const modalProductDescription =
-      document.getElementById(
-        "modalProductDescription"
-      );
+      document.getElementById("modalProductDescription");
 
     const modalSellerPhoto =
-      document.getElementById(
-        "modalSellerPhoto"
-      );
+      document.getElementById("modalSellerPhoto");
 
     const modalSellerName =
-      document.getElementById(
-        "modalSellerName"
-      );
+      document.getElementById("modalSellerName");
 
     const modalSellerEmail =
-      document.getElementById(
-        "modalSellerEmail"
-      );
+      document.getElementById("modalSellerEmail");
 
     const sellerActions =
-      document.getElementById(
-        "sellerActions"
-      );
+      document.getElementById("sellerActions");
+
 
     const profileModal =
-      document.getElementById(
-        "profileModal"
-      );
+      document.getElementById("profileModal");
 
     const profileModalOverlay =
       document.querySelector(
         "#profileModal .profile-modal-overlay"
       );
 
-    const closeProfileModalBtn =
-      document.getElementById(
-        "closeProfileModal"
-      );
+    const closeProfileModal =
+      document.getElementById("closeProfileModal");
 
     const profileModalContent =
-      document.getElementById(
-        "profileModalContent"
-      );
+      document.getElementById("profileModalContent");
+
 
     const editProfileModal =
-      document.getElementById(
-        "editProfileModal"
-      );
+      document.getElementById("editProfileModal");
 
     const editProfileModalOverlay =
       document.querySelector(
@@ -680,79 +769,52 @@ document.addEventListener(
       );
 
     const closeEditProfileModal =
-      document.getElementById(
-        "closeEditProfileModal"
-      );
+      document.getElementById("closeEditProfileModal");
 
     const editProfileForm =
-      document.getElementById(
-        "editProfileForm"
-      );
+      document.getElementById("editProfileForm");
+
 
     const profilePhotoFile =
-      document.getElementById(
-        "profilePhotoFile"
-      );
+      document.getElementById("profilePhotoFile");
 
     const profileImageStatus =
-      document.getElementById(
-        "profileImageStatus"
-      );
+      document.getElementById("profileImageStatus");
 
     const profileSaveStatus =
-      document.getElementById(
-        "profileSaveStatus"
-      );
+      document.getElementById("profileSaveStatus");
+
 
     const profileNameInput =
-      document.getElementById(
-        "profileNameInput"
-      );
+      document.getElementById("profileNameInput");
 
     const profilePhoneInput =
-      document.getElementById(
-        "profilePhoneInput"
-      );
+      document.getElementById("profilePhoneInput");
 
     const profileLocationInput =
-      document.getElementById(
-        "profileLocationInput"
-      );
+      document.getElementById("profileLocationInput");
 
     const profileBioInput =
-      document.getElementById(
-        "profileBioInput"
-      );
+      document.getElementById("profileBioInput");
 
     const saveProfileBtn =
-      document.getElementById(
-        "saveProfileBtn"
-      );
+      document.getElementById("saveProfileBtn");
+
 
     const conversationList =
-      document.getElementById(
-        "conversationList"
-      );
+      document.getElementById("conversationList");
 
     const chatHeader =
-      document.getElementById(
-        "chatHeader"
-      );
+      document.getElementById("chatHeader");
 
     const chatMessages =
-      document.getElementById(
-        "chatMessages"
-      );
+      document.getElementById("chatMessages");
 
     const chatForm =
-      document.getElementById(
-        "chatForm"
-      );
+      document.getElementById("chatForm");
 
     const chatInput =
-      document.getElementById(
-        "chatInput"
-      );
+      document.getElementById("chatInput");
 
 
     /* =======================================================
@@ -773,7 +835,8 @@ document.addEventListener(
 
     function formatPrice(price) {
 
-      const number = Number(price);
+      const number =
+        Number(price);
 
       if (!Number.isFinite(number)) {
         return "0";
@@ -786,6 +849,7 @@ document.addEventListener(
             Number.isInteger(number)
               ? 0
               : 2,
+
           maximumFractionDigits: 2
         }
       );
@@ -809,8 +873,7 @@ document.addEventListener(
       let date;
 
       if (
-        typeof value.toDate ===
-        "function"
+        typeof value.toDate === "function"
       ) {
 
         date = value.toDate();
@@ -827,14 +890,8 @@ document.addEventListener(
 
       }
 
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-
+      if (Number.isNaN(date.getTime())) {
         return t("unknown");
-
       }
 
       return date.toLocaleDateString(
@@ -872,11 +929,8 @@ document.addEventListener(
       displayProducts(products);
 
       if (auth.currentUser) {
-
         renderMyProfile();
-
         loadConversations();
-
       }
 
     }
@@ -901,9 +955,7 @@ document.addEventListener(
       success = false
     ) {
 
-      if (!authStatus) {
-        return;
-      }
+      if (!authStatus) return;
 
       authStatus.textContent =
         message;
@@ -915,53 +967,68 @@ document.addEventListener(
 
     }
 
-/* =======================================================
-   Firebase Errors
-======================================================= */
 
-function getFirebaseErrorMessage(error) {
-  switch (error.code) {
-    case "auth/email-already-in-use":
-      return currentLanguage === "ar"
-        ? "هذا البريد الإلكتروني مسجل بالفعل."
-        : "This email is already registered.";
+    /* =======================================================
+       Firebase Errors
+    ======================================================= */
 
-    case "auth/invalid-email":
-      return currentLanguage === "ar"
-        ? "يرجى إدخال بريد إلكتروني صالح."
-        : "Please enter a valid email address.";
+    function getFirebaseErrorMessage(error) {
 
-    case "auth/weak-password":
-      return currentLanguage === "ar"
-        ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
-        : "Password must be at least 6 characters.";
+      switch (error.code) {
 
-    case "auth/invalid-credential":
-      return currentLanguage === "ar"
-        ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
-        : "Email or password is incorrect.";
+        case "auth/email-already-in-use":
 
-    case "auth/user-not-found":
-      return currentLanguage === "ar"
-        ? "لا يوجد حساب بهذا البريد الإلكتروني."
-        : "No account found with this email.";
+          return currentLanguage === "ar"
+            ? "هذا البريد الإلكتروني مسجل بالفعل."
+            : "This email is already registered.";
 
-    case "auth/wrong-password":
-      return currentLanguage === "ar"
-        ? "كلمة المرور غير صحيحة."
-        : "Incorrect password.";
+        case "auth/invalid-email":
 
-    case "auth/too-many-requests":
-      return currentLanguage === "ar"
-        ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
-        : "Too many attempts. Please try again later.";
+          return currentLanguage === "ar"
+            ? "يرجى إدخال بريد إلكتروني صالح."
+            : "Please enter a valid email address.";
 
-    default:
-      return currentLanguage === "ar"
-        ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-        : "Something went wrong. Please try again.";
-  }
-}
+        case "auth/weak-password":
+
+          return currentLanguage === "ar"
+            ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
+            : "Password must be at least 6 characters.";
+
+        case "auth/invalid-credential":
+
+          return currentLanguage === "ar"
+            ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+            : "Email or password is incorrect.";
+
+        case "auth/user-not-found":
+
+          return currentLanguage === "ar"
+            ? "لا يوجد حساب بهذا البريد الإلكتروني."
+            : "No account found with this email.";
+
+        case "auth/wrong-password":
+
+          return currentLanguage === "ar"
+            ? "كلمة المرور غير صحيحة."
+            : "Incorrect password.";
+
+        case "auth/too-many-requests":
+
+          return currentLanguage === "ar"
+            ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
+            : "Too many attempts. Please try again later.";
+
+        default:
+
+          return currentLanguage === "ar"
+            ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+            : "Something went wrong. Please try again.";
+
+      }
+
+    }
+
+
     /* =======================================================
        Profile Data
     ======================================================= */
@@ -1004,11 +1071,11 @@ function getFirebaseErrorMessage(error) {
     }
 
 
-    async function createUserProfile(user) {
+    async function createUserProfile(
+      user
+    ) {
 
-      if (!user) {
-        return;
-      }
+      if (!user) return;
 
       const profileRef =
         doc(
@@ -1028,14 +1095,23 @@ function getFirebaseErrorMessage(error) {
         profileRef,
         {
           uid: user.uid,
+
           name: "",
+
           phone: "",
-          email: user.email || "",
+
+          email:
+            user.email || "",
+
           location: "",
+
           bio: "",
+
           photoURL: "",
+
           createdAt:
             serverTimestamp(),
+
           updatedAt:
             serverTimestamp()
         }
@@ -1149,7 +1225,6 @@ function getFirebaseErrorMessage(error) {
             <div class="profile-info-grid">
 
               <div class="profile-info-item">
-
                 <span>
                   ${escapeHTML(
                     t("email")
@@ -1159,12 +1234,10 @@ function getFirebaseErrorMessage(error) {
                 <strong>
                   ${escapeHTML(email)}
                 </strong>
-
               </div>
 
 
               <div class="profile-info-item">
-
                 <span>
                   ${escapeHTML(
                     t("phone")
@@ -1174,12 +1247,10 @@ function getFirebaseErrorMessage(error) {
                 <strong>
                   ${escapeHTML(phone)}
                 </strong>
-
               </div>
 
 
               <div class="profile-info-item">
-
                 <span>
                   ${escapeHTML(
                     t("location")
@@ -1189,12 +1260,10 @@ function getFirebaseErrorMessage(error) {
                 <strong>
                   ${escapeHTML(location)}
                 </strong>
-
               </div>
 
 
               <div class="profile-info-item">
-
                 <span>
                   ${escapeHTML(
                     t("joinDate")
@@ -1204,7 +1273,6 @@ function getFirebaseErrorMessage(error) {
                 <strong>
                   ${escapeHTML(joined)}
                 </strong>
-
               </div>
 
             </div>
@@ -1287,15 +1355,12 @@ function getFirebaseErrorMessage(error) {
                   `
                   : `
                     <div class="empty-state">
-
-                      <div>ðŸ“¦</div>
-
+                      <div>📦</div>
                       <p>
                         ${escapeHTML(
                           t("noListings")
                         )}
                       </p>
-
                     </div>
                   `
               }
@@ -1313,9 +1378,7 @@ function getFirebaseErrorMessage(error) {
 
     async function renderMyProfile() {
 
-      if (!profileContent) {
-        return;
-      }
+      if (!profileContent) return;
 
       const user =
         auth.currentUser;
@@ -1327,7 +1390,7 @@ function getFirebaseErrorMessage(error) {
           <div class="not-logged-profile">
 
             <div class="hero-icon">
-              ðŸ‘¤
+              👤
             </div>
 
             <h3>
@@ -1344,19 +1407,11 @@ function getFirebaseErrorMessage(error) {
 
       }
 
-
       profileContent.innerHTML = `
 
         <div class="empty-state">
-
-          <div>â³</div>
-
-          <p>
-            ${escapeHTML(
-              t("loading")
-            )}
-          </p>
-
+          <div>⏳</div>
+          <p>${escapeHTML(t("loading"))}</p>
         </div>
 
       `;
@@ -1399,7 +1454,6 @@ function getFirebaseErrorMessage(error) {
           "openEditProfileBtn"
         );
 
-
       if (editBtn) {
 
         editBtn.addEventListener(
@@ -1422,8 +1476,7 @@ function getFirebaseErrorMessage(error) {
               () => {
 
                 const id =
-                  card.dataset
-                    .profileProductId;
+                  card.dataset.profileProductId;
 
                 const product =
                   products.find(
@@ -1432,11 +1485,9 @@ function getFirebaseErrorMessage(error) {
                   );
 
                 if (product) {
-
                   openProductDetails(
                     product
                   );
-
                 }
 
               }
@@ -1452,25 +1503,19 @@ function getFirebaseErrorMessage(error) {
        Public Profile
     ======================================================= */
 
-    async function openPublicProfile(uid) {
+    async function openPublicProfile(
+      uid
+    ) {
 
       if (!profileModalContent) {
         return;
       }
 
-
       profileModalContent.innerHTML = `
 
         <div class="empty-state">
-
-          <div>â³</div>
-
-          <p>
-            ${escapeHTML(
-              t("loading")
-            )}
-          </p>
-
+          <div>⏳</div>
+          <p>${escapeHTML(t("loading"))}</p>
         </div>
 
       `;
@@ -1499,13 +1544,11 @@ function getFirebaseErrorMessage(error) {
         profileModalContent.innerHTML = `
 
           <div class="not-logged-profile">
-
             <h3>
               ${escapeHTML(
                 t("profileNotFound")
               )}
             </h3>
-
           </div>
 
         `;
@@ -1515,11 +1558,12 @@ function getFirebaseErrorMessage(error) {
       }
 
 
-      const user = {
-        uid,
-        email:
-          profile.email || ""
-      };
+      const user =
+        {
+          uid,
+          email:
+            profile.email || ""
+        };
 
 
       const userProducts =
@@ -1576,11 +1620,8 @@ function getFirebaseErrorMessage(error) {
             <div class="public-info">
 
               <div class="public-info-item">
-
                 <span>
-                  ${escapeHTML(
-                    t("email")
-                  )}
+                  ${escapeHTML(t("email"))}
                 </span>
 
                 <strong>
@@ -1588,16 +1629,11 @@ function getFirebaseErrorMessage(error) {
                     profile.email || ""
                   )}
                 </strong>
-
               </div>
 
-
               <div class="public-info-item">
-
                 <span>
-                  ${escapeHTML(
-                    t("phone")
-                  )}
+                  ${escapeHTML(t("phone"))}
                 </span>
 
                 <strong>
@@ -1606,16 +1642,11 @@ function getFirebaseErrorMessage(error) {
                     t("unknown")
                   )}
                 </strong>
-
               </div>
 
-
               <div class="public-info-item">
-
                 <span>
-                  ${escapeHTML(
-                    t("location")
-                  )}
+                  ${escapeHTML(t("location"))}
                 </span>
 
                 <strong>
@@ -1624,16 +1655,11 @@ function getFirebaseErrorMessage(error) {
                     t("unknown")
                   )}
                 </strong>
-
               </div>
 
-
               <div class="public-info-item">
-
                 <span>
-                  ${escapeHTML(
-                    t("joinDate")
-                  )}
+                  ${escapeHTML(t("joinDate"))}
                 </span>
 
                 <strong>
@@ -1643,7 +1669,6 @@ function getFirebaseErrorMessage(error) {
                     )
                   )}
                 </strong>
-
               </div>
 
             </div>
@@ -1652,9 +1677,7 @@ function getFirebaseErrorMessage(error) {
             <div class="public-bio">
 
               <h3>
-                ${escapeHTML(
-                  t("bio")
-                )}
+                ${escapeHTML(t("bio"))}
               </h3>
 
               <p>
@@ -1678,7 +1701,7 @@ function getFirebaseErrorMessage(error) {
                         profile.phone
                       )}"
                     >
-                      ðŸ“ž ${escapeHTML(
+                      📞 ${escapeHTML(
                         t("call")
                       )}
                     </a>
@@ -1686,13 +1709,12 @@ function getFirebaseErrorMessage(error) {
                   : ""
               }
 
-
               <button
                 type="button"
                 class="primary-btn"
                 id="publicMessageBtn"
               >
-                ðŸ’¬ ${escapeHTML(
+                💬 ${escapeHTML(
                   t("message")
                 )}
               </button>
@@ -1709,11 +1731,9 @@ function getFirebaseErrorMessage(error) {
                 (${userProducts.length})
               </h3>
 
-
               ${
                 userProducts.length
                   ? `
-
                     <div class="mini-products">
 
                       ${userProducts
@@ -1762,22 +1782,16 @@ function getFirebaseErrorMessage(error) {
                         .join("")}
 
                     </div>
-
                   `
                   : `
-
                     <div class="empty-state">
-
-                      <div>ðŸ“¦</div>
-
+                      <div>📦</div>
                       <p>
                         ${escapeHTML(
                           t("noListings")
                         )}
                       </p>
-
                     </div>
-
                   `
               }
 
@@ -1794,7 +1808,6 @@ function getFirebaseErrorMessage(error) {
         document.getElementById(
           "publicMessageBtn"
         );
-
 
       if (messageBtn) {
 
@@ -1814,7 +1827,6 @@ function getFirebaseErrorMessage(error) {
               return;
 
             }
-
 
             closeProfileModal();
 
@@ -1840,8 +1852,7 @@ function getFirebaseErrorMessage(error) {
               () => {
 
                 const id =
-                  card.dataset
-                    .publicProductId;
+                  card.dataset.publicProductId;
 
                 const product =
                   products.find(
@@ -1850,13 +1861,10 @@ function getFirebaseErrorMessage(error) {
                   );
 
                 if (product) {
-
                   closeProfileModal();
-
                   openProductDetails(
                     product
                   );
-
                 }
 
               }
@@ -1886,15 +1894,14 @@ function getFirebaseErrorMessage(error) {
     }
 
 
-    if (closeProfileModalBtn) {
+    if (closeProfileModal) {
 
-      closeProfileModalBtn.addEventListener(
+      closeProfileModal.addEventListener(
         "click",
         closeProfileModal
       );
 
     }
-
 
     if (profileModalOverlay) {
 
@@ -1914,7 +1921,6 @@ function getFirebaseErrorMessage(error) {
 
       const user =
         auth.currentUser;
-
 
       if (!user) {
 
@@ -1994,7 +2000,6 @@ function getFirebaseErrorMessage(error) {
 
     }
 
-
     if (editProfileModalOverlay) {
 
       editProfileModalOverlay.addEventListener(
@@ -2061,7 +2066,6 @@ function getFirebaseErrorMessage(error) {
         "file",
         file
       );
-
 
       formData.append(
         "upload_preset",
@@ -2130,11 +2134,9 @@ function getFirebaseErrorMessage(error) {
           const file =
             profilePhotoFile.files[0];
 
-
           if (!file) {
             return;
           }
-
 
           if (
             file.size >
@@ -2147,13 +2149,11 @@ function getFirebaseErrorMessage(error) {
             profileImageStatus.style.color =
               "red";
 
-            profilePhotoFile.value =
-              "";
+            profilePhotoFile.value = "";
 
             return;
 
           }
-
 
           if (
             !file.type.startsWith("image/")
@@ -2165,13 +2165,11 @@ function getFirebaseErrorMessage(error) {
             profileImageStatus.style.color =
               "red";
 
-            profilePhotoFile.value =
-              "";
+            profilePhotoFile.value = "";
 
             return;
 
           }
-
 
           profileImageStatus.textContent =
             file.name;
@@ -2220,7 +2218,7 @@ function getFirebaseErrorMessage(error) {
 
           saveProfileBtn.textContent =
             currentLanguage === "ar"
-              ? "Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø­ÙØ¸..."
+              ? "جاري الحفظ..."
               : "Saving...";
 
 
@@ -2319,10 +2317,7 @@ function getFirebaseErrorMessage(error) {
 
 
             if (profilePhotoFile) {
-
-              profilePhotoFile.value =
-                "";
-
+              profilePhotoFile.value = "";
             }
 
 
@@ -2343,7 +2338,6 @@ function getFirebaseErrorMessage(error) {
               "Profile save error:",
               error
             );
-
 
             profileSaveStatus.textContent =
               error.message ||
@@ -2381,7 +2375,6 @@ function getFirebaseErrorMessage(error) {
           const file =
             productImageFile.files[0];
 
-
           if (!file) {
 
             imageStatus.textContent =
@@ -2390,7 +2383,6 @@ function getFirebaseErrorMessage(error) {
             return;
 
           }
-
 
           if (
             file.size >
@@ -2410,7 +2402,6 @@ function getFirebaseErrorMessage(error) {
 
           }
 
-
           if (
             !file.type.startsWith("image/")
           ) {
@@ -2427,7 +2418,6 @@ function getFirebaseErrorMessage(error) {
             return;
 
           }
-
 
           imageStatus.textContent =
             file.name;
@@ -2463,7 +2453,9 @@ function getFirebaseErrorMessage(error) {
     }
 
 
-    async function openProductDetails(product) {
+    async function openProductDetails(
+      product
+    ) {
 
       if (!product) {
         return;
@@ -2487,20 +2479,16 @@ function getFirebaseErrorMessage(error) {
         product.category ||
         t("others");
 
-
       modalProductTitle.textContent =
         product.title ||
         "Untitled Product";
 
-
       modalProductPrice.textContent =
         `$${formatPrice(product.price)}`;
-
 
       modalProductLocation.textContent =
         product.location ||
         t("unknown");
-
 
       modalProductDescription.textContent =
         product.description ||
@@ -2538,52 +2526,40 @@ function getFirebaseErrorMessage(error) {
         auth.currentUser;
 
 
-      const viewProfileButton =
-        document.createElement(
-          "button"
-        );
-
-
-      viewProfileButton.type =
-        "button";
-
-      viewProfileButton.className =
-        "profile-view-btn";
-
-      viewProfileButton.textContent =
-        t("viewProfile");
-
-
-      viewProfileButton.addEventListener(
-        "click",
-        () => {
-
-          closeProductDetails();
-
-          openPublicProfile(
-            product.sellerId
-          );
-
-        }
-      );
-
-
-      sellerActions.appendChild(
-        viewProfileButton
-      );
-
-
       if (
         currentUser &&
         product.sellerId ===
         currentUser.uid
       ) {
 
-        const deleteButton =
-          document.createElement(
-            "button"
-          );
+        const viewProfileButton =
+          document.createElement("button");
 
+        viewProfileButton.type =
+          "button";
+
+        viewProfileButton.className =
+          "profile-view-btn";
+
+        viewProfileButton.textContent =
+          t("viewProfile");
+
+        viewProfileButton.addEventListener(
+          "click",
+          () => {
+
+            closeProductDetails();
+
+            openPublicProfile(
+              product.sellerId
+            );
+
+          }
+        );
+
+
+        const deleteButton =
+          document.createElement("button");
 
         deleteButton.type =
           "button";
@@ -2593,7 +2569,6 @@ function getFirebaseErrorMessage(error) {
 
         deleteButton.textContent =
           t("deleteProduct");
-
 
         deleteButton.addEventListener(
           "click",
@@ -2608,17 +2583,44 @@ function getFirebaseErrorMessage(error) {
 
 
         sellerActions.appendChild(
+          viewProfileButton
+        );
+
+        sellerActions.appendChild(
           deleteButton
         );
 
 
       } else {
 
-        const messageButton =
-          document.createElement(
-            "button"
-          );
+        const viewProfileButton =
+          document.createElement("button");
 
+        viewProfileButton.type =
+          "button";
+
+        viewProfileButton.className =
+          "profile-view-btn";
+
+        viewProfileButton.textContent =
+          t("viewProfile");
+
+        viewProfileButton.addEventListener(
+          "click",
+          () => {
+
+            closeProductDetails();
+
+            openPublicProfile(
+              product.sellerId
+            );
+
+          }
+        );
+
+
+        const messageButton =
+          document.createElement("button");
 
         messageButton.type =
           "button";
@@ -2627,7 +2629,7 @@ function getFirebaseErrorMessage(error) {
           "message-user-btn";
 
         messageButton.textContent =
-          `ðŸ’¬ ${t("message")}`;
+          `💬 ${t("message")}`;
 
 
         messageButton.addEventListener(
@@ -2656,6 +2658,10 @@ function getFirebaseErrorMessage(error) {
 
 
         sellerActions.appendChild(
+          viewProfileButton
+        );
+
+        sellerActions.appendChild(
           messageButton
         );
 
@@ -2663,10 +2669,7 @@ function getFirebaseErrorMessage(error) {
         if (sellerProfile?.phone) {
 
           const callLink =
-            document.createElement(
-              "a"
-            );
-
+            document.createElement("a");
 
           callLink.className =
             "contact-seller-btn";
@@ -2675,8 +2678,7 @@ function getFirebaseErrorMessage(error) {
             `tel:${sellerProfile.phone}`;
 
           callLink.textContent =
-            `ðŸ“ž ${t("call")}`;
-
+            `📞 ${t("call")}`;
 
           sellerActions.appendChild(
             callLink
@@ -2727,17 +2729,16 @@ function getFirebaseErrorMessage(error) {
        Delete Product
     ======================================================= */
 
-    async function deleteProduct(productId) {
+    async function deleteProduct(
+      productId
+    ) {
 
       const currentUser =
         auth.currentUser;
 
-
       if (!currentUser) {
 
-        alert(
-          t("loginFirst")
-        );
+        alert(t("loginFirst"));
 
         return;
 
@@ -2753,9 +2754,7 @@ function getFirebaseErrorMessage(error) {
 
       if (!product) {
 
-        alert(
-          t("productNotFound")
-        );
+        alert(t("productNotFound"));
 
         return;
 
@@ -2767,9 +2766,7 @@ function getFirebaseErrorMessage(error) {
         currentUser.uid
       ) {
 
-        alert(
-          t("ownProduct")
-        );
+        alert(t("ownProduct"));
 
         return;
 
@@ -2800,18 +2797,13 @@ function getFirebaseErrorMessage(error) {
 
         closeProductDetails();
 
-        alert(
-          t("deleted")
-        );
-
+        alert(t("deleted"));
 
         await loadProducts();
 
 
         if (auth.currentUser) {
-
           await renderMyProfile();
-
         }
 
 
@@ -2821,7 +2813,6 @@ function getFirebaseErrorMessage(error) {
           "Delete error:",
           error
         );
-
 
         alert(
           t("deleteFailed")
@@ -2836,7 +2827,9 @@ function getFirebaseErrorMessage(error) {
        Display Products
     ======================================================= */
 
-    function displayProducts(productList) {
+    function displayProducts(
+      productList
+    ) {
 
       if (!productsContainer) {
         return;
@@ -2851,7 +2844,7 @@ function getFirebaseErrorMessage(error) {
 
           <div class="empty-state">
 
-            <div>ðŸ“¦</div>
+            <div>📦</div>
 
             <h3>
               ${escapeHTML(
@@ -2875,6 +2868,7 @@ function getFirebaseErrorMessage(error) {
 
 
       productsContainer.innerHTML =
+
         productList
           .map(
             product => {
@@ -2901,47 +2895,34 @@ function getFirebaseErrorMessage(error) {
 
                   </div>
 
-
                   <div class="product-info">
 
                     <span class="product-category">
-
                       ${escapeHTML(
                         product.category ||
                         t("others")
                       )}
-
                     </span>
 
-
                     <h3>
-
                       ${escapeHTML(
                         product.title ||
                         "Untitled Product"
                       )}
-
                     </h3>
 
-
                     <div class="product-price">
-
                       $${formatPrice(
                         product.price
                       )}
-
                     </div>
 
-
                     <p class="product-location">
-
-                      ðŸ“ ${escapeHTML(
+                      📍 ${escapeHTML(
                         product.location ||
                         t("unknown")
                       )}
-
                     </p>
-
 
                     <button
                       class="view-product-btn"
@@ -2950,11 +2931,9 @@ function getFirebaseErrorMessage(error) {
                       )}"
                       type="button"
                     >
-
                       ${escapeHTML(
                         t("viewDetails")
                       )}
-
                     </button>
 
                   </div>
@@ -2993,7 +2972,6 @@ function getFirebaseErrorMessage(error) {
                       button.dataset.id
                   );
 
-
                 if (product) {
 
                   openProductDetails(
@@ -3017,16 +2995,11 @@ function getFirebaseErrorMessage(error) {
 
     async function loadProducts() {
 
-      if (!productsContainer) {
-        return;
-      }
-
-
       productsContainer.innerHTML = `
 
         <div class="empty-state">
 
-          <div>â³</div>
+          <div>⏳</div>
 
           <h3>
             ${escapeHTML(
@@ -3052,6 +3025,10 @@ function getFirebaseErrorMessage(error) {
             collection(
               db,
               "products"
+            ),
+            orderBy(
+              "createdAt",
+              "desc"
             )
           );
 
@@ -3081,34 +3058,13 @@ function getFirebaseErrorMessage(error) {
         );
 
 
-        products.sort(
-          (a, b) => {
-
-            const aTime =
-              a.createdAt?.toMillis
-                ? a.createdAt.toMillis()
-                : 0;
-
-            const bTime =
-              b.createdAt?.toMillis
-                ? b.createdAt.toMillis()
-                : 0;
-
-            return bTime - aTime;
-
-          }
-        );
-
-
         displayProducts(
           products
         );
 
 
         if (auth.currentUser) {
-
           renderMyProfile();
-
         }
 
 
@@ -3124,7 +3080,7 @@ function getFirebaseErrorMessage(error) {
 
           <div class="empty-state">
 
-            <div>âš ï¸</div>
+            <div>⚠️</div>
 
             <h3>
               ${escapeHTML(
@@ -3193,15 +3149,9 @@ function getFirebaseErrorMessage(error) {
 
 
             const matchesText =
-              title.includes(
-                searchText
-              ) ||
-              category.includes(
-                searchText
-              ) ||
-              location.includes(
-                searchText
-              );
+              title.includes(searchText) ||
+              category.includes(searchText) ||
+              location.includes(searchText);
 
 
             const matchesCategory =
@@ -3340,13 +3290,13 @@ function getFirebaseErrorMessage(error) {
 
           authTitle.textContent =
             currentLanguage === "ar"
-              ? "Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ù…Ø²Ø§Ø¯"
+              ? "إنشاء حساب مزاد"
               : "Create Mazad Account";
 
 
           authMessage.textContent =
             currentLanguage === "ar"
-              ? "Ø³Ø¬Ù„ Ù„Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ ÙˆØ§Ù„Ø¨Ø¯Ø¡ Ø¨Ø§Ù„Ø¨ÙŠØ¹ ÙˆØ§Ù„Ø´Ø±Ø§Ø¡."
+              ? "سجل لإنشاء حساب والبدء بالبيع والشراء."
               : "Register to start buying and selling.";
 
 
@@ -3380,10 +3330,8 @@ function getFirebaseErrorMessage(error) {
           authTitle.textContent =
             t("welcomeMazad");
 
-
           authMessage.textContent =
             t("loginRegisterMessage");
-
 
           showAuthMessage("");
 
@@ -3456,7 +3404,6 @@ function getFirebaseErrorMessage(error) {
 
             console.error(error);
 
-
             showAuthMessage(
               getFirebaseErrorMessage(
                 error
@@ -3527,7 +3474,6 @@ function getFirebaseErrorMessage(error) {
           } catch (error) {
 
             console.error(error);
-
 
             showAuthMessage(
               getFirebaseErrorMessage(
@@ -3619,11 +3565,9 @@ function getFirebaseErrorMessage(error) {
 
             event.preventDefault();
 
-
             alert(
               t("profileRequired")
             );
-
 
             document
               .getElementById(
@@ -3633,17 +3577,13 @@ function getFirebaseErrorMessage(error) {
                 behavior: "smooth"
               });
 
-
             return;
 
           }
 
-
           setTimeout(
             () => {
-
               renderMyProfile();
-
             },
             100
           );
@@ -3746,7 +3686,7 @@ function getFirebaseErrorMessage(error) {
 
           publishProductBtn.textContent =
             currentLanguage === "ar"
-              ? "Ø¬Ø§Ø±ÙŠ Ø§Ù„Ù†Ø´Ø±..."
+              ? "جاري النشر..."
               : "Publishing...";
 
 
@@ -3959,35 +3899,26 @@ function getFirebaseErrorMessage(error) {
       };
 
 
-      if (chatHeader) {
+      chatHeader.innerHTML = `
 
-        chatHeader.innerHTML = `
+        <img
+          src="${escapeHTML(
+            selectedChatUser.photoURL
+          )}"
+          class="conversation-avatar"
+          alt=""
+        >
 
-          <img
-            src="${escapeHTML(
-              selectedChatUser.photoURL
-            )}"
-            class="conversation-avatar"
-            alt=""
-          >
+        <span>
+          ${escapeHTML(
+            selectedChatUser.name
+          )}
+        </span>
 
-          <span>
-            ${escapeHTML(
-              selectedChatUser.name
-            )}
-          </span>
-
-        `;
-
-      }
+      `;
 
 
-      if (chatMessages) {
-
-        chatMessages.innerHTML =
-          "";
-
-      }
+      chatMessages.innerHTML = "";
 
 
       document
@@ -4006,13 +3937,6 @@ function getFirebaseErrorMessage(error) {
 
     }
 
-
-    /* =======================================================
-       Listen To Messages
-       IMPORTANT:
-       No orderBy() here.
-       This avoids Firestore composite index problems.
-    ======================================================= */
 
     function listenToMessages() {
 
@@ -4045,6 +3969,10 @@ function getFirebaseErrorMessage(error) {
             "conversationId",
             "==",
             selectedConversationId
+          ),
+          orderBy(
+            "createdAt",
+            "asc"
           )
         );
 
@@ -4054,22 +3982,19 @@ function getFirebaseErrorMessage(error) {
           messagesQuery,
           snapshot => {
 
-            if (!chatMessages) {
-              return;
-            }
-
-
             chatMessages.innerHTML =
               "";
 
 
-            if (snapshot.empty) {
+            if (
+              snapshot.empty
+            ) {
 
               chatMessages.innerHTML = `
 
                 <div class="chat-empty">
 
-                  ðŸ’¬
+                  💬
 
                   <p>
                     ${escapeHTML(
@@ -4086,47 +4011,12 @@ function getFirebaseErrorMessage(error) {
             }
 
 
-            const messageList =
-              [];
-
-
             snapshot.forEach(
               messageDoc => {
 
-                messageList.push({
+                const message =
+                  messageDoc.data();
 
-                  id:
-                    messageDoc.id,
-
-                  ...messageDoc.data()
-
-                });
-
-              }
-            );
-
-
-            messageList.sort(
-              (a, b) => {
-
-                const aTime =
-                  a.createdAt?.toMillis
-                    ? a.createdAt.toMillis()
-                    : 0;
-
-                const bTime =
-                  b.createdAt?.toMillis
-                    ? b.createdAt.toMillis()
-                    : 0;
-
-                return aTime - bTime;
-
-              }
-            );
-
-
-            messageList.forEach(
-              message => {
 
                 const mine =
                   message.senderId ===
@@ -4152,7 +4042,6 @@ function getFirebaseErrorMessage(error) {
                     "div"
                   );
 
-
                 text.textContent =
                   message.text || "";
 
@@ -4162,10 +4051,8 @@ function getFirebaseErrorMessage(error) {
                     "small"
                   );
 
-
                 time.className =
                   "message-time";
-
 
                 time.textContent =
                   formatDateTime(
@@ -4176,7 +4063,6 @@ function getFirebaseErrorMessage(error) {
                 bubble.appendChild(
                   text
                 );
-
 
                 bubble.appendChild(
                   time
@@ -4202,33 +4088,15 @@ function getFirebaseErrorMessage(error) {
               error
             );
 
-            if (chatMessages) {
-
-              chatMessages.innerHTML = `
-
-                <div class="chat-empty">
-
-                  âš ï¸
-
-                  <p>
-                    ${escapeHTML(
-                      t("firestoreError")
-                    )}
-                  </p>
-
-                </div>
-
-              `;
-
-            }
-
           }
         );
 
     }
 
 
-    function formatDateTime(value) {
+    function formatDateTime(
+      value
+    ) {
 
       if (!value) {
         return "";
@@ -4265,10 +4133,6 @@ function getFirebaseErrorMessage(error) {
 
     }
 
-
-    /* =======================================================
-       Send Message
-    ======================================================= */
 
     if (chatForm) {
 
@@ -4319,10 +4183,6 @@ function getFirebaseErrorMessage(error) {
 
           try {
 
-            /* -----------------------------------------------
-               Save Message
-            ------------------------------------------------ */
-
             await addDoc(
               collection(
                 db,
@@ -4353,10 +4213,6 @@ function getFirebaseErrorMessage(error) {
             );
 
 
-            /* -----------------------------------------------
-               Save / Update Conversation
-            ------------------------------------------------ */
-
             const conversationRef =
               doc(
                 db,
@@ -4375,13 +4231,11 @@ function getFirebaseErrorMessage(error) {
                 ],
 
                 participantEmails: {
-
                   [currentUser.uid]:
                     currentUser.email || "",
 
                   [selectedChatUser.uid]:
                     selectedChatUser.email || ""
-
                 },
 
                 lastMessage:
@@ -4414,13 +4268,6 @@ function getFirebaseErrorMessage(error) {
               error
             );
 
-
-            alert(
-              currentLanguage === "ar"
-                ? "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø³Ø§Ù„Ø©. ÙŠØ±Ø¬Ù‰ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Firestore."
-                : "Message could not be sent. Please check your Firestore rules."
-            );
-
           } finally {
 
             chatInput.disabled =
@@ -4438,9 +4285,6 @@ function getFirebaseErrorMessage(error) {
 
     /* =======================================================
        Load Conversations
-       IMPORTANT:
-       No orderBy() here.
-       This avoids Firestore composite index problems.
     ======================================================= */
 
     async function loadConversations() {
@@ -4459,13 +4303,11 @@ function getFirebaseErrorMessage(error) {
         conversationList.innerHTML = `
 
           <div class="chat-empty">
-
             <p>
               ${escapeHTML(
                 t("profileRequired")
               )}
             </p>
-
           </div>
 
         `;
@@ -4487,6 +4329,10 @@ function getFirebaseErrorMessage(error) {
               "participants",
               "array-contains",
               currentUser.uid
+            ),
+            orderBy(
+              "updatedAt",
+              "desc"
             )
           );
 
@@ -4509,7 +4355,7 @@ function getFirebaseErrorMessage(error) {
 
             <div class="chat-empty">
 
-              ðŸ’¬
+              💬
 
               <p>
                 ${escapeHTML(
@@ -4526,47 +4372,17 @@ function getFirebaseErrorMessage(error) {
         }
 
 
-        const conversationData =
-          snapshot.docs.map(
-            conversationDoc => ({
-
-              id:
-                conversationDoc.id,
-
-              ...conversationDoc.data()
-
-            })
-          );
-
-
-        /* Sort newest conversation first */
-
-        conversationData.sort(
-          (a, b) => {
-
-            const aTime =
-              a.updatedAt?.toMillis
-                ? a.updatedAt.toMillis()
-                : 0;
-
-            const bTime =
-              b.updatedAt?.toMillis
-                ? b.updatedAt.toMillis()
-                : 0;
-
-            return bTime - aTime;
-
-          }
-        );
-
-
         for (
-          const conversation
-          of conversationData
+          const conversationDoc
+          of snapshot.docs
         ) {
 
+          const conversation =
+            conversationDoc.data();
+
+
           const otherUid =
-            conversation.participants?.find(
+            conversation.participants.find(
               uid =>
                 uid !==
                 currentUser.uid
@@ -4596,7 +4412,7 @@ function getFirebaseErrorMessage(error) {
 
           if (
             selectedConversationId ===
-            conversation.id
+            conversationDoc.id
           ) {
 
             item.classList.add(
@@ -4674,7 +4490,7 @@ function getFirebaseErrorMessage(error) {
 
           <div class="chat-empty">
 
-            âš ï¸
+            ⚠️
 
             <p>
               ${escapeHTML(
@@ -4718,12 +4534,8 @@ function getFirebaseErrorMessage(error) {
             );
 
 
-          if (authMessage) {
-
-            authMessage.textContent =
-              `${t("loggedInAs")} ${user.email}`;
-
-          }
+          authMessage.textContent =
+            `${t("loggedInAs")} ${user.email}`;
 
 
           let logoutBtn =
@@ -4743,25 +4555,17 @@ function getFirebaseErrorMessage(error) {
             logoutBtn.id =
               "logoutBtn";
 
-
             logoutBtn.type =
               "button";
-
 
             logoutBtn.className =
               "secondary-btn";
 
 
-            if (
-              loginForm?.parentNode
-            ) {
-
-              loginForm.parentNode.insertBefore(
-                logoutBtn,
-                loginForm
-              );
-
-            }
+            loginForm.parentNode.insertBefore(
+              logoutBtn,
+              loginForm
+            );
 
 
             logoutBtn.addEventListener(
@@ -4820,25 +4624,6 @@ function getFirebaseErrorMessage(error) {
 
         } else {
 
-          if (
-            unsubscribeMessages
-          ) {
-
-            unsubscribeMessages();
-
-            unsubscribeMessages =
-              null;
-
-          }
-
-
-          selectedConversationId =
-            null;
-
-          selectedChatUser =
-            null;
-
-
           const logoutBtn =
             document.getElementById(
               "logoutBtn"
@@ -4846,9 +4631,7 @@ function getFirebaseErrorMessage(error) {
 
 
           if (logoutBtn) {
-
             logoutBtn.remove();
-
           }
 
 
@@ -4859,7 +4642,7 @@ function getFirebaseErrorMessage(error) {
               <div class="not-logged-profile">
 
                 <div class="hero-icon">
-                  ðŸ‘¤
+                  👤
                 </div>
 
                 <h3>
@@ -4902,7 +4685,6 @@ function getFirebaseErrorMessage(error) {
 
 
         if (
-          productModal &&
           productModal.classList.contains(
             "active"
           )
@@ -4914,7 +4696,6 @@ function getFirebaseErrorMessage(error) {
 
 
         if (
-          profileModal &&
           profileModal.classList.contains(
             "active"
           )
@@ -4926,7 +4707,6 @@ function getFirebaseErrorMessage(error) {
 
 
         if (
-          editProfileModal &&
           editProfileModal.classList.contains(
             "active"
           )
