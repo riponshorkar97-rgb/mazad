@@ -2945,4 +2945,2109 @@ async function openSellerProfile(
   const profile =
     await getUserProfile(uid);
 
-  if (!
+  if (!profile) {
+
+    alert(
+      t("profileNotFound")
+    );
+
+    return;
+
+  }
+
+  const photo =
+    profile.photoURL ||
+    getDefaultAvatar();
+
+  const name =
+    profile.name ||
+    profile.email ||
+    t("member");
+
+  const sellerProducts =
+    products.filter(
+      product =>
+        product.sellerId === uid
+    );
+
+
+  if (profileModalContent) {
+
+    profileModalContent.innerHTML = `
+
+      <div class="profile-card">
+
+        <div class="profile-header">
+
+          <img
+            src="${escapeHTML(photo)}"
+            alt=""
+            class="profile-avatar-image"
+            onerror="
+              this.onerror=null;
+              this.src='${escapeHTML(
+                getDefaultAvatar()
+              )}';
+            "
+          >
+
+          <div class="profile-info">
+
+            <h2>
+              ${escapeHTML(name)}
+            </h2>
+
+            <p>
+              ${escapeHTML(
+                profile.email || ""
+              )}
+            </p>
+
+            ${
+              profile.phone
+                ? `<p>📞 ${escapeHTML(
+                    profile.phone
+                  )}</p>`
+                : ""
+            }
+
+            ${
+              profile.location
+                ? `<p>📍 ${escapeHTML(
+                    profile.location
+                  )}</p>`
+                : ""
+            }
+
+          </div>
+
+        </div>
+
+        ${
+          profile.bio
+            ? `
+              <div class="profile-bio">
+                <strong>
+                  ${escapeHTML(t("bio"))}
+                </strong>
+                <p>
+                  ${escapeHTML(
+                    profile.bio
+                  )}
+                </p>
+              </div>
+            `
+            : ""
+        }
+
+        <h3>
+          ${escapeHTML(
+            t("myListings")
+          )}
+        </h3>
+
+        <div
+          id="sellerProductsContainer"
+          class="products-grid"
+        ></div>
+
+      </div>
+
+    `;
+
+  }
+
+
+  const sellerProductsContainer =
+    document.getElementById(
+      "sellerProductsContainer"
+    );
+
+
+  if (!sellerProductsContainer) {
+    return;
+  }
+
+
+  if (!sellerProducts.length) {
+
+    sellerProductsContainer.innerHTML = `
+      <div class="empty-state">
+        <p>
+          ${escapeHTML(
+            t("noListings")
+          )}
+        </p>
+      </div>
+    `;
+
+  } else {
+
+    sellerProducts.forEach(
+      product => {
+
+        const card =
+          document.createElement(
+            "article"
+          );
+
+        card.className =
+          "product-card";
+
+        const image =
+          product.imageURL ||
+          product.imageUrl ||
+          getDefaultAvatar();
+
+        card.innerHTML = `
+          <div class="product-image-wrapper">
+            <img
+              class="product-image"
+              src="${escapeHTML(image)}"
+              alt=""
+              onerror="
+                this.onerror=null;
+                this.src='${escapeHTML(
+                  getDefaultAvatar()
+                )}';
+              "
+            >
+          </div>
+
+          <div class="product-card-content">
+
+            <span class="product-category">
+              ${escapeHTML(
+                product.category ||
+                t("others")
+              )}
+            </span>
+
+            <h3>
+              ${escapeHTML(
+                product.title ||
+                t("product")
+              )}
+            </h3>
+
+            <div class="product-price">
+              ${escapeHTML(
+                formatPrice(
+                  product.price
+                )
+              )}
+            </div>
+
+          </div>
+        `;
+
+        card.addEventListener(
+          "click",
+          () => {
+
+            closeProfileModal();
+
+            openProductModal(
+              product.id
+            );
+
+          }
+        );
+
+        sellerProductsContainer.appendChild(
+          card
+        );
+
+      }
+    );
+
+  }
+
+
+  if (profileModal) {
+
+    profileModal.style.display =
+      "flex";
+
+    profileModal.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+
+  }
+
+}
+
+
+function closeProfileModal() {
+
+  if (!profileModal) {
+    return;
+  }
+
+  profileModal.style.display =
+    "none";
+
+  profileModal.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+}
+
+
+/* =========================================================
+   DELETE PRODUCT
+   ========================================================= */
+
+async function deleteProduct(
+  productId
+) {
+
+  const user =
+    auth.currentUser;
+
+  if (!user) {
+
+    alert(
+      t("loginFirst")
+    );
+
+    return;
+
+  }
+
+  const product =
+    products.find(
+      item =>
+        item.id === productId
+    );
+
+  if (!product) {
+
+    alert(
+      t("productNotFound")
+    );
+
+    return;
+
+  }
+
+  if (
+    product.sellerId !==
+    user.uid
+  ) {
+
+    alert(
+      t("ownProduct")
+    );
+
+    return;
+
+  }
+
+
+  const confirmed =
+    window.confirm(
+      t("deleteConfirm")
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    await deleteDoc(
+      doc(
+        db,
+        "products",
+        productId
+      )
+    );
+
+    alert(
+      t("deleted")
+    );
+
+    closeProductModal();
+
+    await loadProducts();
+
+    if (auth.currentUser) {
+      await renderMyProfile();
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Delete product error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      t("deleteFailed")
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH UI
+   ========================================================= */
+
+function showLoginForm() {
+
+  if (loginForm) {
+    loginForm.style.display =
+      "block";
+  }
+
+  if (registerForm) {
+    registerForm.style.display =
+      "none";
+  }
+
+  if (showRegisterBtn) {
+    showRegisterBtn.style.display =
+      "block";
+  }
+
+  if (showLoginBtn) {
+    showLoginBtn.style.display =
+      "none";
+  }
+
+  if (authTitle) {
+    authTitle.textContent =
+      t("login");
+  }
+
+}
+
+
+function showRegisterForm() {
+
+  if (loginForm) {
+    loginForm.style.display =
+      "none";
+  }
+
+  if (registerForm) {
+    registerForm.style.display =
+      "block";
+  }
+
+  if (showRegisterBtn) {
+    showRegisterBtn.style.display =
+      "none";
+  }
+
+  if (showLoginBtn) {
+    showLoginBtn.style.display =
+      "block";
+  }
+
+  if (authTitle) {
+    authTitle.textContent =
+      t("register");
+  }
+
+}
+
+
+/* =========================================================
+   REGISTER
+   ========================================================= */
+
+async function handleRegister(
+  event
+) {
+
+  event.preventDefault();
+
+  const email =
+    document
+      .getElementById(
+        "registerEmail"
+      )
+      ?.value
+      ?.trim()
+      .toLowerCase() || "";
+
+  const password =
+    document
+      .getElementById(
+        "registerPassword"
+      )
+      ?.value || "";
+
+
+  if (!email) {
+
+    showAuthMessage(
+      t("invalidEmail")
+    );
+
+    return;
+
+  }
+
+  if (password.length < 6) {
+
+    showAuthMessage(
+      t("weakPassword")
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    registerForm.querySelector(
+      'button[type="submit"]'
+    );
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+    button.dataset.originalText =
+      button.textContent;
+
+    button.textContent =
+      currentLanguage === "ar"
+        ? "جاري إنشاء الحساب..."
+        : "Creating account...";
+
+  }
+
+
+  showAuthMessage(
+    currentLanguage === "ar"
+      ? "جاري إنشاء الحساب..."
+      : "Creating account..."
+  );
+
+
+  try {
+
+    const credential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+    await createUserProfile(
+      credential.user
+    );
+
+    showAuthMessage(
+      currentLanguage === "ar"
+        ? "تم إنشاء الحساب بنجاح."
+        : "Account created successfully.",
+      true
+    );
+
+    registerForm.reset();
+
+    showLoginForm();
+
+  } catch (error) {
+
+    console.error(
+      "Register error:",
+      error
+    );
+
+    showAuthMessage(
+      getFirebaseErrorMessage(
+        error
+      )
+    );
+
+  } finally {
+
+    if (button) {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        button.dataset.originalText ||
+        t("createAccount");
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+async function handleLogin(
+  event
+) {
+
+  event.preventDefault();
+
+  const email =
+    document
+      .getElementById(
+        "loginEmail"
+      )
+      ?.value
+      ?.trim()
+      .toLowerCase() || "";
+
+  const password =
+    document
+      .getElementById(
+        "loginPassword"
+      )
+      ?.value || "";
+
+
+  if (!email) {
+
+    showAuthMessage(
+      t("invalidEmail")
+    );
+
+    return;
+
+  }
+
+  if (!password) {
+
+    showAuthMessage(
+      currentLanguage === "ar"
+        ? "يرجى إدخال كلمة المرور."
+        : "Please enter your password."
+    );
+
+    return;
+
+  }
+
+
+  const button =
+    loginForm.querySelector(
+      'button[type="submit"]'
+    );
+
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+    button.dataset.originalText =
+      button.textContent;
+
+    button.textContent =
+      currentLanguage === "ar"
+        ? "جاري تسجيل الدخول..."
+        : "Logging in...";
+
+  }
+
+
+  showAuthMessage(
+    currentLanguage === "ar"
+      ? "جاري تسجيل الدخول..."
+      : "Logging in..."
+  );
+
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    showAuthMessage(
+      currentLanguage === "ar"
+        ? "تم تسجيل الدخول بنجاح."
+        : "Logged in successfully.",
+      true
+    );
+
+    loginForm.reset();
+
+  } catch (error) {
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+    showAuthMessage(
+      getFirebaseErrorMessage(
+        error
+      )
+    );
+
+  } finally {
+
+    if (button) {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        button.dataset.originalText ||
+        t("login");
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH UI AFTER LOGIN
+   ========================================================= */
+
+function updateAuthUIForUser(
+  user
+) {
+
+  if (!authMessage) {
+    return;
+  }
+
+  if (!user) {
+
+    authMessage.textContent =
+      t("loginRegisterMessage");
+
+    return;
+
+  }
+
+  authMessage.textContent =
+    `${t("loggedInAs")} ${
+      user.email || ""
+    }`;
+
+}
+
+
+/* =========================================================
+   MESSENGER
+   ========================================================= */
+
+function createConversationId(
+  uid1,
+  uid2
+) {
+
+  return [
+    uid1,
+    uid2
+  ]
+    .sort()
+    .join("_");
+
+}
+
+
+async function startConversation(
+  otherUid
+) {
+
+  const currentUser =
+    auth.currentUser;
+
+  if (!currentUser) {
+
+    alert(
+      t("loginToMessage")
+    );
+
+    return;
+
+  }
+
+  if (!otherUid) {
+
+    alert(
+      t("profileNotFound")
+    );
+
+    return;
+
+  }
+
+  if (
+    currentUser.uid ===
+    otherUid
+  ) {
+
+    alert(
+      t("cannotMessageSelf")
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const otherProfile =
+      await getUserProfile(
+        otherUid
+      );
+
+    if (!otherProfile) {
+
+      alert(
+        t("profileNotFound")
+      );
+
+      return;
+
+    }
+
+
+    selectedConversationId =
+      createConversationId(
+        currentUser.uid,
+        otherUid
+      );
+
+
+    selectedChatUser = {
+
+      uid: otherUid,
+
+      name:
+        otherProfile.name ||
+        otherProfile.email ||
+        t("member"),
+
+      email:
+        otherProfile.email ||
+        "",
+
+      photoURL:
+        otherProfile.photoURL ||
+        getDefaultAvatar()
+
+    };
+
+
+    if (chatHeader) {
+
+      chatHeader.innerHTML = `
+        <img
+          src="${escapeHTML(
+            selectedChatUser.photoURL
+          )}"
+          class="conversation-avatar"
+          alt=""
+          onerror="
+            this.onerror=null;
+            this.src='${escapeHTML(
+              getDefaultAvatar()
+            )}';
+          "
+        >
+
+        <span>
+          ${escapeHTML(
+            selectedChatUser.name
+          )}
+        </span>
+      `;
+
+    }
+
+
+    if (chatMessages) {
+
+      chatMessages.innerHTML = `
+        <div class="chat-empty">
+          <div>💬</div>
+          <p>
+            ${escapeHTML(
+              t("loading")
+            )}
+          </p>
+        </div>
+      `;
+
+    }
+
+
+    document
+      .getElementById("messages")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+
+    listenToMessages();
+
+    await loadConversations();
+
+  } catch (error) {
+
+    console.error(
+      "Start conversation error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      t("firestoreError")
+    );
+
+  }
+
+}
+
+
+function listenToMessages() {
+
+  if (unsubscribeMessages) {
+
+    unsubscribeMessages();
+
+    unsubscribeMessages =
+      null;
+
+  }
+
+  if (!selectedConversationId) {
+    return;
+  }
+
+
+  const messagesQuery =
+    query(
+      collection(
+        db,
+        "messages"
+      ),
+      where(
+        "conversationId",
+        "==",
+        selectedConversationId
+      )
+    );
+
+
+  unsubscribeMessages =
+    onSnapshot(
+      messagesQuery,
+
+      snapshot => {
+
+        if (!chatMessages) {
+          return;
+        }
+
+        chatMessages.innerHTML =
+          "";
+
+
+        if (snapshot.empty) {
+
+          chatMessages.innerHTML = `
+            <div class="chat-empty">
+              <div>💬</div>
+              <p>
+                ${escapeHTML(
+                  t("noMessages")
+                )}
+              </p>
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        const messageList =
+          snapshot.docs.map(
+            messageDoc => ({
+              id: messageDoc.id,
+              ...messageDoc.data()
+            })
+          );
+
+
+        messageList.sort(
+          (a, b) => {
+
+            const aTime =
+              a.createdAt?.toMillis
+                ? a.createdAt.toMillis()
+                : 0;
+
+            const bTime =
+              b.createdAt?.toMillis
+                ? b.createdAt.toMillis()
+                : 0;
+
+            return aTime - bTime;
+
+          }
+        );
+
+
+        messageList.forEach(
+          message => {
+
+            const mine =
+              message.senderId ===
+              auth.currentUser?.uid;
+
+
+            const bubble =
+              document.createElement(
+                "div"
+              );
+
+            bubble.className =
+              `message-bubble ${
+                mine
+                  ? "mine"
+                  : "theirs"
+              }`;
+
+
+            const text =
+              document.createElement(
+                "div"
+              );
+
+            text.className =
+              "message-text";
+
+            text.textContent =
+              message.text || "";
+
+
+            const time =
+              document.createElement(
+                "small"
+              );
+
+            time.className =
+              "message-time";
+
+            time.textContent =
+              formatDateTime(
+                message.createdAt
+              );
+
+
+            bubble.appendChild(
+              text
+            );
+
+            bubble.appendChild(
+              time
+            );
+
+            chatMessages.appendChild(
+              bubble
+            );
+
+          }
+        );
+
+
+        chatMessages.scrollTop =
+          chatMessages.scrollHeight;
+
+      },
+
+      error => {
+
+        console.error(
+          "Messages listener error:",
+          error
+        );
+
+        if (chatMessages) {
+
+          chatMessages.innerHTML = `
+            <div class="chat-empty">
+              <div>⚠️</div>
+              <p>
+                ${escapeHTML(
+                  t("firestoreError")
+                )}
+              </p>
+            </div>
+          `;
+
+        }
+
+      }
+
+    );
+
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+   ========================================================= */
+
+async function sendMessage(
+  event
+) {
+
+  event.preventDefault();
+
+  const currentUser =
+    auth.currentUser;
+
+  if (!currentUser) {
+
+    alert(
+      t("loginToMessage")
+    );
+
+    return;
+
+  }
+
+  if (
+    !selectedConversationId ||
+    !selectedChatUser
+  ) {
+
+    return;
+
+  }
+
+
+  const text =
+    chatInput?.value
+      ?.trim() || "";
+
+
+  if (!text) {
+    return;
+  }
+
+
+  if (text.length > 5000) {
+
+    alert(
+      currentLanguage === "ar"
+        ? "الرسالة طويلة جداً."
+        : "Message is too long."
+    );
+
+    return;
+
+  }
+
+
+  const sendButton =
+    chatForm.querySelector(
+      'button[type="submit"]'
+    );
+
+
+  if (chatInput) {
+    chatInput.disabled = true;
+  }
+
+  if (sendButton) {
+    sendButton.disabled = true;
+  }
+
+
+  try {
+
+    await addDoc(
+      collection(
+        db,
+        "messages"
+      ),
+      {
+
+        conversationId:
+          selectedConversationId,
+
+        senderId:
+          currentUser.uid,
+
+        receiverId:
+          selectedChatUser.uid,
+
+        senderEmail:
+          currentUser.email || "",
+
+        text,
+
+        createdAt:
+          serverTimestamp()
+
+      }
+    );
+
+
+    await setDoc(
+      doc(
+        db,
+        "conversations",
+        selectedConversationId
+      ),
+      {
+
+        participants: [
+          currentUser.uid,
+          selectedChatUser.uid
+        ],
+
+        participantEmails: {
+
+          [currentUser.uid]:
+            currentUser.email || "",
+
+          [selectedChatUser.uid]:
+            selectedChatUser.email || ""
+
+        },
+
+        lastMessage:
+          text,
+
+        lastMessageSenderId:
+          currentUser.uid,
+
+        updatedAt:
+          serverTimestamp()
+
+      },
+      {
+        merge: true
+      }
+    );
+
+
+    if (chatInput) {
+      chatInput.value = "";
+    }
+
+
+    await loadConversations();
+
+  } catch (error) {
+
+    console.error(
+      "Send message error:",
+      error
+    );
+
+    alert(
+      error.message ||
+      (
+        currentLanguage === "ar"
+          ? "تعذر إرسال الرسالة."
+          : "Message could not be sent."
+      )
+    );
+
+  } finally {
+
+    if (chatInput) {
+
+      chatInput.disabled =
+        false;
+
+      chatInput.focus();
+
+    }
+
+    if (sendButton) {
+      sendButton.disabled =
+        false;
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD CONVERSATIONS
+   ========================================================= */
+
+async function loadConversations() {
+
+  if (!conversationList) {
+    return;
+  }
+
+  const currentUser =
+    auth.currentUser;
+
+
+  if (!currentUser) {
+
+    conversationList.innerHTML = `
+      <div class="chat-empty">
+        <p>
+          ${escapeHTML(
+            t("profileRequired")
+          )}
+        </p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  try {
+
+    const conversationsQuery =
+      query(
+        collection(
+          db,
+          "conversations"
+        ),
+        where(
+          "participants",
+          "array-contains",
+          currentUser.uid
+        )
+      );
+
+
+    const snapshot =
+      await getDocs(
+        conversationsQuery
+      );
+
+
+    conversationList.innerHTML =
+      "";
+
+
+    if (snapshot.empty) {
+
+      conversationList.innerHTML = `
+        <div class="chat-empty">
+          <div>💬</div>
+          <p>
+            ${escapeHTML(
+              t("noConversations")
+            )}
+          </p>
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    const conversationData =
+      snapshot.docs.map(
+        conversationDoc => ({
+          id:
+            conversationDoc.id,
+          ...conversationDoc.data()
+        })
+      );
+
+
+    conversationData.sort(
+      (a, b) => {
+
+        const aTime =
+          a.updatedAt?.toMillis
+            ? a.updatedAt.toMillis()
+            : 0;
+
+        const bTime =
+          b.updatedAt?.toMillis
+            ? b.updatedAt.toMillis()
+            : 0;
+
+        return bTime - aTime;
+
+      }
+    );
+
+
+    for (
+      const conversation
+      of conversationData
+    ) {
+
+      const otherUid =
+        conversation
+          .participants
+          ?.find(
+            uid =>
+              uid !==
+              currentUser.uid
+          );
+
+
+      if (!otherUid) {
+        continue;
+      }
+
+
+      const otherProfile =
+        await getUserProfile(
+          otherUid
+        );
+
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+      item.className =
+        "conversation-item";
+
+
+      if (
+        selectedConversationId ===
+        conversation.id
+      ) {
+
+        item.classList.add(
+          "active"
+        );
+
+      }
+
+
+      const photo =
+        otherProfile?.photoURL ||
+        getDefaultAvatar();
+
+
+      const name =
+        otherProfile?.name ||
+        otherProfile?.email ||
+        t("member");
+
+
+      item.innerHTML = `
+        <img
+          class="conversation-avatar"
+          src="${escapeHTML(photo)}"
+          alt=""
+          onerror="
+            this.onerror=null;
+            this.src='${escapeHTML(
+              getDefaultAvatar()
+            )}';
+          "
+        >
+
+        <div class="conversation-info">
+
+          <strong>
+            ${escapeHTML(name)}
+          </strong>
+
+          <span>
+            ${escapeHTML(
+              conversation.lastMessage ||
+              ""
+            )}
+          </span>
+
+        </div>
+      `;
+
+
+      item.addEventListener(
+        "click",
+        () => {
+
+          startConversation(
+            otherUid
+          );
+
+        }
+      );
+
+
+      conversationList.appendChild(
+        item
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Conversation loading error:",
+      error
+    );
+
+    conversationList.innerHTML = `
+      <div class="chat-empty">
+        <div>⚠️</div>
+        <p>
+          ${escapeHTML(
+            t("firestoreError")
+          )}
+        </p>
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function handleLogout() {
+
+  try {
+
+    if (unsubscribeMessages) {
+
+      unsubscribeMessages();
+
+      unsubscribeMessages =
+        null;
+
+    }
+
+    await signOut(auth);
+
+    selectedConversationId =
+      null;
+
+    selectedChatUser =
+      null;
+
+    currentProfile =
+      null;
+
+    alert(
+      t("loggedOut")
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+    alert(
+      currentLanguage === "ar"
+        ? "تعذر تسجيل الخروج."
+        : "Unable to log out."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+function setupNavigation() {
+
+  const profileNavBtn =
+    document.getElementById(
+      "profileNavBtn"
+    );
+
+  const headerSellBtn =
+    document.getElementById(
+      "headerSellBtn"
+    );
+
+  const heroSellBtn =
+    document.getElementById(
+      "heroSellBtn"
+    );
+
+
+  function goToSell() {
+
+    document
+      .getElementById("sell")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+  }
+
+
+  if (headerSellBtn) {
+
+    headerSellBtn.addEventListener(
+      "click",
+      goToSell
+    );
+
+  }
+
+
+  if (heroSellBtn) {
+
+    heroSellBtn.addEventListener(
+      "click",
+      () => {
+
+        if (!auth.currentUser) {
+
+          alert(
+            t("loginFirst")
+          );
+
+          document
+            .getElementById("login")
+            ?.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+          return;
+
+        }
+
+        goToSell();
+
+      }
+    );
+
+  }
+
+
+  if (profileNavBtn) {
+
+    profileNavBtn.addEventListener(
+      "click",
+      event => {
+
+        event.preventDefault();
+
+        document
+          .getElementById("profile")
+          ?.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+          });
+
+        if (auth.currentUser) {
+
+          renderMyProfile();
+
+        } else {
+
+          document
+            .getElementById("login")
+            ?.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+        }
+
+      }
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".category-card"
+    )
+    .forEach(card => {
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          const category =
+            card.dataset.category ||
+            "";
+
+          if (categorySelect) {
+
+            categorySelect.value =
+              category;
+
+          }
+
+          filterProducts();
+
+          document
+            .getElementById(
+              "listings"
+            )
+            ?.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   MODAL EVENTS
+   ========================================================= */
+
+function setupModalEvents() {
+
+  closeProductModal?.addEventListener(
+    "click",
+    closeProductModal
+  );
+
+  productModalOverlay?.addEventListener(
+    "click",
+    closeProductModal
+  );
+
+  closeProfileModalBtn?.addEventListener(
+    "click",
+    closeProfileModal
+  );
+
+  profileModalOverlay?.addEventListener(
+    "click",
+    closeProfileModal
+  );
+
+  closeEditProfileModal?.addEventListener(
+    "click",
+    closeEditProfile
+  );
+
+  editProfileModalOverlay?.addEventListener(
+    "click",
+    closeEditProfile
+  );
+
+
+  document.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        closeProductModal();
+        closeProfileModal();
+        closeEditProfile();
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    try {
+
+      updateAuthUIForUser(
+        user
+      );
+
+
+      if (user) {
+
+        await createUserProfile(
+          user
+        );
+
+        currentProfile =
+          await getUserProfile(
+            user.uid
+          );
+
+        await renderMyProfile();
+
+        await loadConversations();
+
+      } else {
+
+        currentProfile =
+          null;
+
+        selectedConversationId =
+          null;
+
+        selectedChatUser =
+          null;
+
+
+        if (unsubscribeMessages) {
+
+          unsubscribeMessages();
+
+          unsubscribeMessages =
+            null;
+
+        }
+
+
+        if (profileContent) {
+
+          profileContent.innerHTML = `
+            <div class="empty-state">
+              <div>👤</div>
+              <h3>
+                ${escapeHTML(
+                  t("profileRequired")
+                )}
+              </h3>
+            </div>
+          `;
+
+        }
+
+
+        if (conversationList) {
+
+          conversationList.innerHTML = `
+            <div class="chat-empty">
+              <div>💬</div>
+              <p>
+                ${escapeHTML(
+                  t("loginFirst")
+                )}
+              </p>
+            </div>
+          `;
+
+        }
+
+
+        if (chatHeader) {
+
+          chatHeader.innerHTML = `
+            <span>
+              ${escapeHTML(
+                t("selectConversation")
+              )}
+            </span>
+          `;
+
+        }
+
+
+        if (chatMessages) {
+          chatMessages.innerHTML = "";
+        }
+
+      }
+
+    } catch (error) {
+
+      console.error(
+        "Auth state error:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   EVENT LISTENERS
+   ========================================================= */
+
+if (languageBtn) {
+
+  languageBtn.addEventListener(
+    "click",
+    switchLanguage
+  );
+
+}
+
+
+if (searchBtn) {
+
+  searchBtn.addEventListener(
+    "click",
+    filterProducts
+  );
+
+}
+
+
+if (searchInput) {
+
+  searchInput.addEventListener(
+    "input",
+    filterProducts
+  );
+
+  searchInput.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        filterProducts();
+
+      }
+
+    }
+  );
+
+}
+
+
+if (categorySelect) {
+
+  categorySelect.addEventListener(
+    "change",
+    filterProducts
+  );
+
+}
+
+
+if (showRegisterBtn) {
+
+  showRegisterBtn.addEventListener(
+    "click",
+    showRegisterForm
+  );
+
+}
+
+
+if (showLoginBtn) {
+
+  showLoginBtn.addEventListener(
+    "click",
+    showLoginForm
+  );
+
+}
+
+
+if (loginForm) {
+
+  loginForm.addEventListener(
+    "submit",
+    handleLogin
+  );
+
+}
+
+
+if (registerForm) {
+
+  registerForm.addEventListener(
+    "submit",
+    handleRegister
+  );
+
+}
+
+
+if (sellProductForm) {
+
+  sellProductForm.addEventListener(
+    "submit",
+    publishProduct
+  );
+
+}
+
+
+if (editProfileForm) {
+
+  editProfileForm.addEventListener(
+    "submit",
+    saveProfile
+  );
+
+}
+
+
+if (chatForm) {
+
+  chatForm.addEventListener(
+    "submit",
+    sendMessage
+  );
+
+}
+
+
+if (productImageFile) {
+
+  productImageFile.addEventListener(
+    "change",
+    () => {
+
+      const file =
+        productImageFile.files?.[0];
+
+      if (!file) {
+
+        if (imageStatus) {
+          imageStatus.textContent =
+            "";
+        }
+
+        return;
+
+      }
+
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+
+        productImageFile.value =
+          "";
+
+        if (imageStatus) {
+
+          imageStatus.textContent =
+            t("validImage");
+
+        }
+
+        return;
+
+      }
+
+      if (
+        file.size >
+        10 * 1024 * 1024
+      ) {
+
+        productImageFile.value =
+          "";
+
+        if (imageStatus) {
+
+          imageStatus.textContent =
+            t("imageTooLarge");
+
+        }
+
+        return;
+
+      }
+
+      if (imageStatus) {
+
+        imageStatus.textContent =
+          `${file.name} ✓`;
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   START MAZAD
+   ========================================================= */
+
+async function initializeMazad() {
+
+  try {
+
+    applyLanguage();
+
+    setupNavigation();
+
+    setupModalEvents();
+
+    await loadProducts();
+
+  } catch (error) {
+
+    console.error(
+      "Mazad initialization error:",
+      error
+    );
+
+  }
+
+}
+
+
+if (
+  document.readyState ===
+  "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeMazad,
+    {
+      once: true
+    }
+  );
+
+} else {
+
+  initializeMazad();
+
+}
