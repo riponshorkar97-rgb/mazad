@@ -1,14 +1,29 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mazad</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
     <meta
         name="description"
-        content="Mazad - A modern online marketplace for buyers and sellers."
+        content="Mazad - Gulf marketplace for cars, real estate, electronics, furniture, services and more."
+    >
+
+    <meta name="theme-color" content="#10101f">
+
+    <title>Mazad | سوق الخليج</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
     >
 
     <link rel="stylesheet" href="style.css">
@@ -16,382 +31,822 @@
 
 <body>
 
-    <!-- Header -->
-    <header class="site-header">
+    <!-- =========================================
+         APP
+    ========================================== -->
 
-        <div class="header-container">
+    <div id="app">
 
-            <a href="#" class="logo">
-                Mazad
-            </a>
+        <!-- =====================================
+             TOP HEADER
+        ====================================== -->
 
-            <nav class="main-nav">
-                <a href="#" class="nav-link active">Home</a>
-                <a href="#" class="nav-link">Products</a>
-                <a href="#" class="nav-link">Categories</a>
-                <a href="#" class="nav-link">Messages</a>
-                <a href="#" class="nav-link">Profile</a>
-            </nav>
+        <header class="top-header">
 
-            <div class="header-actions">
+            <div class="header-inner">
 
                 <button
                     type="button"
+                    class="header-icon-button profile-button"
+                    id="profileButton"
+                    aria-label="Profile"
+                >
+                    <span class="profile-icon">●</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="language-button"
                     id="languageButton"
-                    class="header-button"
                 >
-                    EN
+                    <span class="language-flag">🇬🇧</span>
+                    <span id="languageText">EN</span>
                 </button>
 
-                <button
-                    type="button"
-                    id="loginButton"
-                    class="header-button primary-button"
+
+                <form
+                    class="search-box"
+                    id="searchForm"
+                    autocomplete="off"
                 >
-                    Login
-                </button>
-
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <!-- Main Content -->
-    <main>
-
-        <!-- Hero Section -->
-        <section class="hero-section">
-
-            <div class="hero-container">
-
-                <div class="hero-content">
-
-                    <span class="hero-label">
-                        Welcome to Mazad
-                    </span>
-
-                    <h1>
-                        Buy and Sell
-                        <br>
-                        Everything You Need
-                    </h1>
-
-                    <p>
-                        Discover products, connect with sellers,
-                        and find great deals on Mazad.
-                    </p>
-
-                    <div class="hero-actions">
-
-                        <button
-                            type="button"
-                            id="browseProductsButton"
-                            class="hero-button primary-button"
-                        >
-                            Browse Products
-                        </button>
-
-                        <button
-                            type="button"
-                            id="sellProductButton"
-                            class="hero-button secondary-button"
-                        >
-                            Sell a Product
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- Search Section -->
-        <section class="search-section">
-
-            <div class="search-container">
-
-                <form id="searchForm" class="search-form">
 
                     <input
                         type="search"
                         id="searchInput"
-                        class="search-input"
-                        placeholder="Search products..."
-                        autocomplete="off"
+                        placeholder="ابحث عن أي شيء..."
+                        aria-label="Search"
                     >
 
                     <button
                         type="submit"
-                        class="search-button"
+                        aria-label="Search"
+                        class="search-submit"
                     >
-                        Search
+                        <span>⌕</span>
                     </button>
 
                 </form>
 
-            </div>
 
-        </section>
-
-
-        <!-- Categories -->
-        <section class="categories-section">
-
-            <div class="section-container">
-
-                <div class="section-heading">
-
-                    <div>
-                        <span class="section-label">
-                            Explore
-                        </span>
-
-                        <h2>
-                            Popular Categories
-                        </h2>
-                    </div>
-
-                </div>
-
-
-                <div class="categories-grid">
-
-                    <button
-                        type="button"
-                        class="category-card"
-                        data-category="Electronics"
-                    >
-                        <span class="category-icon">📱</span>
-                        <span class="category-name">
-                            Electronics
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="category-card"
-                        data-category="Vehicles"
-                    >
-                        <span class="category-icon">🚗</span>
-                        <span class="category-name">
-                            Vehicles
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="category-card"
-                        data-category="Fashion"
-                    >
-                        <span class="category-icon">👕</span>
-                        <span class="category-name">
-                            Fashion
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="category-card"
-                        data-category="Home"
-                    >
-                        <span class="category-icon">🏠</span>
-                        <span class="category-name">
-                            Home
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="category-card"
-                        data-category="Mobile"
-                    >
-                        <span class="category-icon">📲</span>
-                        <span class="category-name">
-                            Mobile
-                        </span>
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="category-card"
-                        data-category="Other"
-                    >
-                        <span class="category-icon">🛍️</span>
-                        <span class="category-name">
-                            Other
-                        </span>
-                    </button>
-
-                </div>
+                <a
+                    href="#"
+                    class="mazad-logo"
+                    id="mazadLogo"
+                    aria-label="Mazad Home"
+                >
+                    مزاد
+                </a>
 
             </div>
 
-        </section>
+        </header>
 
 
-        <!-- Products -->
-        <section class="products-section">
+        <!-- =====================================
+             MAIN CONTENT
+        ====================================== -->
 
-            <div class="section-container">
+        <main class="main-content">
 
-                <div class="section-heading">
+            <!-- =================================
+                 CATEGORY NAVIGATION
+            ================================== -->
 
-                    <div>
-                        <span class="section-label">
-                            Marketplace
-                        </span>
-
-                        <h2>
-                            Latest Products
-                        </h2>
-                    </div>
-
-                    <button
-                        type="button"
-                        id="viewAllProductsButton"
-                        class="text-button"
-                    >
-                        View All
-                    </button>
-
-                </div>
-
+            <section class="categories-section">
 
                 <div
-                    id="productsContainer"
-                    class="products-grid"
+                    class="categories-track"
+                    id="categoriesTrack"
                 >
-
-                    <div class="empty-products">
-                        <h3>
-                            No products yet
-                        </h3>
-
-                        <p>
-                            Products will appear here when sellers
-                            start listing items.
-                        </p>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- Sell CTA -->
-        <section class="sell-section">
-
-            <div class="section-container">
-
-                <div class="sell-card">
-
-                    <div class="sell-content">
-
-                        <span class="section-label">
-                            Start Selling
-                        </span>
-
-                        <h2>
-                            Have something to sell?
-                        </h2>
-
-                        <p>
-                            Create your seller account and list
-                            your products on Mazad.
-                        </p>
-
-                    </div>
 
                     <button
                         type="button"
-                        id="startSellingButton"
-                        class="hero-button primary-button"
+                        class="category-item active"
+                        data-category="home"
                     >
-                        Start Selling
+                        <span class="category-icon category-logo">
+                            مزاد
+                        </span>
+
+                        <span class="category-title">
+                            الرئيسية
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="cars"
+                    >
+                        <span class="category-icon">
+                            🚘
+                        </span>
+
+                        <span class="category-title">
+                            سيارات
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="devices"
+                    >
+                        <span class="category-icon">
+                            📱
+                        </span>
+
+                        <span class="category-title">
+                            أجهزة
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="real-estate"
+                    >
+                        <span class="category-icon">
+                            🏠
+                        </span>
+
+                        <span class="category-title">
+                            عقارات
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="furniture"
+                    >
+                        <span class="category-icon">
+                            🛋️
+                        </span>
+
+                        <span class="category-title">
+                            أثاث
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="services"
+                    >
+                        <span class="category-icon">
+                            🤝
+                        </span>
+
+                        <span class="category-title">
+                            خدمات
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="fashion"
+                    >
+                        <span class="category-icon">
+                            👔
+                        </span>
+
+                        <span class="category-title">
+                            أزياء
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="animals"
+                    >
+                        <span class="category-icon">
+                            🐑
+                        </span>
+
+                        <span class="category-title">
+                            حيوانات
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="jobs"
+                    >
+                        <span class="category-icon">
+                            💼
+                        </span>
+
+                        <span class="category-title">
+                            وظائف
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-item"
+                        data-category="games"
+                    >
+                        <span class="category-icon">
+                            🎮
+                        </span>
+
+                        <span class="category-title">
+                            ألعاب
+                        </span>
                     </button>
 
                 </div>
 
-            </div>
 
-        </section>
+                <div class="category-pagination">
 
-    </main>
+                    <span class="pagination-dot active"></span>
+                    <span class="pagination-dot"></span>
+                    <span class="pagination-dot"></span>
+
+                </div>
+
+            </section>
 
 
-    <!-- Footer -->
-    <footer class="site-footer">
+            <!-- =================================
+                 FILTER BAR
+            ================================== -->
 
-        <div class="footer-container">
+            <section class="filter-section">
 
-            <div class="footer-brand">
+                <div class="filter-bar">
 
-                <a href="#" class="logo">
-                    Mazad
-                </a>
+                    <button
+                        type="button"
+                        class="filter-button"
+                        id="regionButton"
+                    >
+                        <span class="filter-icon">◈</span>
+
+                        <span>
+                            المنطقة
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="filter-button"
+                        id="nearButton"
+                    >
+                        <span class="filter-icon">➤</span>
+
+                        <span>
+                            بالقرب مني
+                        </span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="filter-button active-filter"
+                        id="newButton"
+                    >
+                        <span>
+                            الأحدث
+                        </span>
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 LISTINGS
+            ================================== -->
+
+            <section class="listings-section">
+
+                <div
+                    class="listings-container"
+                    id="listingsContainer"
+                >
+
+                    <!-- Listing 1 -->
+
+                    <article
+                        class="listing-card"
+                        data-category="cars"
+                    >
+
+                        <div class="listing-image-wrapper">
+
+                            <img
+                                src=""
+                                alt="سيارة للبيع"
+                                class="listing-image"
+                                loading="lazy"
+                            >
+
+                            <button
+                                type="button"
+                                class="favorite-button"
+                                aria-label="Add to favorites"
+                            >
+                                ♡
+                            </button>
+
+                        </div>
+
+
+                        <div class="listing-content">
+
+                            <div class="listing-top-row">
+
+                                <h2 class="listing-title">
+                                    لكزس 2015 نظيف
+                                </h2>
+
+                            </div>
+
+
+                            <div class="listing-price">
+                                قابل للتفاوض
+                            </div>
+
+
+                            <div class="listing-meta">
+
+                                <span>
+                                    ◉ الرياض
+                                </span>
+
+                                <span>
+                                    ◷ الآن
+                                </span>
+
+                            </div>
+
+
+                            <div class="seller-row">
+
+                                <div class="seller-avatar">
+                                    م
+                                </div>
+
+                                <span class="seller-name">
+                                    محمد محمد
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- Listing 2 -->
+
+                    <article
+                        class="listing-card"
+                        data-category="real-estate"
+                    >
+
+                        <div class="listing-image-wrapper">
+
+                            <img
+                                src=""
+                                alt="غرفة للبيع"
+                                class="listing-image"
+                                loading="lazy"
+                            >
+
+                            <button
+                                type="button"
+                                class="favorite-button"
+                                aria-label="Add to favorites"
+                            >
+                                ♡
+                            </button>
+
+                        </div>
+
+
+                        <div class="listing-content">
+
+                            <h2 class="listing-title">
+                                غرفة نوم فاخرة
+                            </h2>
+
+
+                            <div class="listing-price">
+                                1,500 ريال
+                            </div>
+
+
+                            <div class="listing-meta">
+
+                                <span>
+                                    ◉ الدمام
+                                </span>
+
+                                <span>
+                                    ◷ الآن
+                                </span>
+
+                            </div>
+
+
+                            <div class="seller-row">
+
+                                <div class="seller-avatar">
+                                    ه
+                                </div>
+
+                                <span class="seller-name">
+                                    هلال 01
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- Listing 3 -->
+
+                    <article
+                        class="listing-card"
+                        data-category="cars"
+                    >
+
+                        <div class="listing-image-wrapper">
+
+                            <img
+                                src=""
+                                alt="سيارة للبيع"
+                                class="listing-image"
+                                loading="lazy"
+                            >
+
+                            <button
+                                type="button"
+                                class="favorite-button"
+                                aria-label="Add to favorites"
+                            >
+                                ♡
+                            </button>
+
+                        </div>
+
+
+                        <div class="listing-content">
+
+                            <h2 class="listing-title">
+                                لكزس 2018 مالك أول
+                            </h2>
+
+
+                            <div class="listing-price">
+                                85,000 ريال
+                            </div>
+
+
+                            <div class="listing-meta">
+
+                                <span>
+                                    ◉ جدة
+                                </span>
+
+                                <span>
+                                    ◷ الآن
+                                </span>
+
+                            </div>
+
+
+                            <div class="seller-row">
+
+                                <div class="seller-avatar">
+                                    ع
+                                </div>
+
+                                <span class="seller-name">
+                                    عبدالله
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- Listing 4 -->
+
+                    <article
+                        class="listing-card"
+                        data-category="devices"
+                    >
+
+                        <div class="listing-image-wrapper">
+
+                            <img
+                                src=""
+                                alt="جهاز إلكتروني للبيع"
+                                class="listing-image"
+                                loading="lazy"
+                            >
+
+                            <button
+                                type="button"
+                                class="favorite-button"
+                                aria-label="Add to favorites"
+                            >
+                                ♡
+                            </button>
+
+                        </div>
+
+
+                        <div class="listing-content">
+
+                            <h2 class="listing-title">
+                                آيفون جديد مع الضمان
+                            </h2>
+
+
+                            <div class="listing-price">
+                                3,200 ريال
+                            </div>
+
+
+                            <div class="listing-meta">
+
+                                <span>
+                                    ◉ الرياض
+                                </span>
+
+                                <span>
+                                    ◷ الآن
+                                </span>
+
+                            </div>
+
+
+                            <div class="seller-row">
+
+                                <div class="seller-avatar">
+                                    س
+                                </div>
+
+                                <span class="seller-name">
+                                    سامي
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+        <!-- =====================================
+             MOBILE BOTTOM NAVIGATION
+        ====================================== -->
+
+        <nav
+            class="bottom-navigation"
+            aria-label="Main navigation"
+        >
+
+            <button
+                type="button"
+                class="bottom-nav-item active"
+                data-nav="home"
+            >
+
+                <span class="bottom-nav-icon">
+                    ⌂
+                </span>
+
+                <span class="bottom-nav-label">
+                    الرئيسية
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="bottom-nav-item"
+                data-nav="all"
+            >
+
+                <span class="bottom-nav-icon">
+                    ▦
+                </span>
+
+                <span class="bottom-nav-label">
+                    الكل
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="add-post-button"
+                id="addPostButton"
+            >
+
+                <span class="add-post-plus">
+                    +
+                </span>
+
+                <span class="add-post-label">
+                    إضافة إعلان
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="bottom-nav-item"
+                data-nav="notifications"
+            >
+
+                <span class="bottom-nav-icon notification-icon">
+                    ♧
+                </span>
+
+                <span class="notification-badge">
+                    0
+                </span>
+
+                <span class="bottom-nav-label">
+                    الإشعارات
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="bottom-nav-item"
+                data-nav="chat"
+            >
+
+                <span class="bottom-nav-icon">
+                    ✉
+                </span>
+
+                <span class="bottom-nav-label">
+                    المحادثات
+                </span>
+
+            </button>
+
+        </nav>
+
+
+        <!-- =====================================
+             LOGIN MODAL
+        ====================================== -->
+
+        <div
+            class="modal-overlay"
+            id="loginModal"
+            aria-hidden="true"
+        >
+
+            <div
+                class="modal-card"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="loginModalTitle"
+            >
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="loginModalClose"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+
+                <div class="modal-icon">
+                    👤
+                </div>
+
+
+                <h2 id="loginModalTitle">
+                    تسجيل الدخول
+                </h2>
+
 
                 <p>
-                    A modern marketplace for buyers and sellers.
+                    سجل دخولك للوصول إلى حسابك وإعلاناتك ومحادثاتك.
                 </p>
 
-            </div>
 
-
-            <div class="footer-links">
-
-                <a href="#">
-                    Home
-                </a>
-
-                <a href="#">
-                    Products
-                </a>
-
-                <a href="#">
-                    About
-                </a>
-
-                <a href="#">
-                    Contact
-                </a>
-
-                <a href="#">
-                    Privacy
-                </a>
+                <button
+                    type="button"
+                    class="modal-primary-button"
+                    id="loginModalButton"
+                >
+                    تسجيل الدخول
+                </button>
 
             </div>
 
         </div>
 
 
-        <div class="footer-bottom">
+        <!-- =====================================
+             ADD POST MODAL
+        ====================================== -->
 
-            <p>
-                © 2026 Mazad. All rights reserved.
-            </p>
+        <div
+            class="modal-overlay"
+            id="addPostModal"
+            aria-hidden="true"
+        >
+
+            <div
+                class="modal-card"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="addPostModalTitle"
+            >
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="addPostModalClose"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+
+                <div class="modal-icon">
+                    ＋
+                </div>
+
+
+                <h2 id="addPostModalTitle">
+                    إضافة إعلان
+                </h2>
+
+
+                <p>
+                    قريباً ستتمكن من إضافة سيارات وعقارات وأجهزة
+                    وخدمات ومنتجاتك بسهولة.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="modal-primary-button"
+                    id="addPostModalButton"
+                >
+                    متابعة
+                </button>
+
+            </div>
 
         </div>
 
-    </footer>
+    </div>
 
 
-    <!-- JavaScript -->
     <script
         type="module"
         src="script.js"
     ></script>
 
 </body>
+
 </html>
