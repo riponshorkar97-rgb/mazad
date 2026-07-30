@@ -1,35 +1,162 @@
-// ==========================
-// MAZAD - Script v1
-// ==========================
+/* =================================
+   MAZAD PREMIUM JAVASCRIPT
+   VERSION 2.0
+================================= */
 
-console.log("Mazad Loaded Successfully");
 
-// Category Click
-const categories = document.querySelectorAll(".category-card");
+// App Loaded
 
-categories.forEach((card) => {
-    card.addEventListener("click", () => {
-        alert("Category: " + card.innerText);
-    });
-});
+document.addEventListener("DOMContentLoaded", () => {
 
-// Bottom Navigation Active
-const navLinks = document.querySelectorAll(".bottom-nav a");
+    console.log("Mazad Premium Loaded");
 
-navLinks.forEach((link) => {
-    link.addEventListener("click", function () {
 
-        navLinks.forEach((item) => {
-            item.style.color = "#9ca3af";
+    /* =========================
+       Favorite Button
+    ========================= */
+
+
+    const favoriteButtons = document.querySelectorAll(".favorite-btn");
+
+
+    favoriteButtons.forEach(button => {
+
+
+        button.addEventListener("click", () => {
+
+
+            const icon = button.querySelector("i");
+
+
+            icon.classList.toggle("fa-regular");
+
+            icon.classList.toggle("fa-solid");
+
+
+
+            if(icon.classList.contains("fa-solid")){
+
+                icon.style.color = "#ff3b5c";
+
+            }else{
+
+                icon.style.color = "#ffffff";
+
+            }
+
+
+
         });
 
-        this.style.color = "#1e88e5";
+
+
     });
-});
 
-// Search
-const searchInput = document.querySelector(".search-box input");
 
-searchInput.addEventListener("keyup", function () {
-    console.log("Searching:", this.value);
+
+
+
+    /* =========================
+       Search
+    ========================= */
+
+
+    const searchInput = document.querySelector(".premium-search input");
+
+
+    if(searchInput){
+
+
+        searchInput.addEventListener("keyup", function(){
+
+
+            let value = this.value.trim();
+
+
+            console.log("Searching:", value);
+
+
+
+        });
+
+
+
+    }
+
+
+
+
+
+    /* =========================
+       Bottom Navigation
+    ========================= */
+
+
+    const navItems = document.querySelectorAll(".bottom-navigation a");
+
+
+
+    navItems.forEach(item => {
+
+
+        item.addEventListener("click", function(){
+
+
+
+            navItems.forEach(nav => {
+
+
+                nav.classList.remove("active");
+
+
+            });
+
+
+
+            this.classList.add("active");
+
+
+
+        });
+
+
+
+    });
+
+
+
+
+
+
+    /* =========================
+       Category Click
+    ========================= */
+
+
+    const categories = document.querySelectorAll(".category-card");
+
+
+
+    categories.forEach(category => {
+
+
+        category.addEventListener("click",()=>{
+
+
+            let name = category.innerText;
+
+
+            console.log("Category:",name);
+
+
+
+        });
+
+
+
+    });
+
+
+
+
 });
