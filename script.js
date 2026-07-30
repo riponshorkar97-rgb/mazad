@@ -915,68 +915,53 @@ document.addEventListener(
 
     }
 
+/* =======================================================
+   Firebase Errors
+======================================================= */
 
-    /* =======================================================
-       Firebase Errors
-    ======================================================= */
+function getFirebaseErrorMessage(error) {
+  switch (error.code) {
+    case "auth/email-already-in-use":
+      return currentLanguage === "ar"
+        ? "هذا البريد الإلكتروني مسجل بالفعل."
+        : "This email is already registered.";
 
-    function getFirebaseErrorMessage(error) {
+    case "auth/invalid-email":
+      return currentLanguage === "ar"
+        ? "يرجى إدخال بريد إلكتروني صالح."
+        : "Please enter a valid email address.";
 
-      switch (error.code) {
+    case "auth/weak-password":
+      return currentLanguage === "ar"
+        ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
+        : "Password must be at least 6 characters.";
 
-        case "auth/email-already-in-use":
+    case "auth/invalid-credential":
+      return currentLanguage === "ar"
+        ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+        : "Email or password is incorrect.";
 
-          return currentLanguage === "ar"
-            ? "Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù…Ø³Ø¬Ù„ Ø¨Ø§Ù„ÙØ¹Ù„."
-            : "This email is already registered.";
+    case "auth/user-not-found":
+      return currentLanguage === "ar"
+        ? "لا يوجد حساب بهذا البريد الإلكتروني."
+        : "No account found with this email.";
 
-        case "auth/invalid-email":
+    case "auth/wrong-password":
+      return currentLanguage === "ar"
+        ? "كلمة المرور غير صحيحة."
+        : "Incorrect password.";
 
-          return currentLanguage === "ar"
-            ? "ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØµØ§Ù„Ø­."
-            : "Please enter a valid email address.";
+    case "auth/too-many-requests":
+      return currentLanguage === "ar"
+        ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
+        : "Too many attempts. Please try again later.";
 
-        case "auth/weak-password":
-
-          return currentLanguage === "ar"
-            ? "ÙŠØ¬Ø¨ Ø£Ù† ØªØªÙƒÙˆÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù…Ù† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„."
-            : "Password must be at least 6 characters.";
-
-        case "auth/invalid-credential":
-
-          return currentLanguage === "ar"
-            ? "Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø£Ùˆ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± ØµØ­ÙŠØ­Ø©."
-            : "Email or password is incorrect.";
-
-        case "auth/user-not-found":
-
-          return currentLanguage === "ar"
-            ? "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø­Ø³Ø§Ø¨ Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ."
-            : "No account found with this email.";
-
-        case "auth/wrong-password":
-
-          return currentLanguage === "ar"
-            ? "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± ØµØ­ÙŠØ­Ø©."
-            : "Incorrect password.";
-
-        case "auth/too-many-requests":
-
-          return currentLanguage === "ar"
-            ? "Ù…Ø­Ø§ÙˆÙ„Ø§Øª ÙƒØ«ÙŠØ±Ø© Ø¬Ø¯Ø§Ù‹. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ø§Ù‹."
-            : "Too many attempts. Please try again later.";
-
-        default:
-
-          return currentLanguage === "ar"
-            ? "Ø­Ø¯Ø« Ø®Ø·Ø£ Ù…Ø§. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰."
-            : "Something went wrong. Please try again.";
-
-      }
-
-    }
-
-
+    default:
+      return currentLanguage === "ar"
+        ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+        : "Something went wrong. Please try again.";
+  }
+}
     /* =======================================================
        Profile Data
     ======================================================= */
