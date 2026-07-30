@@ -1,20 +1,12 @@
 /* =========================================================
-   MAZAD — Optimized Script.js
-   Part 1 / 6
-
-   Firebase Authentication
-   Firestore
+   MAZAD — Main JavaScript
+   Firebase Authentication + Firestore
    Cloudinary Image Upload
    English + Arabic
-   Fast Image Upload
-   Fast Image Loading
-   Profile + Buyer/Seller + Messenger
+   Profile + Products + Messenger
+   ========================================================= */
 
-   Firebase Storage is NOT used.
-========================================================= */
-
-import { initializeApp } from
-  "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
   getAuth,
@@ -22,29 +14,27 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
-} from
-  "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
   getFirestore,
   collection,
-  addDoc,
-  getDocs,
+  doc,
   getDoc,
+  getDocs,
   setDoc,
+  addDoc,
+  deleteDoc,
   query,
   where,
-  deleteDoc,
-  doc,
-  serverTimestamp,
-  onSnapshot
-} from
-  "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
 /* =========================================================
-   Firebase Configuration
-========================================================= */
+   FIREBASE CONFIGURATION
+   ========================================================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBfiON-27mz4OlD2Hl8uGNMk_2iS2cp2Qw",
@@ -58,8 +48,18 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   Cloudinary
-========================================================= */
+   INITIALIZE FIREBASE
+   ========================================================= */
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+
+/* =========================================================
+   CLOUDINARY
+   Firebase Storage is NOT used.
+   ========================================================= */
 
 const CLOUDINARY_CLOUD_NAME = "bhpccaio";
 const CLOUDINARY_UPLOAD_PRESET = "mazad_upload";
@@ -69,229 +69,151 @@ const CLOUDINARY_UPLOAD_URL =
 
 
 /* =========================================================
-   Initialize Firebase
-========================================================= */
+   GLOBAL VARIABLES
+   ========================================================= */
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+let products = [];
+let currentProfile = null;
+
+let selectedConversationId = null;
+let selectedChatUser = null;
+
+let unsubscribeMessages = null;
+
+let currentLanguage =
+  localStorage.getItem("mazadLanguage") || "en";
 
 
 /* =========================================================
-   Translations
-========================================================= */
+   TRANSLATIONS
+   ========================================================= */
 
 const translations = {
 
   en: {
 
-    home: "Home",
-    categories: "Categories",
-    listings: "Listings",
-    login: "Login",
-    profile: "Profile",
-    sellProduct: "Sell Product",
-
-    welcome: "Welcome to Mazad",
-    buySell: "Buy & Sell",
-    anythingEasily: "Anything Easily",
-
-    heroDescription:
-      "Find great products near you or sell your products quickly and easily on Mazad.",
-
-    browseProducts: "Browse Products",
-    sellSomething: "Sell Something",
-
-    simpleFastSecure:
-      "Simple • Fast • Secure",
-
-    searchPlaceholder:
-      "What are you looking for?",
-
-    allCategories:
-      "All Categories",
-
-    search: "Search",
-    explore: "Explore",
-
-    popularCategories:
-      "Popular Categories",
-
-    cars: "Cars",
-    mobiles: "Mobiles",
-    electronics: "Electronics",
-    property: "Property",
-    fashion: "Fashion",
-    jobs: "Jobs",
+    member: "Member",
+    unknown: "Unknown",
+    loading: "Loading...",
     others: "Others",
+    noDescription: "No description available.",
+    product: "Product",
+    sellerUnavailable: "Seller unavailable",
 
-    findNextCar:
-      "Find your next car",
+    login: "Login",
+    register: "Register",
+    createAccount: "Create Account",
+    logout: "Logout",
 
-    phonesAccessories:
-      "Phones & accessories",
+    loggedInAs: "Logged in as",
 
-    devicesGadgets:
-      "Devices & gadgets",
+    email: "Email",
+    password: "Password",
+    name: "Name",
+    phone: "Phone",
+    location: "Location",
 
-    homesLand:
-      "Homes & land",
+    emailAlreadyRegistered:
+      "This email is already registered.",
 
-    clothesAccessories:
-      "Clothes & accessories",
+    invalidEmail:
+      "Please enter a valid email address.",
 
-    findOpportunities:
-      "Find opportunities",
+    weakPassword:
+      "Password must be at least 6 characters.",
 
-    marketplace:
-      "Marketplace",
+    invalidCredential:
+      "Email or password is incorrect.",
 
-    latestListings:
-      "Latest Listings",
+    userNotFound:
+      "No account found with this email.",
 
-    loadingProducts:
-      "Loading products...",
+    wrongPassword:
+      "Incorrect password.",
 
-    pleaseWait:
-      "Please wait.",
+    tooManyRequests:
+      "Too many attempts. Please try again later.",
 
-    sellYourProduct:
-      "Sell Your Product",
+    somethingWentWrong:
+      "Something went wrong. Please try again.",
 
-    productTitle:
-      "Product title",
+    loginFirst:
+      "Please login first.",
 
-    selectCategory:
-      "Select Category",
+    loginToMessage:
+      "Please login to send a message.",
 
-    price:
-      "Price",
+    cannotMessageSelf:
+      "You cannot message yourself.",
 
-    location:
-      "Location",
+    loggedOut:
+      "You have been logged out.",
 
-    productImage:
-      "Product Image",
+    profileRequired:
+      "Please login to view your profile.",
 
-    productDescription:
-      "Product description",
+    profileNotFound:
+      "Profile not found.",
+
+    editProfile:
+      "Edit Profile",
+
+    editProfileLogin:
+      "Please login to edit your profile.",
+
+    saveProfile:
+      "Save Profile",
+
+    profileSaved:
+      "Profile saved successfully.",
+
+    bio:
+      "Bio",
+
+    joinDate:
+      "Joined",
+
+    myListings:
+      "My Listings",
+
+    noListings:
+      "No listings yet.",
+
+    publish:
+      "Publish",
 
     publishProduct:
       "Publish Product",
 
-    welcomeMazad:
-      "Welcome to Mazad",
+    published:
+      "Product published successfully.",
 
-    loginRegisterMessage:
-      "Login or register to start buying and selling.",
+    publishFailed:
+      "Failed to publish product.",
 
-    emailAddress:
-      "Email address",
+    enterProductTitle:
+      "Please enter a product title.",
 
-    password:
-      "Password",
+    enterPrice:
+      "Please enter a price.",
 
-    passwordMin:
-      "Password (minimum 6 characters)",
+    invalidPrice:
+      "Please enter a valid price.",
 
-    createAccount:
-      "Create Account",
+    selectCategory:
+      "Please select a category.",
 
-    createNewAccount:
-      "Create new account",
+    enterLocation:
+      "Please enter a location.",
 
-    alreadyAccount:
-      "Already have an account? Login",
-
-    description:
-      "Description",
-
-    seller:
-      "Seller",
-
-    buySellProducts:
-      "Buy and sell products easily.",
-
-    allRightsReserved:
-      "All rights reserved.",
-
-    viewDetails:
-      "View Details",
+    selectImage:
+      "Please select a product image.",
 
     noProducts:
-      "No products found",
-
-    tryAnother:
-      "Try another search or category.",
-
-    unknown:
-      "Unknown",
-
-    noDescription:
-      "No description available.",
-
-    sellerUnavailable:
-      "Seller information unavailable",
-
-    contactSeller:
-      "Contact Seller",
+      "No products found.",
 
     deleteProduct:
       "Delete Product",
-
-    loadingError:
-      "Could not load products",
-
-    firestoreError:
-      "Please check your Firestore rules and try again.",
-
-    imageTooLarge:
-      "Image must be less than 10 MB.",
-
-    validImage:
-      "Please select a valid image.",
-
-    imageUploaded:
-      "Image uploaded successfully! ✅",
-
-    uploadingImage:
-      "Uploading image to Cloudinary...",
-
-    preparingProduct:
-      "Preparing product...",
-
-    savingProduct:
-      "Saving product...",
-
-    published:
-      "Product published successfully! 🎉",
-
-    loginBeforeSell:
-      "Please login or create an account before selling a product.",
-
-    loginBeforePublish:
-      "Please login before publishing a product.",
-
-    accountCreated:
-      "Account created successfully! 🎉",
-
-    loginSuccessful:
-      "Login successful! 🎉",
-
-    creatingAccount:
-      "Creating account...",
-
-    loggingIn:
-      "Logging in...",
-
-    loggedInAs:
-      "Logged in as",
-
-    logout:
-      "Logout",
-
-    loggedOut:
-      "Logged out successfully.",
 
     deleteConfirm:
       "Are you sure you want to delete this product?",
@@ -300,73 +222,13 @@ const translations = {
       "Product deleted successfully.",
 
     deleteFailed:
-      "Could not delete the product. Please try again.",
+      "Failed to delete product.",
 
     productNotFound:
       "Product not found.",
 
     ownProduct:
-      "You can only delete your own products.",
-
-    loginFirst:
-      "Please login first.",
-
-    uploadFailed:
-      "Cloudinary upload failed.",
-
-    imageUrlFailed:
-      "Cloudinary did not return an image URL.",
-
-    publishFailed:
-      "Failed to publish product. Please try again.",
-
-    account:
-      "Account",
-
-    myProfile:
-      "My Profile",
-
-    editProfile:
-      "Edit Profile",
-
-    profilePhoto:
-      "Profile Photo",
-
-    yourName:
-      "Your name",
-
-    phoneNumber:
-      "Phone number",
-
-    aboutBio:
-      "About you",
-
-    saveProfile:
-      "Save Profile",
-
-    profileSaved:
-      "Profile updated successfully! 🎉",
-
-    profileRequired:
-      "Please login to view your profile.",
-
-    joinDate:
-      "Joined",
-
-    phone:
-      "Phone",
-
-    email:
-      "Email",
-
-    bio:
-      "About",
-
-    myListings:
-      "My Listings",
-
-    noListings:
-      "No listings yet.",
+      "You can only delete your own product.",
 
     viewProfile:
       "View Profile",
@@ -377,360 +239,183 @@ const translations = {
     call:
       "Call",
 
-    communication:
-      "Communication",
+    imageTooLarge:
+      "Image must be 10 MB or smaller.",
 
-    messages:
-      "Messages",
+    validImage:
+      "Please select a valid image file.",
 
-    noConversations:
-      "No conversations yet.",
+    uploadingImage:
+      "Uploading image...",
 
-    selectConversation:
-      "Select a conversation",
+    imageUploaded:
+      "Image uploaded successfully.",
 
-    writeMessage:
-      "Write a message...",
+    uploadFailed:
+      "Image upload failed.",
 
-    send:
-      "Send",
-
-    profileNotFound:
-      "Profile not found.",
-
-    loginToMessage:
-      "Please login to send a message.",
-
-    cannotMessageSelf:
-      "You cannot message yourself.",
-
-    messageSent:
-      "Message sent.",
+    imageUrlFailed:
+      "Could not get image URL.",
 
     noMessages:
       "No messages yet.",
 
-    loading:
-      "Loading...",
+    noConversations:
+      "No conversations yet.",
 
-    member:
-      "Member",
+    firestoreError:
+      "Something went wrong with Firestore.",
 
-    editProfileLogin:
-      "Please login before editing your profile.",
+    send:
+      "Send",
 
-    profileImageUploaded:
-      "Profile photo uploaded successfully.",
+    search:
+      "Search",
 
-    profileImageUploadFailed:
-      "Could not upload profile photo."
-
+    allCategories:
+      "All Categories"
   },
 
 
   ar: {
 
-    home: "الرئيسية",
-    categories: "الفئات",
-    listings: "الإعلانات",
+    member: "عضو",
+    unknown: "غير معروف",
+    loading: "جار التحميل...",
+    others: "أخرى",
+    noDescription: "لا يوجد وصف متاح.",
+    product: "منتج",
+    sellerUnavailable: "البائع غير متاح",
+
     login: "تسجيل الدخول",
-    profile: "الملف الشخصي",
-    sellProduct: "بيع منتج",
+    register: "إنشاء حساب",
+    createAccount: "إنشاء حساب",
+    logout: "تسجيل الخروج",
 
-    welcome: "مرحباً بك في مزاد",
-    buySell: "بيع وشراء",
-    anythingEasily: "أي شيء بسهولة",
+    loggedInAs: "تم تسجيل الدخول باسم",
 
-    heroDescription:
-      "اعثر على منتجات رائعة بالقرب منك أو قم ببيع منتجاتك بسرعة وسهولة على مزاد.",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    name: "الاسم",
+    phone: "الهاتف",
+    location: "الموقع",
 
-    browseProducts:
-      "تصفح المنتجات",
+    emailAlreadyRegistered:
+      "هذا البريد الإلكتروني مسجل بالفعل.",
 
-    sellSomething:
-      "بيع شيء ما",
+    invalidEmail:
+      "يرجى إدخال بريد إلكتروني صالح.",
 
-    simpleFastSecure:
-      "بسيط • سريع • آمن",
+    weakPassword:
+      "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
 
-    searchPlaceholder:
-      "ما الذي تبحث عنه؟",
+    invalidCredential:
+      "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
 
-    allCategories:
-      "جميع الفئات",
+    userNotFound:
+      "لا يوجد حساب بهذا البريد الإلكتروني.",
 
-    search:
-      "بحث",
+    wrongPassword:
+      "كلمة المرور غير صحيحة.",
 
-    explore:
-      "استكشف",
+    tooManyRequests:
+      "محاولات كثيرة جداً. يرجى المحاولة لاحقاً.",
 
-    popularCategories:
-      "الفئات الشائعة",
+    somethingWentWrong:
+      "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
 
-    cars:
-      "سيارات",
+    loginFirst:
+      "يرجى تسجيل الدخول أولاً.",
 
-    mobiles:
-      "جوالات",
+    loginToMessage:
+      "يرجى تسجيل الدخول لإرسال رسالة.",
 
-    electronics:
-      "إلكترونيات",
+    cannotMessageSelf:
+      "لا يمكنك مراسلة نفسك.",
 
-    property:
-      "عقارات",
+    loggedOut:
+      "تم تسجيل خروجك.",
 
-    fashion:
-      "أزياء",
+    profileRequired:
+      "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
 
-    jobs:
-      "وظائف",
+    profileNotFound:
+      "لم يتم العثور على الملف الشخصي.",
 
-    others:
-      "أخرى",
+    editProfile:
+      "تعديل الملف الشخصي",
 
-    findNextCar:
-      "اعثر على سيارتك القادمة",
+    editProfileLogin:
+      "يرجى تسجيل الدخول لتعديل ملفك الشخصي.",
 
-    phonesAccessories:
-      "جوالات وإكسسوارات",
+    saveProfile:
+      "حفظ الملف الشخصي",
 
-    devicesGadgets:
-      "أجهزة وأدوات",
+    profileSaved:
+      "تم حفظ الملف الشخصي بنجاح.",
 
-    homesLand:
-      "منازل وأراضٍ",
+    bio:
+      "نبذة",
 
-    clothesAccessories:
-      "ملابس وإكسسوارات",
+    joinDate:
+      "تاريخ الانضمام",
 
-    findOpportunities:
-      "ابحث عن فرص",
+    myListings:
+      "إعلاناتي",
 
-    marketplace:
-      "السوق",
+    noListings:
+      "لا توجد إعلانات حتى الآن.",
 
-    latestListings:
-      "أحدث الإعلانات",
-
-    loadingProducts:
-      "جاري تحميل المنتجات...",
-
-    pleaseWait:
-      "يرجى الانتظار.",
-
-    sellYourProduct:
-      "بيع منتجك",
-
-    productTitle:
-      "عنوان المنتج",
-
-    selectCategory:
-      "اختر الفئة",
-
-    price:
-      "السعر",
-
-    location:
-      "الموقع",
-
-    productImage:
-      "صورة المنتج",
-
-    productDescription:
-      "وصف المنتج",
+    publish:
+      "نشر",
 
     publishProduct:
       "نشر المنتج",
 
-    welcomeMazad:
-      "مرحباً بك في مزاد",
+    published:
+      "تم نشر المنتج بنجاح.",
 
-    loginRegisterMessage:
-      "سجل الدخول أو أنشئ حساباً لبدء البيع والشراء.",
+    publishFailed:
+      "فشل نشر المنتج.",
 
-    emailAddress:
-      "البريد الإلكتروني",
+    enterProductTitle:
+      "يرجى إدخال اسم المنتج.",
 
-    password:
-      "كلمة المرور",
+    enterPrice:
+      "يرجى إدخال السعر.",
 
-    passwordMin:
-      "كلمة المرور (6 أحرف على الأقل)",
+    invalidPrice:
+      "يرجى إدخال سعر صالح.",
 
-    createAccount:
-      "إنشاء حساب",
+    selectCategory:
+      "يرجى اختيار الفئة.",
 
-    createNewAccount:
-      "إنشاء حساب جديد",
+    enterLocation:
+      "يرجى إدخال الموقع.",
 
-    alreadyAccount:
-      "لديك حساب بالفعل؟ تسجيل الدخول",
-
-    description:
-      "الوصف",
-
-    seller:
-      "البائع",
-
-    buySellProducts:
-      "اشترِ وبع المنتجات بسهولة.",
-
-    allRightsReserved:
-      "جميع الحقوق محفوظة.",
-
-    viewDetails:
-      "عرض التفاصيل",
+    selectImage:
+      "يرجى اختيار صورة المنتج.",
 
     noProducts:
-      "لم يتم العثور على منتجات",
-
-    tryAnother:
-      "جرب بحثاً أو فئة أخرى.",
-
-    unknown:
-      "غير معروف",
-
-    noDescription:
-      "لا يوجد وصف متاح.",
-
-    sellerUnavailable:
-      "معلومات البائع غير متاحة",
-
-    contactSeller:
-      "تواصل مع البائع",
+      "لم يتم العثور على منتجات.",
 
     deleteProduct:
       "حذف المنتج",
 
-    loadingError:
-      "تعذر تحميل المنتجات",
-
-    firestoreError:
-      "يرجى التحقق من إعدادات Firestore والمحاولة مرة أخرى.",
-
-    imageTooLarge:
-      "يجب أن يكون حجم الصورة أقل من 10 ميجابايت.",
-
-    validImage:
-      "يرجى اختيار صورة صالحة.",
-
-    imageUploaded:
-      "تم رفع الصورة بنجاح! ✅",
-
-    uploadingImage:
-      "جاري رفع الصورة إلى Cloudinary...",
-
-    preparingProduct:
-      "جاري تجهيز المنتج...",
-
-    savingProduct:
-      "جاري حفظ المنتج...",
-
-    published:
-      "تم نشر المنتج بنجاح! 🎉",
-
-    loginBeforeSell:
-      "يرجى تسجيل الدخول أو إنشاء حساب قبل بيع منتج.",
-
-    loginBeforePublish:
-      "يرجى تسجيل الدخول قبل نشر المنتج.",
-
-    accountCreated:
-      "تم إنشاء الحساب بنجاح! 🎉",
-
-    loginSuccessful:
-      "تم تسجيل الدخول بنجاح! 🎉",
-
-    creatingAccount:
-      "جاري إنشاء الحساب...",
-
-    loggingIn:
-      "جاري تسجيل الدخول...",
-
-    loggedInAs:
-      "تم تسجيل الدخول باسم",
-
-    logout:
-      "تسجيل الخروج",
-
-    loggedOut:
-      "تم تسجيل الخروج بنجاح.",
-
     deleteConfirm:
-      "هل أنت متأكد من رغبتك في حذف هذا المنتج؟",
+      "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
 
     deleted:
       "تم حذف المنتج بنجاح.",
 
     deleteFailed:
-      "تعذر حذف المنتج. يرجى المحاولة مرة أخرى.",
+      "فشل حذف المنتج.",
 
     productNotFound:
       "لم يتم العثور على المنتج.",
 
     ownProduct:
       "يمكنك حذف منتجاتك فقط.",
-
-    loginFirst:
-      "يرجى تسجيل الدخول أولاً.",
-
-    uploadFailed:
-      "فشل رفع الصورة إلى Cloudinary.",
-
-    imageUrlFailed:
-      "لم يُرجع Cloudinary رابط الصورة.",
-
-    publishFailed:
-      "فشل نشر المنتج. يرجى المحاولة مرة أخرى.",
-
-    account:
-      "الحساب",
-
-    myProfile:
-      "ملفي الشخصي",
-
-    editProfile:
-      "تعديل الملف الشخصي",
-
-    profilePhoto:
-      "الصورة الشخصية",
-
-    yourName:
-      "اسمك",
-
-    phoneNumber:
-      "رقم الهاتف",
-
-    aboutBio:
-      "نبذة عنك",
-
-    saveProfile:
-      "حفظ الملف الشخصي",
-
-    profileSaved:
-      "تم تحديث الملف الشخصي بنجاح! 🎉",
-
-    profileRequired:
-      "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
-
-    joinDate:
-      "تاريخ الانضمام",
-
-    phone:
-      "الهاتف",
-
-    email:
-      "البريد الإلكتروني",
-
-    bio:
-      "نبذة",
-
-    myListings:
-      "إعلاناتي",
-
-    noListings:
-      "لا توجد إعلانات بعد.",
 
     viewProfile:
       "عرض الملف الشخصي",
@@ -741,77 +426,63 @@ const translations = {
     call:
       "اتصال",
 
-    communication:
-      "التواصل",
+    imageTooLarge:
+      "يجب ألا يتجاوز حجم الصورة 10 ميجابايت.",
 
-    messages:
-      "الرسائل",
+    validImage:
+      "يرجى اختيار ملف صورة صالح.",
+
+    uploadingImage:
+      "جار رفع الصورة...",
+
+    imageUploaded:
+      "تم رفع الصورة بنجاح.",
+
+    uploadFailed:
+      "فشل رفع الصورة.",
+
+    imageUrlFailed:
+      "تعذر الحصول على رابط الصورة.",
+
+    noMessages:
+      "لا توجد رسائل حتى الآن.",
 
     noConversations:
-      "لا توجد محادثات بعد.",
+      "لا توجد محادثات حتى الآن.",
 
-    selectConversation:
-      "اختر محادثة",
-
-    writeMessage:
-      "اكتب رسالة...",
+    firestoreError:
+      "حدث خطأ في Firestore.",
 
     send:
       "إرسال",
 
-    profileNotFound:
-      "لم يتم العثور على الملف الشخصي.",
+    search:
+      "بحث",
 
-    loginToMessage:
-      "يرجى تسجيل الدخول لإرسال رسالة.",
-
-    cannotMessageSelf:
-      "لا يمكنك إرسال رسالة إلى نفسك.",
-
-    messageSent:
-      "تم إرسال الرسالة.",
-
-    noMessages:
-      "لا توجد رسائل بعد.",
-
-    loading:
-      "جاري التحميل...",
-
-    member:
-      "عضو",
-
-    editProfileLogin:
-      "يرجى تسجيل الدخول قبل تعديل ملفك الشخصي.",
-
-    profileImageUploaded:
-      "تم رفع الصورة الشخصية بنجاح.",
-
-    profileImageUploadFailed:
-      "تعذر رفع الصورة الشخصية."
-
+    allCategories:
+      "جميع الفئات"
   }
-
 };
 
 
 /* =========================================================
-   Language
-========================================================= */
-
-let currentLanguage =
-  localStorage.getItem("mazadLanguage") || "en";
-
+   TRANSLATION HELPER
+   ========================================================= */
 
 function t(key) {
 
   return (
     translations[currentLanguage]?.[key] ||
-    translations.en[key] ||
+    translations.en?.[key] ||
     key
   );
 
 }
 
+
+/* =========================================================
+   APPLY LANGUAGE
+   ========================================================= */
 
 function applyLanguage() {
 
@@ -823,22 +494,17 @@ function applyLanguage() {
       ? "rtl"
       : "ltr";
 
-  if (document.body) {
-
-    document.body.dir =
-      currentLanguage === "ar"
-        ? "rtl"
-        : "ltr";
-
-  }
-
 
   document
     .querySelectorAll("[data-i18n]")
     .forEach(element => {
 
-      element.textContent =
-        t(element.dataset.i18n);
+      const key =
+        element.getAttribute("data-i18n");
+
+      if (key) {
+        element.textContent = t(key);
+      }
 
     });
 
@@ -847,8 +513,30 @@ function applyLanguage() {
     .querySelectorAll("[data-i18n-placeholder]")
     .forEach(element => {
 
-      element.placeholder =
-        t(element.dataset.i18nPlaceholder);
+      const key =
+        element.getAttribute(
+          "data-i18n-placeholder"
+        );
+
+      if (key) {
+        element.placeholder = t(key);
+      }
+
+    });
+
+
+  document
+    .querySelectorAll("[data-i18n-title]")
+    .forEach(element => {
+
+      const key =
+        element.getAttribute(
+          "data-i18n-title"
+        );
+
+      if (key) {
+        element.title = t(key);
+      }
 
     });
 
@@ -857,7 +545,6 @@ function applyLanguage() {
     document.getElementById(
       "languageBtn"
     );
-
 
   if (languageBtn) {
 
@@ -868,3369 +555,535 @@ function applyLanguage() {
 
   }
 
-
-  document.title =
-    currentLanguage === "ar"
-      ? "مزاد — سوق البيع والشراء"
-      : "Mazad — Buy & Sell Marketplace";
-
 }
 
 
 /* =========================================================
-   Global State
-========================================================= */
+   DOM ELEMENTS
+   ========================================================= */
 
-let products = [];
+const languageBtn =
+  document.getElementById("languageBtn");
 
-let currentProfile = null;
+const searchInput =
+  document.getElementById("searchInput");
 
-let selectedConversationId = null;
+const categorySelect =
+  document.getElementById("categorySelect");
 
-let selectedChatUser = null;
+const searchBtn =
+  document.getElementById("searchBtn");
 
-let unsubscribeMessages = null;
+const productsContainer =
+  document.getElementById(
+    "productsContainer"
+  );
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const registerForm =
+  document.getElementById("registerForm");
+
+const showRegisterBtn =
+  document.getElementById(
+    "showRegisterBtn"
+  );
+
+const showLoginBtn =
+  document.getElementById(
+    "showLoginBtn"
+  );
+
+const authTitle =
+  document.getElementById("authTitle");
+
+const authMessage =
+  document.getElementById(
+    "authMessage"
+  );
+
+const authStatus =
+  document.getElementById("authStatus");
+
+const sellProductForm =
+  document.getElementById(
+    "sellProductForm"
+  );
+
+const sellStatus =
+  document.getElementById("sellStatus");
+
+const imageStatus =
+  document.getElementById("imageStatus");
+
+const publishProductBtn =
+  document.getElementById(
+    "publishProductBtn"
+  );
+
+const productImageFile =
+  document.getElementById(
+    "productImageFile"
+  );
+
+const profileContent =
+  document.getElementById(
+    "profileContent"
+  );
+
+
+const productModal =
+  document.getElementById(
+    "productModal"
+  );
+
+const productModalOverlay =
+  document.querySelector(
+    ".product-modal-overlay"
+  );
+
+const closeProductModal =
+  document.getElementById(
+    "closeProductModal"
+  );
+
+const modalProductImage =
+  document.getElementById(
+    "modalProductImage"
+  );
+
+const modalProductCategory =
+  document.getElementById(
+    "modalProductCategory"
+  );
+
+const modalProductTitle =
+  document.getElementById(
+    "modalProductTitle"
+  );
+
+const modalProductPrice =
+  document.getElementById(
+    "modalProductPrice"
+  );
+
+const modalProductLocation =
+  document.getElementById(
+    "modalProductLocation"
+  );
+
+const modalProductDescription =
+  document.getElementById(
+    "modalProductDescription"
+  );
+
+const modalSellerPhoto =
+  document.getElementById(
+    "modalSellerPhoto"
+  );
+
+const modalSellerName =
+  document.getElementById(
+    "modalSellerName"
+  );
+
+const modalSellerEmail =
+  document.getElementById(
+    "modalSellerEmail"
+  );
+
+const sellerActions =
+  document.getElementById(
+    "sellerActions"
+  );
+
+
+const profileModal =
+  document.getElementById(
+    "profileModal"
+  );
+
+const profileModalOverlay =
+  document.querySelector(
+    "#profileModal .profile-modal-overlay"
+  );
+
+const closeProfileModalBtn =
+  document.getElementById(
+    "closeProfileModal"
+  );
+
+const profileModalContent =
+  document.getElementById(
+    "profileModalContent"
+  );
+
+
+const editProfileModal =
+  document.getElementById(
+    "editProfileModal"
+  );
+
+const editProfileModalOverlay =
+  document.querySelector(
+    "#editProfileModal .profile-modal-overlay"
+  );
+
+const closeEditProfileModal =
+  document.getElementById(
+    "closeEditProfileModal"
+  );
+
+const editProfileForm =
+  document.getElementById(
+    "editProfileForm"
+  );
+
+const profilePhotoFile =
+  document.getElementById(
+    "profilePhotoFile"
+  );
+
+const profileImageStatus =
+  document.getElementById(
+    "profileImageStatus"
+  );
+
+const profileSaveStatus =
+  document.getElementById(
+    "profileSaveStatus"
+  );
+
+const profileNameInput =
+  document.getElementById(
+    "profileNameInput"
+  );
+
+const profilePhoneInput =
+  document.getElementById(
+    "profilePhoneInput"
+  );
+
+const profileLocationInput =
+  document.getElementById(
+    "profileLocationInput"
+  );
+
+const profileBioInput =
+  document.getElementById(
+    "profileBioInput"
+  );
+
+const saveProfileBtn =
+  document.getElementById(
+    "saveProfileBtn"
+  );
+
+
+const conversationList =
+  document.getElementById(
+    "conversationList"
+  );
+
+const chatHeader =
+  document.getElementById(
+    "chatHeader"
+  );
+
+const chatMessages =
+  document.getElementById(
+    "chatMessages"
+  );
+
+const chatForm =
+  document.getElementById(
+    "chatForm"
+  );
+
+const chatInput =
+  document.getElementById(
+    "chatInput"
+  );
 
 
 /* =========================================================
-   PERFORMANCE CACHE
-========================================================= */
+   HELPERS
+   ========================================================= */
 
-/*
-   Profile cache prevents the same user profile from being
-   downloaded repeatedly from Firestore.
+function escapeHTML(value) {
 
-   This is especially useful for:
-   - Product modal
-   - Public profile
-   - Messenger
-   - Conversation list
-*/
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
-const profileCache = new Map();
+}
 
 
-/*
-   Image cache prevents repeated browser requests for the
-   same image URL.
-*/
+function formatPrice(price) {
 
-const imageCache = new Set();
+  const number = Number(price);
 
+  if (!Number.isFinite(number)) {
+    return "0";
+  }
 
-/*
-   Prevent duplicate product loading requests.
-*/
+  return number.toLocaleString(
+    "en-US",
+    {
+      minimumFractionDigits:
+        Number.isInteger(number)
+          ? 0
+          : 2,
 
-let productsLoadingPromise = null;
+      maximumFractionDigits: 2
+    }
+  );
 
-
-/*
-   Prevent duplicate conversation loading requests.
-*/
-
-let conversationsLoadingPromise = null;
-
-
-/* =========================================================
-   DEFAULT IMAGES
-========================================================= */
-
-const DEFAULT_AVATAR =
-  "https://via.placeholder.com/200x200?text=User";
-
-const DEFAULT_PRODUCT_IMAGE =
-  "https://via.placeholder.com/800x500?text=Mazad+Product";
+}
 
 
 function getDefaultAvatar() {
 
-  return DEFAULT_AVATAR;
+  return "https://via.placeholder.com/200x200?text=User";
 
 }
 
 
-function getDefaultProductImage() {
+function formatDate(value) {
 
-  return DEFAULT_PRODUCT_IMAGE;
-
-}
-
-
-/* =========================================================
-   FAST IMAGE PRELOAD
-========================================================= */
-
-function preloadImage(url) {
-
-  if (!url) {
-    return;
+  if (!value) {
+    return t("unknown");
   }
 
-  if (imageCache.has(url)) {
-    return;
-  }
+  let date;
 
-  imageCache.add(url);
-
-  const image =
-    new Image();
-
-  image.decoding = "async";
-
-  image.src = url;
-
-}
-
-
-/* =========================================================
-   IMAGE URL HELPER
-========================================================= */
-
-function getImageUrl(
-  url,
-  fallback = DEFAULT_PRODUCT_IMAGE
-) {
-
-  if (
-    typeof url !== "string" ||
-    !url.trim()
-  ) {
-
-    return fallback;
-
-  }
-
-  return url.trim();
-
-}
-
-
-/* =========================================================
-   FAST IMAGE COMPRESSION
-========================================================= */
-
-/*
-   Instead of uploading a 5MB–10MB original image,
-   resize/compress it in the browser first.
-
-   Benefits:
-   - Faster Cloudinary upload
-   - Less mobile data
-   - Faster Cloudinary processing
-   - Faster page loading
-   - Smaller stored image
-*/
-
-async function compressImage(
-  file,
-  options = {}
-) {
-
-  if (!file) {
-    return null;
-  }
-
-
-  if (
-    !file.type ||
-    !file.type.startsWith("image/")
-  ) {
-
-    throw new Error(
-      t("validImage")
-    );
-
-  }
-
-
-  const maxWidth =
-    options.maxWidth || 1600;
-
-  const maxHeight =
-    options.maxHeight || 1600;
-
-  const quality =
-    options.quality ?? 0.82;
-
-
-  /*
-     Very small files don't need heavy compression.
-  */
-
-  if (
-    file.size <= 700 * 1024
-  ) {
-
-    return file;
-
-  }
-
-
-  const image =
-    await new Promise(
-      (resolve, reject) => {
-
-        const img =
-          new Image();
-
-        const objectUrl =
-          URL.createObjectURL(file);
-
-
-        img.onload = () => {
-
-          URL.revokeObjectURL(
-            objectUrl
-          );
-
-          resolve(img);
-
-        };
-
-
-        img.onerror = () => {
-
-          URL.revokeObjectURL(
-            objectUrl
-          );
-
-          reject(
-            new Error(
-              t("validImage")
-            )
-          );
-
-        };
-
-
-        img.src =
-          objectUrl;
-
-      }
-    );
-
-
-  let width =
-    image.naturalWidth;
-
-  let height =
-    image.naturalHeight;
-
-
-  /*
-     Keep aspect ratio.
-  */
-
-  const scale =
-    Math.min(
-      1,
-      maxWidth / width,
-      maxHeight / height
-    );
-
-
-  width =
-    Math.max(
-      1,
-      Math.round(
-        width * scale
-      )
-    );
-
-
-  height =
-    Math.max(
-      1,
-      Math.round(
-        height * scale
-      )
-    );
-
-
-  const canvas =
-    document.createElement(
-      "canvas"
-    );
-
-
-  canvas.width =
-    width;
-
-  canvas.height =
-    height;
-
-
-  const ctx =
-    canvas.getContext(
-      "2d",
-      {
-        alpha: false
-      }
-    );
-
-
-  if (!ctx) {
-
-    return file;
-
-  }
-
-
-  /*
-     White background avoids transparency issues when
-     converting unsupported image formats to JPEG.
-  */
-
-  ctx.fillStyle =
-    "#ffffff";
-
-  ctx.fillRect(
-    0,
-    0,
-    width,
-    height
-  );
-
-
-  ctx.drawImage(
-    image,
-    0,
-    0,
-    width,
-    height
-  );
-
-
-  const blob =
-    await new Promise(
-      resolve => {
-
-        canvas.toBlob(
-          resolve,
-          "image/jpeg",
-          quality
-        );
-
-      }
-    );
-
-
-  if (!blob) {
-
-    return file;
-
-  }
-
-
-  return new File(
-    [blob],
-    `${file.name.replace(
-      /\.[^/.]+$/,
-      ""
-    )}.jpg`,
-    {
-      type:
-        "image/jpeg",
-      lastModified:
-        Date.now()
-    }
-  );
-
-}
-
-
-/* =========================================================
-   VALIDATE IMAGE
-========================================================= */
-
-function validateImageFile(
-  file
-) {
-
-  if (!file) {
-
-    return {
-      valid: false,
-      error: ""
-    };
-
-  }
-
-
-  if (
-    file.size >
-    10 * 1024 * 1024
-  ) {
-
-    return {
-      valid: false,
-      error: t("imageTooLarge")
-    };
-
-  }
-
-
-  if (
-    !file.type ||
-    !file.type.startsWith("image/")
-  ) {
-
-    return {
-      valid: false,
-      error: t("validImage")
-    };
-
-  }
-
-
-  return {
-    valid: true,
-    error: ""
-  };
-
-}
-
-
-/* =========================================================
-   FAST CLOUDINARY UPLOAD
-========================================================= */
-
-async function uploadImageToCloudinary(
-  file,
-  statusElement,
-  options = {}
-) {
-
-  if (!file) {
-    return "";
-  }
-
-
-  const validation =
-    validateImageFile(file);
-
-
-  if (!validation.valid) {
-
-    throw new Error(
-      validation.error
-    );
-
-  }
-
-
-  if (statusElement) {
-
-    statusElement.textContent =
-      t("preparingProduct");
-
-    statusElement.style.color =
-      "black";
-
-  }
-
-
-  /*
-     Compress before upload.
-  */
-
-  const compressedFile =
-    await compressImage(
-      file,
-      options
-    );
-
-
-  if (statusElement) {
-
-    statusElement.textContent =
-      t("uploadingImage");
-
-    statusElement.style.color =
-      "black";
-
-  }
-
-
-  const formData =
-    new FormData();
-
-
-  formData.append(
-    "file",
-    compressedFile
-  );
-
-
-  formData.append(
-    "upload_preset",
-    CLOUDINARY_UPLOAD_PRESET
-  );
-
-
-  const response =
-    await fetch(
-      CLOUDINARY_UPLOAD_URL,
-      {
-        method: "POST",
-        body: formData
-      }
-    );
-
-
-  if (!response.ok) {
-
-    throw new Error(
-      t("uploadFailed")
-    );
-
-  }
-
-
-  const data =
-    await response.json();
-
-
-  if (
-    !data ||
-    !data.secure_url
-  ) {
-
-    throw new Error(
-      t("imageUrlFailed")
-    );
-
-  }
-
-
-  /*
-     Cache uploaded image URL.
-  */
-
-  preloadImage(
-    data.secure_url
-  );
-
-
-  if (statusElement) {
-
-    statusElement.textContent =
-      t("imageUploaded");
-
-    statusElement.style.color =
-      "green";
-
-  }
-
-
-  return data.secure_url;
-
-}
-
-
-/* =========================================================
-   DOM READY
-========================================================= */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    applyLanguage();
-
-
-    /* =======================================================
-       DOM ELEMENTS
-    ======================================================= */
-
-    const languageBtn =
-      document.getElementById(
-        "languageBtn"
-      );
-
-    const searchInput =
-      document.getElementById(
-        "searchInput"
-      );
-
-    const categorySelect =
-      document.getElementById(
-        "categorySelect"
-      );
-
-    const searchBtn =
-      document.getElementById(
-        "searchBtn"
-      );
-
-    const productsContainer =
-      document.getElementById(
-        "productsContainer"
-      );
-
-    const loginForm =
-      document.getElementById(
-        "loginForm"
-      );
-
-    const registerForm =
-      document.getElementById(
-        "registerForm"
-      );
-
-    const showRegisterBtn =
-      document.getElementById(
-        "showRegisterBtn"
-      );
-
-    const showLoginBtn =
-      document.getElementById(
-        "showLoginBtn"
-      );
-
-    const authTitle =
-      document.getElementById(
-        "authTitle"
-      );
-
-    const authMessage =
-      document.getElementById(
-        "authMessage"
-      );
-
-    const authStatus =
-      document.getElementById(
-        "authStatus"
-      );
-
-    const sellProductForm =
-      document.getElementById(
-        "sellProductForm"
-      );
-
-    const sellStatus =
-      document.getElementById(
-        "sellStatus"
-      );
-
-    const imageStatus =
-      document.getElementById(
-        "imageStatus"
-      );
-
-    const publishProductBtn =
-      document.getElementById(
-        "publishProductBtn"
-      );
-
-    const productImageFile =
-      document.getElementById(
-        "productImageFile"
-      );
-
-    const headerSellBtn =
-      document.getElementById(
-        "headerSellBtn"
-      );
-
-    const heroSellBtn =
-      document.getElementById(
-        "heroSellBtn"
-      );
-
-    const profileNavBtn =
-      document.getElementById(
-        "profileNavBtn"
-      );
-
-    const profileContent =
-      document.getElementById(
-        "profileContent"
-      );
-
-    const productModal =
-      document.getElementById(
-        "productModal"
-      );
-
-    const productModalOverlay =
-      document.querySelector(
-        ".product-modal-overlay"
-      );
-
-    const closeProductModal =
-      document.getElementById(
-        "closeProductModal"
-      );
-
-    const modalProductImage =
-      document.getElementById(
-        "modalProductImage"
-      );
-
-    const modalProductCategory =
-      document.getElementById(
-        "modalProductCategory"
-      );
-
-    const modalProductTitle =
-      document.getElementById(
-        "modalProductTitle"
-      );
-
-    const modalProductPrice =
-      document.getElementById(
-        "modalProductPrice"
-      );
-
-    const modalProductLocation =
-      document.getElementById(
-        "modalProductLocation"
-      );
-
-    const modalProductDescription =
-      document.getElementById(
-        "modalProductDescription"
-      );
-
-    const modalSellerPhoto =
-      document.getElementById(
-        "modalSellerPhoto"
-      );
-
-    const modalSellerName =
-      document.getElementById(
-        "modalSellerName"
-      );
-
-    const modalSellerEmail =
-      document.getElementById(
-        "modalSellerEmail"
-      );
-
-    const sellerActions =
-      document.getElementById(
-        "sellerActions"
-      );
-
-    const profileModal =
-      document.getElementById(
-        "profileModal"
-      );
-
-    const profileModalOverlay =
-      document.querySelector(
-        "#profileModal .profile-modal-overlay"
-      );
-
-    const closeProfileModalBtn =
-      document.getElementById(
-        "closeProfileModal"
-      );
-
-    const profileModalContent =
-      document.getElementById(
-        "profileModalContent"
-      );
-
-    const editProfileModal =
-      document.getElementById(
-        "editProfileModal"
-      );
-
-    const editProfileModalOverlay =
-      document.querySelector(
-        "#editProfileModal .profile-modal-overlay"
-      );
-
-    const closeEditProfileModal =
-      document.getElementById(
-        "closeEditProfileModal"
-      );
-
-    const editProfileForm =
-      document.getElementById(
-        "editProfileForm"
-      );
-
-    const profilePhotoFile =
-      document.getElementById(
-        "profilePhotoFile"
-      );
-
-    const profileImageStatus =
-      document.getElementById(
-        "profileImageStatus"
-      );
-
-    const profileSaveStatus =
-      document.getElementById(
-        "profileSaveStatus"
-      );
-
-    const profileNameInput =
-      document.getElementById(
-        "profileNameInput"
-      );
-
-    const profilePhoneInput =
-      document.getElementById(
-        "profilePhoneInput"
-      );
-
-    const profileLocationInput =
-      document.getElementById(
-        "profileLocationInput"
-      );
-
-    const profileBioInput =
-      document.getElementById(
-        "profileBioInput"
-      );
-
-    const saveProfileBtn =
-      document.getElementById(
-        "saveProfileBtn"
-      );
-
-    const conversationList =
-      document.getElementById(
-        "conversationList"
-      );
-
-    const chatHeader =
-      document.getElementById(
-        "chatHeader"
-      );
-
-    const chatMessages =
-      document.getElementById(
-        "chatMessages"
-      );
-
-    const chatForm =
-      document.getElementById(
-        "chatForm"
-      );
-
-    const chatInput =
-      document.getElementById(
-        "chatInput"
-      );
-
-
-    /* =======================================================
-       HELPERS
-    ======================================================= */
-
-    function escapeHTML(value) {
-
-      return String(
-        value ?? ""
-      )
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-    }
-
-
-    function formatPrice(price) {
-
-      const number =
-        Number(price);
-
-
-      if (
-        !Number.isFinite(
-          number
-        )
-      ) {
-
-        return "0";
-
-      }
-
-
-      return number.toLocaleString(
-        "en-US",
-        {
-          minimumFractionDigits:
-            Number.isInteger(
-              number
-            )
-              ? 0
-              : 2,
-
-          maximumFractionDigits:
-            2
-        }
-      );
-
-    }
-
-
-    function formatDate(value) {
-
-      if (!value) {
-
-        return t("unknown");
-
-      }
-
-
-      let date;
-
-
-      if (
-        typeof value.toDate ===
-        "function"
-      ) {
-
-        date =
-          value.toDate();
-
-      } else if (
-        value instanceof Date
-      ) {
-
-        date =
-          value;
-
-      } else {
-
-        date =
-          new Date(value);
-
-      }
-
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-
-        return t("unknown");
-
-      }
-
-
-      return date.toLocaleDateString(
-        currentLanguage === "ar"
-          ? "ar-SA"
-          : "en-US",
-        {
-          year:
-            "numeric",
-
-          month:
-            "long",
-
-          day:
-            "numeric"
-        }
-      );
-
-    }
-
-
-    /* =======================================================
-       LANGUAGE SWITCH
-    ======================================================= */
-
-    function switchLanguage() {
-
-      currentLanguage =
-        currentLanguage === "en"
-          ? "ar"
-          : "en";
-
-
-      localStorage.setItem(
-        "mazadLanguage",
-        currentLanguage
-      );
-
-
-      applyLanguage();
-
-
-      displayProducts(
-        products
-      );
-
-
-      if (
-        auth.currentUser
-      ) {
-
-        renderMyProfile();
-
-        loadConversations();
-
-      }
-
-    }
-
-
-    if (languageBtn) {
-
-      languageBtn.addEventListener(
-        "click",
-        switchLanguage
-      );
-
-    }
-
-
-    /* =======================================================
-       AUTH MESSAGE
-    ======================================================= */
-
-    function showAuthMessage(
-      message,
-      success = false
-    ) {
-
-      if (!authStatus) {
-
-        return;
-
-      }
-
-
-      authStatus.textContent =
-        message;
-
-
-      authStatus.style.color =
-        success
-          ? "green"
-          : "red";
-
-    }
-
-
-    /* =======================================================
-       FIREBASE ERROR MESSAGE
-    ======================================================= */
-
-    function getFirebaseErrorMessage(
-      error
-    ) {
-
-      switch (
-        error.code
-      ) {
-
-        case "auth/email-already-in-use":
-
-          return currentLanguage === "ar"
-            ? "هذا البريد الإلكتروني مسجل بالفعل."
-            : "This email is already registered.";
-
-
-        case "auth/invalid-email":
-
-          return currentLanguage === "ar"
-            ? "يرجى إدخال بريد إلكتروني صالح."
-            : "Please enter a valid email address.";
-
-
-        case "auth/weak-password":
-
-          return currentLanguage === "ar"
-            ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
-            : "Password must be at least 6 characters.";
-
-
-        case "auth/invalid-credential":
-
-          return currentLanguage === "ar"
-            ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
-            : "Email or password is incorrect.";
-
-
-        case "auth/user-not-found":
-
-          return currentLanguage === "ar"
-            ? "لا يوجد حساب بهذا البريد الإلكتروني."
-            : "No account found with this email.";
-
-
-        case "auth/wrong-password":
-
-          return currentLanguage === "ar"
-            ? "كلمة المرور غير صحيحة."
-            : "Incorrect password.";
-
-
-        case "auth/too-many-requests":
-
-          return currentLanguage === "ar"
-            ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
-            : "Too many attempts. Please try again later.";
-
-
-        default:
-
-          return currentLanguage === "ar"
-            ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-            : "Something went wrong. Please try again.";
-
-      }
-
-    }
-
-
-    /* =======================================================
-       PROFILE CACHE
-    ======================================================= */
-
-    async function getUserProfile(
-      uid
-    ) {
-
-      if (!uid) {
-
-        return null;
-
-      }
-
-
-      /*
-         Return cached profile immediately.
-         This avoids repeated Firestore reads.
-      */
-
-      if (
-        profileCache.has(uid)
-      ) {
-
-        return profileCache.get(
-          uid
-        );
-
-      }
-
-
-      try {
-
-        const profileDoc =
-          await getDoc(
-            doc(
-              db,
-              "users",
-              uid
-            )
-          );
-
-
-        if (
-          profileDoc.exists()
-        ) {
-
-          const profile = {
-            id:
-              uid,
-            ...profileDoc.data()
-          };
-
-
-          profileCache.set(
-            uid,
-            profile
-          );
-
-
-          return profile;
-
-        }
-
-
-        return null;
-
-      } catch (error) {
-
-        console.error(
-          "Profile loading error:",
-          error
-        );
-
-        return null;
-
-      }
-
-    }
-
-
-    /* =======================================================
-       CREATE USER PROFILE
-    ======================================================= */
-
-    async function createUserProfile(
-      user
-    ) {
-
-      if (!user) {
-
-        return;
-
-      }
-
-
-      const profileRef =
-        doc(
-          db,
-          "users",
-          user.uid
-        );
-
-
-      /*
-         First check cache.
-      */
-
-      if (
-        profileCache.has(
-          user.uid
-        )
-      ) {
-
-        return;
-
-      }
-
-
-      const existing =
-        await getDoc(
-          profileRef
-        );
-
-
-      if (
-        existing.exists()
-      ) {
-
-        const profile = {
-          id:
-            user.uid,
-          ...existing.data()
-        };
-
-
-        profileCache.set(
-          user.uid,
-          profile
-        );
-
-
-        return;
-
-      }
-
-
-      const newProfile = {
-
-        uid:
-          user.uid,
-
-        name:
-          "",
-
-        phone:
-          "",
-
-        email:
-          user.email || "",
-
-        location:
-          "",
-
-        bio:
-          "",
-
-        photoURL:
-          "",
-
-        createdAt:
-          serverTimestamp(),
-
-        updatedAt:
-          serverTimestamp()
-
-      };
-
-
-      await setDoc(
-        profileRef,
-        newProfile
-      );
-
-
-      /*
-         Don't immediately make another Firestore
-         getDoc() request. Keep local data cached.
-      */
-
-      profileCache.set(
-        user.uid,
-        {
-          id:
-            user.uid,
-          uid:
-            user.uid,
-          name:
-            "",
-          phone:
-            "",
-          email:
-            user.email || "",
-          location:
-            "",
-          bio:
-            "",
-          photoURL:
-            ""
-        }
-      );
-
-    }
-
-
-    /* =======================================================
-       PROFILE DISPLAY
-    ======================================================= */
-
-    function profileTemplate(
-      profile,
-      user,
-      isOwnProfile = false
-    ) {
-
-      const photo =
-        profile?.photoURL ||
-        getDefaultAvatar();
-
-
-      const name =
-        profile?.name?.trim() ||
-        user?.email ||
-        t("member");
-
-
-      const email =
-        profile?.email ||
-        user?.email ||
-        "";
-
-
-      const phone =
-        profile?.phone ||
-        t("unknown");
-
-
-      const location =
-        profile?.location ||
-        t("unknown");
-
-
-      const bio =
-        profile?.bio ||
-        t("noDescription");
-
-
-      const joined =
-        formatDate(
-          profile?.createdAt
-        );
-
-
-      const userProducts =
-        products.filter(
-          product =>
-            product.sellerId ===
-            (
-              profile?.uid ||
-              user?.uid
-            )
-        );
-
-
-      preloadImage(
-        photo
-      );
-
-
-      return `
-
-        <div class="profile-card">
-
-          <div class="profile-cover"></div>
-
-          <div class="profile-main">
-
-            <div class="profile-top">
-
-              <img
-                class="profile-avatar-image"
-                src="${escapeHTML(photo)}"
-                alt="${escapeHTML(name)}"
-                loading="eager"
-                decoding="async"
-              >
-
-              <div class="profile-heading">
-
-                <h2>
-                  ${escapeHTML(name)}
-                </h2>
-
-                <p>
-                  ${escapeHTML(
-                    t("member")
-                  )}
-                </p>
-
-              </div>
-
-              ${
-                isOwnProfile
-                  ? `
-
-                    <div class="profile-actions">
-
-                      <button
-                        type="button"
-                        class="primary-btn"
-                        id="openEditProfileBtn"
-                      >
-                        ${escapeHTML(
-                          t("editProfile")
-                        )}
-                      </button>
-
-                    </div>
-
-                  `
-                  : ""
-              }
-
-            </div>
-
-
-            <div class="profile-info-grid">
-
-              <div class="profile-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("email")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(email)}
-                </strong>
-
-              </div>
-
-
-              <div class="profile-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("phone")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(phone)}
-                </strong>
-
-              </div>
-
-
-              <div class="profile-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("location")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(location)}
-                </strong>
-
-              </div>
-
-
-              <div class="profile-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("joinDate")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(joined)}
-                </strong>
-
-              </div>
-
-            </div>
-
-
-            <div class="profile-bio">
-
-              <h3>
-                ${escapeHTML(
-                  t("bio")
-                )}
-              </h3>
-
-              <p>
-                ${escapeHTML(bio)}
-              </p>
-
-            </div>
-
-
-            <div class="profile-listings">
-
-              <h3>
-                ${escapeHTML(
-                  t("myListings")
-                )}
-              </h3>
-
-              ${
-                userProducts.length
-                  ? `
-
-                    <div class="mini-products">
-
-                      ${userProducts
-                        .map(
-                          product => {
-
-                            const image =
-                              getImageUrl(
-                                product.image
-                              );
-
-                            preloadImage(
-                              image
-                            );
-
-
-                            return `
-
-                              <div
-                                class="mini-product"
-                                data-profile-product-id="${escapeHTML(
-                                  product.id
-                                )}"
-                              >
-
-                                <img
-                                  src="${escapeHTML(image)}"
-                                  alt="${escapeHTML(
-                                    product.title ||
-                                    "Product"
-                                  )}"
-                                  loading="lazy"
-                                  decoding="async"
-                                >
-
-                                <div class="mini-product-info">
-
-                                  <strong>
-                                    ${escapeHTML(
-                                      product.title ||
-                                      "Product"
-                                    )}
-                                  </strong>
-
-                                  <span>
-                                    $${formatPrice(
-                                      product.price
-                                    )}
-                                  </span>
-
-                                </div>
-
-                              </div>
-
-                            `;
-
-                          }
-                        )
-                        .join("")}
-
-                    </div>
-
-                  `
-                  : `
-
-                    <div class="empty-state">
-
-                      <div>
-                        📦
-                      </div>
-
-                      <p>
-                        ${escapeHTML(
-                          t("noListings")
-                        )}
-                      </p>
-
-                    </div>
-
-                  `
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* =======================================================
-       RENDER MY PROFILE
-    ======================================================= */
-
-    async function renderMyProfile() {
-
-      if (!profileContent) {
-
-        return;
-
-      }
-
-
-      const user =
-        auth.currentUser;
-
-
-      if (!user) {
-
-        profileContent.innerHTML = `
-
-          <div class="not-logged-profile">
-
-            <div class="hero-icon">
-              👤
-            </div>
-
-            <h3>
-              ${escapeHTML(
-                t("profileRequired")
-              )}
-            </h3>
-
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      /*
-         If profile is already cached, render immediately.
-         This makes profile opening much faster.
-      */
-
-      let profile =
-        profileCache.get(
-          user.uid
-        ) ||
-        currentProfile;
-
-
-      if (profile) {
-
-        currentProfile =
-          profile;
-
-        profileContent.innerHTML =
-          profileTemplate(
-            profile,
-            user,
-            true
-          );
-
-        attachProfileEvents();
-
-        /*
-           Refresh in background without blocking UI.
-        */
-
-        getUserProfile(
-          user.uid
-        ).then(
-          freshProfile => {
-
-            if (
-              freshProfile &&
-              JSON.stringify(
-                freshProfile
-              ) !==
-              JSON.stringify(
-                currentProfile
-              )
-            ) {
-
-              currentProfile =
-                freshProfile;
-
-              profileContent.innerHTML =
-                profileTemplate(
-                  freshProfile,
-                  user,
-                  true
-                );
-
-              attachProfileEvents();
-
-            }
-
-          }
-        );
-
-
-        return;
-
-      }
-
-
-      profileContent.innerHTML = `
-
-        <div class="empty-state">
-
-          <div>
-            ⏳
-          </div>
-
-          <p>
-            ${escapeHTML(
-              t("loading")
-            )}
-          </p>
-
-        </div>
-
-      `;
-
-
-      profile =
-        await getUserProfile(
-          user.uid
-        );
-
-
-      if (!profile) {
-
-        await createUserProfile(
-          user
-        );
-
-        profile =
-          await getUserProfile(
-            user.uid
-          );
-
-      }
-
-
-      currentProfile =
-        profile;
-
-
-      profileContent.innerHTML =
-        profileTemplate(
-          profile,
-          user,
-          true
-        );
-
-
-      attachProfileEvents();
-
-    }
-
-
-    /* =======================================================
-       PROFILE EVENTS
-    ======================================================= */
-
-    function attachProfileEvents() {
-
-      const editBtn =
-        document.getElementById(
-          "openEditProfileBtn"
-        );
-
-
-      if (editBtn) {
-
-        editBtn.addEventListener(
-          "click",
-          openEditProfile
-        );
-
-      }
-
-
-      if (!profileContent) {
-
-        return;
-
-      }
-
-
-      profileContent
-        .querySelectorAll(
-          "[data-profile-product-id]"
-        )
-        .forEach(
-          card => {
-
-            card.addEventListener(
-              "click",
-              () => {
-
-                const id =
-                  card.dataset
-                    .profileProductId;
-
-
-                const product =
-                  products.find(
-                    item =>
-                      item.id ===
-                      id
-                  );
-
-
-                if (product) {
-
-                  openProductDetails(
-                    product
-                  );
-
-                }
-
-              }
-            );
-
-          }
-        );
-
-    }
-
-
-    /* =======================================================
-       PUBLIC PROFILE
-    ======================================================= */
-
-    async function openPublicProfile(
-      uid
-    ) {
-
-      if (!profileModalContent) {
-
-        return;
-
-      }
-
-
-      /*
-         Show modal immediately.
-      */
-
-      profileModalContent.innerHTML = `
-
-        <div class="empty-state">
-
-          <div>
-            ⏳
-          </div>
-
-          <p>
-            ${escapeHTML(
-              t("loading")
-            )}
-          </p>
-
-        </div>
-
-      `;
-
-
-      profileModal.classList.add(
-        "active"
-      );
-
-
-      profileModal.setAttribute(
-        "aria-hidden",
-        "false"
-      );
-
-
-      document.body.classList.add(
-        "modal-open"
-      );
-
-
-      const profile =
-        await getUserProfile(
-          uid
-        );
-
-
-      if (!profile) {
-
-        profileModalContent.innerHTML = `
-
-          <div class="not-logged-profile">
-
-            <h3>
-              ${escapeHTML(
-                t("profileNotFound")
-              )}
-            </h3>
-
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      const user = {
-
-        uid,
-
-        email:
-          profile.email || ""
-
-      };
-
-
-      const userProducts =
-        products.filter(
-          product =>
-            product.sellerId ===
-            uid
-        );
-
-
-      const photo =
-        profile.photoURL ||
-        getDefaultAvatar();
-
-
-      preloadImage(
-        photo
-      );
-
-
-      userProducts.forEach(
-        product => {
-
-          preloadImage(
-            getImageUrl(
-              product.image
-            )
-          );
-
-        }
-      );
-
-
-      profileModalContent.innerHTML = `
-
-        <div class="profile-public">
-
-          <div class="profile-public-cover"></div>
-
-          <div class="profile-public-body">
-
-            <div class="profile-public-top">
-
-              <img
-                class="public-avatar"
-                src="${escapeHTML(photo)}"
-                alt="${escapeHTML(
-                  profile.name ||
-                  profile.email ||
-                  "User"
-                )}"
-                loading="eager"
-                decoding="async"
-              >
-
-              <div class="public-heading">
-
-                <h2>
-                  ${escapeHTML(
-                    profile.name ||
-                    profile.email ||
-                    t("member")
-                  )}
-                </h2>
-
-                <p>
-                  ${escapeHTML(
-                    t("member")
-                  )}
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div class="public-info">
-
-              <div class="public-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("email")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    profile.email || ""
-                  )}
-                </strong>
-
-              </div>
-
-
-              <div class="public-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("phone")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    profile.phone ||
-                    t("unknown")
-                  )}
-                </strong>
-
-              </div>
-
-
-              <div class="public-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("location")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    profile.location ||
-                    t("unknown")
-                  )}
-                </strong>
-
-              </div>
-
-
-              <div class="public-info-item">
-
-                <span>
-                  ${escapeHTML(
-                    t("joinDate")
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHTML(
-                    formatDate(
-                      profile.createdAt
-                    )
-                  )}
-                </strong>
-
-              </div>
-
-            </div>
-
-
-            <div class="public-bio">
-
-              <h3>
-                ${escapeHTML(
-                  t("bio")
-                )}
-              </h3>
-
-              <p>
-                ${escapeHTML(
-                  profile.bio ||
-                  t("noDescription")
-                )}
-              </p>
-
-            </div>
-
-
-            <div class="public-actions">
-
-              ${
-                profile.phone
-                  ? `
-
-                    <a
-                      class="secondary-btn"
-                      href="tel:${escapeHTML(
-                        profile.phone
-                      )}"
-                    >
-                      📞 ${escapeHTML(
-                        t("call")
-                      )}
-                    </a>
-
-                  `
-                  : ""
-              }
-
-
-              <button
-                type="button"
-                class="primary-btn"
-                id="publicMessageBtn"
-              >
-                💬 ${escapeHTML(
-                  t("message")
-                )}
-              </button>
-
-            </div>
-
-
-            <div class="profile-listings">
-
-              <h3>
-
-                ${escapeHTML(
-                  t("myListings")
-                )}
-
-                (${userProducts.length})
-
-              </h3>
-
-
-              ${
-                userProducts.length
-                  ? `
-
-                    <div class="mini-products">
-
-                      ${userProducts
-                        .map(
-                          product => {
-
-                            const image =
-                              getImageUrl(
-                                product.image
-                              );
-
-
-                            return `
-
-                              <div
-                                class="mini-product"
-                                data-public-product-id="${escapeHTML(
-                                  product.id
-                                )}"
-                              >
-
-                                <img
-                                  src="${escapeHTML(image)}"
-                                  alt="${escapeHTML(
-                                    product.title ||
-                                    "Product"
-                                  )}"
-                                  loading="lazy"
-                                  decoding="async"
-                                >
-
-                                <div class="mini-product-info">
-
-                                  <strong>
-                                    ${escapeHTML(
-                                      product.title ||
-                                      "Product"
-                                    )}
-                                  </strong>
-
-                                  <span>
-                                    $${formatPrice(
-                                      product.price
-                                    )}
-                                  </span>
-
-                                </div>
-
-                              </div>
-
-                            `;
-
-                          }
-                        )
-                        .join("")}
-
-                    </div>
-
-                  `
-                  : `
-
-                    <div class="empty-state">
-
-                      <div>
-                        📦
-                      </div>
-
-                      <p>
-                        ${escapeHTML(
-                          t("noListings")
-                        )}
-                      </p>
-
-                    </div>
-
-                  `
-              }
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `;
-
-
-      const messageBtn =
-        document.getElementById(
-          "publicMessageBtn"
-        );
-
-
-      if (messageBtn) {
-
-        messageBtn.addEventListener(
-          "click",
-          () => {
-
-            if (
-              auth.currentUser &&
-              auth.currentUser.uid ===
-              uid
-            ) {
-
-              alert(
-                t("cannotMessageSelf")
-              );
-
-              return;
-
-            }
-
-
-            closeProfileModal();
-
-
-            startConversation(
-              uid
-            );
-
-          }
-        );
-
-      }
-
-
-      profileModalContent
-        .querySelectorAll(
-          "[data-public-product-id]"
-        )
-        .forEach(
-          card => {
-
-            card.addEventListener(
-              "click",
-              () => {
-
-                const id =
-                  card.dataset
-                    .publicProductId;
-
-
-                const product =
-                  products.find(
-                    item =>
-                      item.id ===
-                      id
-                  );
-
-
-                if (product) {
-
-                  closeProfileModal();
-
-                  openProductDetails(
-                    product
-                  );
-
-                }
-
-              }
-            );
-
-          }
-        );
-
-    }
-
-
-    /* =======================================================
-       CLOSE PUBLIC PROFILE
-    ======================================================= */
-
-    function closeProfileModal() {
-
-      if (!profileModal) {
-
-        return;
-
-      }
-
-
-      profileModal.classList.remove(
-        "active"
-      );
-
-
-      profileModal.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
-
-      document.body.classList.remove(
-        "modal-open"
-      );
-
-    }
-
-
-    if (closeProfileModalBtn) {
-
-      closeProfileModalBtn.addEventListener(
-        "click",
-        closeProfileModal
-      );
-
-    }
-
-
-    if (profileModalOverlay) {
-
-      profileModalOverlay.addEventListener(
-        "click",
-        closeProfileModal
-      );
-
-    }
-
-
-    /* =======================================================
-       EDIT PROFILE
-    ======================================================= */
-
-    function openEditProfile() {
-
-      const user =
-        auth.currentUser;
-
-
-      if (!user) {
-
-        alert(
-          t("editProfileLogin")
-        );
-
-        return;
-
-      }
-
-
-      const profile =
-        currentProfile ||
-        profileCache.get(
-          user.uid
-        ) ||
-        {};
-
-
-      if (profileNameInput) {
-
-        profileNameInput.value =
-          profile.name || "";
-
-      }
-
-
-      if (profilePhoneInput) {
-
-        profilePhoneInput.value =
-          profile.phone || "";
-
-      }
-
-
-      if (profileLocationInput) {
-
-        profileLocationInput.value =
-          profile.location || "";
-
-      }
-
-
-      if (profileBioInput) {
-
-        profileBioInput.value =
-          profile.bio || "";
-
-      }
-
-
-      if (profileImageStatus) {
-
-        profileImageStatus.textContent =
-          "";
-
-      }
-
-
-      if (profileSaveStatus) {
-
-        profileSaveStatus.textContent =
-          "";
-
-      }
-
-
-      editProfileModal.classList.add(
-        "active"
-      );
-
-
-      editProfileModal.setAttribute(
-        "aria-hidden",
-        "false"
-      );
-
-
-      document.body.classList.add(
-        "modal-open"
-      );
-
-    }
-
-
-    function closeEditProfile() {
-
-      if (!editProfileModal) {
-
-        return;
-
-      }
-
-
-      editProfileModal.classList.remove(
-        "active"
-      );
-
-
-      editProfileModal.setAttribute(
-        "aria-hidden",
-        "true"
-      );
-
-
-      document.body.classList.remove(
-        "modal-open"
-      );
-
-    }
-
-
-    if (closeEditProfileModal) {
-
-      closeEditProfileModal.addEventListener(
-        "click",
-        closeEditProfile
-      );
-
-    }
-
-
-    if (editProfileModalOverlay) {
-
-      editProfileModalOverlay.addEventListener(
-        "click",
-        closeEditProfile
-      );
-
-    }
-
-
-    /* =======================================================
-       PROFILE PHOTO PREVIEW
-    ======================================================= */
-
-    if (profilePhotoFile) {
-
-      profilePhotoFile.addEventListener(
-        "change",
-        () => {
-
-          const file =
-            profilePhotoFile.files[0];
-
-
-          if (!file) {
-
-            return;
-
-          }
-
-
-          const validation =
-            validateImageFile(
-              file
-            );
-
-
-          if (!validation.valid) {
-
-            profileImageStatus.textContent =
-              validation.error;
-
-            profileImageStatus.style.color =
-              "red";
-
-            profilePhotoFile.value =
-              "";
-
-            return;
-
-          }
-
-
-          profileImageStatus.textContent =
-            file.name;
-
-          profileImageStatus.style.color =
-            "green";
-
-        }
-      );
-
-    }
-
-
-    /* =======================================================
-       SAVE PROFILE
-    ======================================================= */
-
-    if (editProfileForm) {
-
-      editProfileForm.addEventListener(
-        "submit",
-        async event => {
-
-          event.preventDefault();
-
-
-          const user =
-            auth.currentUser;
-
-
-          if (!user) {
-
-            profileSaveStatus.textContent =
-              t("editProfileLogin");
-
-            profileSaveStatus.style.color =
-              "red";
-
-            return;
-
-          }
-
-
-          saveProfileBtn.disabled =
-            true;
-
-
-          saveProfileBtn.textContent =
-            currentLanguage === "ar"
-              ? "جاري الحفظ..."
-              : "Saving...";
-
-
-          try {
-
-            let photoURL =
-              currentProfile?.photoURL ||
-              "";
-
-
-            const file =
-              profilePhotoFile
-                ? profilePhotoFile.files[0]
-                : null;
-
-
-            if (file) {
-
-              photoURL =
-                await uploadImageToCloudinary(
-                  file,
-                  profileImageStatus,
-                  {
-                    maxWidth:
-                      1000,
-
-                    maxHeight:
-                      1000,
-
-                    quality:
-                      0.80
-                  }
-                );
-
-            }
-
-
-            const profileRef =
-              doc(
-                db,
-                "users",
-                user.uid
-              );
-
-
-            const existing =
-              await getDoc(
-                profileRef
-              );
-
-
-            const oldData =
-              existing.exists()
-                ? existing.data()
-                : {};
-
-
-            await setDoc(
-              profileRef,
-              {
-
-                uid:
-                  user.uid,
-
-                name:
-                  profileNameInput.value.trim(),
-
-                phone:
-                  profilePhoneInput.value.trim(),
-
-                email:
-                  user.email || "",
-
-                location:
-                  profileLocationInput.value.trim(),
-
-                bio:
-                  profileBioInput.value.trim(),
-
-                photoURL:
-                  photoURL,
-
-                createdAt:
-                  oldData.createdAt ||
-                  serverTimestamp(),
-
-                updatedAt:
-                  serverTimestamp()
-
-              },
-              {
-                merge:
-                  true
-              }
-            );
-
-
-            /*
-               Update local cache immediately.
-               No unnecessary extra getDoc() request.
-            */
-
-            const updatedProfile = {
-
-              id:
-                user.uid,
-
-              uid:
-                user.uid,
-
-              name:
-                profileNameInput.value.trim(),
-
-              phone:
-                profilePhoneInput.value.trim(),
-
-              email:
-                user.email || "",
-
-              location:
-                profileLocationInput.value.trim(),
-
-              bio:
-                profileBioInput.value.trim(),
-
-              photoURL:
-                photoURL,
-
-              createdAt:
-                oldData.createdAt ||
-                currentProfile?.createdAt ||
-                null
-
-            };
-
-
-            profileCache.set(
-              user.uid,
-              updatedProfile
-            );
-
-
-            currentProfile =
-              updatedProfile;
-
-
-            profileSaveStatus.textContent =
-              t("profileSaved");
-
-
-            profileSaveStatus.style.color =
-              "green";
-
-
-            if (profilePhotoFile) {
-
-              profilePhotoFile.value =
-                "";
-
-            }
-
-
-            /*
-               Render immediately from local data.
-            */
-
-            await renderMyProfile();
-
-
-            setTimeout(
-              () => {
-
-                closeEditProfile();
-
-              },
-              700
-            );
-
-
-          } catch (error) {
-
-            console.error(
-              "Profile save error:",
-              error
-            );
-
-
-            profileSaveStatus.textContent =
-              error.message ||
-              t("publishFailed");
-
-
-            profileSaveStatus.style.color =
-              "red";
-
-          } finally {
-
-            saveProfileBtn.disabled =
-              false;
-
-
-            saveProfileBtn.textContent =
-              t("saveProfile");
-
-          }
-
-        }
-      );
-
-    }
-
-
-    /* =======================================================
-       PRODUCT IMAGE SELECTION
-    ======================================================= */
-
-    if (productImageFile) {
-
-      productImageFile.addEventListener(
-        "change",
-        () => {
-
-          const file =
-            productImageFile.files[0];
-
-
-          if (!file) {
-
-            imageStatus.textContent =
-              "";
-
-            return;
-
-          }
-
-
-          const validation =
-            validateImageFile(
-              file
-            );
-
-
-          if (!validation.valid) {
-
-            imageStatus.textContent =
-              validation.error;
-
-            imageStatus.style.color =
-              "red";
-
-            productImageFile.value =
-              "";
-
-            return;
-
-          }
-
-
-          imageStatus.textContent =
-            file.name;
-
-          imageStatus.style.color =
-            "green";
-
-        }
-      );
-
-    }
-
-
-    /*
-       The remaining functions continue in Part 2/6.
-    */
-   /* =========================================================
-   MAZAD — Part 2
-   Global Variables + DOM Ready + Helpers + Language
-========================================================= */
-
-let products = [];
-let currentProfile = null;
-let selectedConversationId = null;
-let selectedChatUser = null;
-let unsubscribeMessages = null;
-
-/* =========================================================
-   DOM Ready
-========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  applyLanguage();
-
-  /* =======================================================
-     DOM Elements
-  ======================================================= */
-
-  const languageBtn =
-    document.getElementById("languageBtn");
-
-  const searchInput =
-    document.getElementById("searchInput");
-
-  const categorySelect =
-    document.getElementById("categorySelect");
-
-  const searchBtn =
-    document.getElementById("searchBtn");
-
-  const productsContainer =
-    document.getElementById("productsContainer");
-
-  const loginForm =
-    document.getElementById("loginForm");
-
-  const registerForm =
-    document.getElementById("registerForm");
-
-  const showRegisterBtn =
-    document.getElementById("showRegisterBtn");
-
-  const showLoginBtn =
-    document.getElementById("showLoginBtn");
-
-  const authTitle =
-    document.getElementById("authTitle");
-
-  const authMessage =
-    document.getElementById("authMessage");
-
-  const authStatus =
-    document.getElementById("authStatus");
-
-  const sellProductForm =
-    document.getElementById("sellProductForm");
-
-  const sellStatus =
-    document.getElementById("sellStatus");
-
-  const imageStatus =
-    document.getElementById("imageStatus");
-
-  const publishProductBtn =
-    document.getElementById("publishProductBtn");
-
-  const productImageFile =
-    document.getElementById("productImageFile");
-
-  const headerSellBtn =
-    document.getElementById("headerSellBtn");
-
-  const heroSellBtn =
-    document.getElementById("heroSellBtn");
-
-  const profileNavBtn =
-    document.getElementById("profileNavBtn");
-
-  const profileContent =
-    document.getElementById("profileContent");
-
-  const productModal =
-    document.getElementById("productModal");
-
-  const productModalOverlay =
-    document.querySelector(".product-modal-overlay");
-
-  const closeProductModal =
-    document.getElementById("closeProductModal");
-
-  const modalProductImage =
-    document.getElementById("modalProductImage");
-
-  const modalProductCategory =
-    document.getElementById("modalProductCategory");
-
-  const modalProductTitle =
-    document.getElementById("modalProductTitle");
-
-  const modalProductPrice =
-    document.getElementById("modalProductPrice");
-
-  const modalProductLocation =
-    document.getElementById("modalProductLocation");
-
-  const modalProductDescription =
-    document.getElementById("modalProductDescription");
-
-  const modalSellerPhoto =
-    document.getElementById("modalSellerPhoto");
-
-  const modalSellerName =
-    document.getElementById("modalSellerName");
-
-  const modalSellerEmail =
-    document.getElementById("modalSellerEmail");
-
-  const sellerActions =
-    document.getElementById("sellerActions");
-
-  const profileModal =
-    document.getElementById("profileModal");
-
-  const profileModalOverlay =
-    document.querySelector(
-      "#profileModal .profile-modal-overlay"
-    );
-
-  const closeProfileModalBtn =
-    document.getElementById("closeProfileModal");
-
-  const profileModalContent =
-    document.getElementById("profileModalContent");
-
-  const editProfileModal =
-    document.getElementById("editProfileModal");
-
-  const editProfileModalOverlay =
-    document.querySelector(
-      "#editProfileModal .profile-modal-overlay"
-    );
-
-  const closeEditProfileModal =
-    document.getElementById("closeEditProfileModal");
-
-  const editProfileForm =
-    document.getElementById("editProfileForm");
-
-  const profilePhotoFile =
-    document.getElementById("profilePhotoFile");
-
-  const profileImageStatus =
-    document.getElementById("profileImageStatus");
-
-  const profileSaveStatus =
-    document.getElementById("profileSaveStatus");
-
-  const profileNameInput =
-    document.getElementById("profileNameInput");
-
-  const profilePhoneInput =
-    document.getElementById("profilePhoneInput");
-
-  const profileLocationInput =
-    document.getElementById("profileLocationInput");
-
-  const profileBioInput =
-    document.getElementById("profileBioInput");
-
-  const saveProfileBtn =
-    document.getElementById("saveProfileBtn");
-
-  const conversationList =
-    document.getElementById("conversationList");
-
-  const chatHeader =
-    document.getElementById("chatHeader");
-
-  const chatMessages =
-    document.getElementById("chatMessages");
-
-  const chatForm =
-    document.getElementById("chatForm");
-
-  const chatInput =
-    document.getElementById("chatInput");
-
-  /* =======================================================
-     Helpers
-  ======================================================= */
-
-  function escapeHTML(value) {
-    return String(value ?? "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  function formatPrice(price) {
-    const number = Number(price);
-
-    if (!Number.isFinite(number)) {
-      return "0";
-    }
-
-    return number.toLocaleString(
-      "en-US",
-      {
-        minimumFractionDigits:
-          Number.isInteger(number)
-            ? 0
-            : 2,
-
-        maximumFractionDigits: 2
-      }
-    );
-  }
-
-  function getDefaultAvatar() {
-    return "https://via.placeholder.com/200x200?text=User";
-  }
-
-  function formatDate(value) {
-    if (!value) {
-      return t("unknown");
-    }
-
-    let date;
+  try {
 
     if (
-      typeof value.toDate ===
-      "function"
+      value &&
+      typeof value.toDate === "function"
     ) {
+
       date = value.toDate();
 
     } else if (
       value instanceof Date
     ) {
+
       date = value;
 
     } else {
+
       date = new Date(value);
+
     }
 
-    if (
-      Number.isNaN(
-        date.getTime()
-      )
-    ) {
-      return t("unknown");
-    }
+  } catch {
 
-    return date.toLocaleDateString(
-      currentLanguage === "ar"
-        ? "ar-SA"
-        : "en-US",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      }
-    );
+    return t("unknown");
+
   }
 
-  /* =======================================================
-     Language
-  ======================================================= */
-
-  function switchLanguage() {
-
-    currentLanguage =
-      currentLanguage === "en"
-        ? "ar"
-        : "en";
-
-    localStorage.setItem(
-      "mazadLanguage",
-      currentLanguage
-    );
-
-    applyLanguage();
-
-    displayProducts(products);
-
-    if (auth.currentUser) {
-      renderMyProfile();
-      loadConversations();
-    }
-  }
-
-  if (languageBtn) {
-    languageBtn.addEventListener(
-      "click",
-      switchLanguage
-    );
-  }
-
-  /* =======================================================
-     Auth Message
-  ======================================================= */
-
-  function showAuthMessage(
-    message,
-    success = false
+  if (
+    !date ||
+    Number.isNaN(date.getTime())
   ) {
 
-    if (!authStatus) {
-      return;
-    }
+    return t("unknown");
 
-    authStatus.textContent =
-      message;
-
-    authStatus.style.color =
-      success
-        ? "green"
-        : "red";
   }
 
-  /* =======================================================
-     Firebase Errors
-  ======================================================= */
-
-  function getFirebaseErrorMessage(error) {
-
-    switch (error.code) {
-
-      case "auth/email-already-in-use":
-
-        return currentLanguage === "ar"
-          ? "هذا البريد الإلكتروني مسجل بالفعل."
-          : "This email is already registered.";
-
-      case "auth/invalid-email":
-
-        return currentLanguage === "ar"
-          ? "يرجى إدخال بريد إلكتروني صالح."
-          : "Please enter a valid email address.";
-
-      case "auth/weak-password":
-
-        return currentLanguage === "ar"
-          ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
-          : "Password must be at least 6 characters.";
-
-      case "auth/invalid-credential":
-
-        return currentLanguage === "ar"
-          ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
-          : "Email or password is incorrect.";
-
-      case "auth/user-not-found":
-
-        return currentLanguage === "ar"
-          ? "لا يوجد حساب بهذا البريد الإلكتروني."
-          : "No account found with this email.";
-
-      case "auth/wrong-password":
-
-        return currentLanguage === "ar"
-          ? "كلمة المرور غير صحيحة."
-          : "Incorrect password.";
-
-      case "auth/too-many-requests":
-
-        return currentLanguage === "ar"
-          ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
-          : "Too many attempts. Please try again later.";
-
-      default:
-
-        return currentLanguage === "ar"
-          ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-          : "Something went wrong. Please try again.";
+  return date.toLocaleDateString(
+    currentLanguage === "ar"
+      ? "ar-SA"
+      : "en-US",
+    {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
     }
+  );
+
+}
+
+
+/* =========================================================
+   LANGUAGE SWITCH
+   ========================================================= */
+
+function switchLanguage() {
+
+  currentLanguage =
+    currentLanguage === "en"
+      ? "ar"
+      : "en";
+
+  localStorage.setItem(
+    "mazadLanguage",
+    currentLanguage
+  );
+
+  applyLanguage();
+
+  displayProducts(products);
+
+  if (auth.currentUser) {
+
+    renderMyProfile();
+    loadConversations();
+
   }
 
-  /* =======================================================
-     Profile Data
-  ======================================================= */
+}
 
-  async function getUserProfile(uid) {
 
-    try {
+if (languageBtn) {
 
-      const profileDoc =
-        await getDoc(
-          doc(
-            db,
-            "users",
-            uid
-          )
-        );
+  languageBtn.addEventListener(
+    "click",
+    switchLanguage
+  );
 
-      if (profileDoc.exists()) {
+}
 
-        return {
-          id: uid,
-          ...profileDoc.data()
-        };
-      }
 
-      return null;
+/* =========================================================
+   AUTH MESSAGE
+   ========================================================= */
 
-    } catch (error) {
+function showAuthMessage(
+  message,
+  success = false
+) {
+
+  if (!authStatus) {
+    return;
+  }
+
+  authStatus.textContent =
+    message || "";
+
+  authStatus.style.color =
+    success
+      ? "green"
+      : "red";
+
+}
+
+
+/* =========================================================
+   FIREBASE AUTH ERROR
+   ========================================================= */
+
+function getFirebaseErrorMessage(error) {
+
+  if (!error) {
+    return t("somethingWentWrong");
+  }
+
+  switch (error.code) {
+
+    case "auth/email-already-in-use":
+      return t("emailAlreadyRegistered");
+
+    case "auth/invalid-email":
+      return t("invalidEmail");
+
+    case "auth/weak-password":
+      return t("weakPassword");
+
+    case "auth/invalid-credential":
+      return t("invalidCredential");
+
+    case "auth/user-not-found":
+      return t("userNotFound");
+
+    case "auth/wrong-password":
+      return t("wrongPassword");
+
+    case "auth/too-many-requests":
+      return t("tooManyRequests");
+
+    case "auth/network-request-failed":
+      return currentLanguage === "ar"
+        ? "تحقق من اتصال الإنترنت وحاول مرة أخرى."
+        : "Please check your internet connection and try again.";
+
+    case "auth/operation-not-allowed":
+      return currentLanguage === "ar"
+        ? "طريقة تسجيل الدخول هذه غير مفعلة في Firebase."
+        : "This sign-in method is not enabled in Firebase.";
+
+    default:
 
       console.error(
-        "Profile loading error:",
+        "Firebase Auth Error:",
         error
       );
 
-      return null;
-    }
+      return t("somethingWentWrong");
+
   }
 
-  async function createUserProfile(user) {
+}
 
-    if (!user) {
-      return;
+
+/* =========================================================
+   USER PROFILE
+   ========================================================= */
+
+async function getUserProfile(uid) {
+
+  if (!uid) {
+    return null;
+  }
+
+  try {
+
+    const profileDoc =
+      await getDoc(
+        doc(db, "users", uid)
+      );
+
+    if (profileDoc.exists()) {
+
+      return {
+        id: uid,
+        ...profileDoc.data()
+      };
+
     }
 
+    return null;
+
+  } catch (error) {
+
+    console.error(
+      "Profile loading error:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+async function createUserProfile(user) {
+
+  if (!user?.uid) {
+    return;
+  }
+
+  try {
+
     const profileRef =
-      doc(
-        db,
-        "users",
-        user.uid
-      );
+      doc(db, "users", user.uid);
 
     const existing =
       await getDoc(profileRef);
@@ -4242,43 +1095,33 @@ document.addEventListener("DOMContentLoaded", () => {
     await setDoc(
       profileRef,
       {
-        uid:
-          user.uid,
-
-        name:
-          "",
-
-        phone:
-          "",
-
-        email:
-          user.email || "",
-
-        location:
-          "",
-
-        bio:
-          "",
-
-        photoURL:
-          "",
-
-        createdAt:
-          serverTimestamp(),
-
-        updatedAt:
-          serverTimestamp()
+        uid: user.uid,
+        name: "",
+        phone: "",
+        email: user.email || "",
+        location: "",
+        bio: "",
+        photoURL: "",
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       }
     );
+
+  } catch (error) {
+
+    console.error(
+      "Create profile error:",
+      error
+    );
+
   }
 
-  /* =======================================================
-     Part 2 শেষ
-     Part 3 শুরু হবে Profile Display থেকে
-  ======================================================= */
-     /* =======================================================
-   Profile Display
-======================================================= */
+}
+
+
+/* =========================================================
+   PROFILE TEMPLATE
+   ========================================================= */
 
 function profileTemplate(
   profile,
@@ -4313,18 +1156,22 @@ function profileTemplate(
     t("noDescription");
 
   const joined =
-    formatDate(
-      profile?.createdAt
-    );
+    formatDate(profile?.createdAt);
+
+  const profileUid =
+    profile?.uid ||
+    user?.uid ||
+    "";
 
   const userProducts =
     products.filter(
       product =>
-        product.sellerId ===
-        (profile?.uid || user?.uid)
+        product.sellerId === profileUid
     );
 
+
   return `
+
     <div class="profile-card">
 
       <div class="profile-cover"></div>
@@ -4337,6 +1184,12 @@ function profileTemplate(
             class="profile-avatar-image"
             src="${escapeHTML(photo)}"
             alt="${escapeHTML(name)}"
+            onerror="
+              this.onerror=null;
+              this.src='${escapeHTML(
+                getDefaultAvatar()
+              )}';
+            "
           >
 
           <div class="profile-heading">
@@ -4375,10 +1228,10 @@ function profileTemplate(
 
         </div>
 
+
         <div class="profile-info-grid">
 
           <div class="profile-info-item">
-
             <span>
               ${escapeHTML(
                 t("email")
@@ -4388,11 +1241,10 @@ function profileTemplate(
             <strong>
               ${escapeHTML(email)}
             </strong>
-
           </div>
 
-          <div class="profile-info-item">
 
+          <div class="profile-info-item">
             <span>
               ${escapeHTML(
                 t("phone")
@@ -4402,11 +1254,10 @@ function profileTemplate(
             <strong>
               ${escapeHTML(phone)}
             </strong>
-
           </div>
 
-          <div class="profile-info-item">
 
+          <div class="profile-info-item">
             <span>
               ${escapeHTML(
                 t("location")
@@ -4416,11 +1267,10 @@ function profileTemplate(
             <strong>
               ${escapeHTML(location)}
             </strong>
-
           </div>
 
-          <div class="profile-info-item">
 
+          <div class="profile-info-item">
             <span>
               ${escapeHTML(
                 t("joinDate")
@@ -4430,10 +1280,10 @@ function profileTemplate(
             <strong>
               ${escapeHTML(joined)}
             </strong>
-
           </div>
 
         </div>
+
 
         <div class="profile-bio">
 
@@ -4449,6 +1299,7 @@ function profileTemplate(
 
         </div>
 
+
         <div class="profile-listings">
 
           <h3>
@@ -4459,54 +1310,59 @@ function profileTemplate(
 
           ${
             userProducts.length
+
               ? `
                 <div class="mini-products">
 
-                  ${userProducts
-                    .map(
-                      product => `
-                        <div
-                          class="mini-product"
-                          data-profile-product-id="${escapeHTML(
-                            product.id
-                          )}"
-                        >
-
-                          <img
-                            src="${escapeHTML(
-                              product.image ||
-                              "https://via.placeholder.com/500x300?text=Mazad"
-                            )}"
-                            alt="${escapeHTML(
-                              product.title ||
-                              "Product"
+                  ${
+                    userProducts
+                      .map(
+                        product => `
+                          <div
+                            class="mini-product"
+                            data-profile-product-id="${escapeHTML(
+                              product.id
                             )}"
                           >
 
-                          <div class="mini-product-info">
-
-                            <strong>
-                              ${escapeHTML(
+                            <img
+                              src="${escapeHTML(
+                                product.image ||
+                                "https://via.placeholder.com/500x300?text=Mazad"
+                              )}"
+                              alt="${escapeHTML(
                                 product.title ||
-                                "Product"
-                              )}
-                            </strong>
+                                t("product")
+                              )}"
+                              loading="lazy"
+                            >
 
-                            <span>
-                              $${formatPrice(
-                                product.price
-                              )}
-                            </span>
+                            <div class="mini-product-info">
+
+                              <strong>
+                                ${escapeHTML(
+                                  product.title ||
+                                  t("product")
+                                )}
+                              </strong>
+
+                              <span>
+                                $${formatPrice(
+                                  product.price
+                                )}
+                              </span>
+
+                            </div>
 
                           </div>
-
-                        </div>
-                      `
-                    )
-                    .join("")}
+                        `
+                      )
+                      .join("")
+                  }
 
                 </div>
               `
+
               : `
                 <div class="empty-state">
 
@@ -4527,13 +1383,15 @@ function profileTemplate(
       </div>
 
     </div>
+
   `;
+
 }
 
 
-/* =======================================================
-   Render My Profile
-======================================================= */
+/* =========================================================
+   RENDER MY PROFILE
+   ========================================================= */
 
 async function renderMyProfile() {
 
@@ -4548,26 +1406,23 @@ async function renderMyProfile() {
 
     profileContent.innerHTML = `
       <div class="not-logged-profile">
-
-        <div class="hero-icon">
-          👤
-        </div>
+        <div class="hero-icon">👤</div>
 
         <h3>
           ${escapeHTML(
             t("profileRequired")
           )}
         </h3>
-
       </div>
     `;
 
     return;
+
   }
+
 
   profileContent.innerHTML = `
     <div class="empty-state">
-
       <div>⏳</div>
 
       <p>
@@ -4575,9 +1430,9 @@ async function renderMyProfile() {
           t("loading")
         )}
       </p>
-
     </div>
   `;
+
 
   let profile =
     await getUserProfile(
@@ -4594,10 +1449,12 @@ async function renderMyProfile() {
       await getUserProfile(
         user.uid
       );
+
   }
 
   currentProfile =
     profile;
+
 
   profileContent.innerHTML =
     profileTemplate(
@@ -4605,6 +1462,7 @@ async function renderMyProfile() {
       user,
       true
     );
+
 
   const editBtn =
     document.getElementById(
@@ -4617,55 +1475,65 @@ async function renderMyProfile() {
       "click",
       openEditProfile
     );
+
   }
+
 
   profileContent
     .querySelectorAll(
       "[data-profile-product-id]"
     )
-    .forEach(
-      card => {
+    .forEach(card => {
 
-        card.addEventListener(
-          "click",
-          () => {
+      card.addEventListener(
+        "click",
+        () => {
 
-            const id =
-              card.dataset
-                .profileProductId;
+          const id =
+            card.dataset
+              .profileProductId;
 
-            const product =
-              products.find(
-                item =>
-                  item.id === id
-              );
+          const product =
+            products.find(
+              item =>
+                item.id === id
+            );
 
-            if (product) {
+          if (product) {
 
-              openProductDetails(
-                product
-              );
-            }
+            openProductDetails(
+              product
+            );
+
           }
-        );
-      }
-    );
+
+        }
+      );
+
+    });
+
 }
 
 
-/* =======================================================
-   Public Profile
-======================================================= */
+/* =========================================================
+   PUBLIC PROFILE
+   ========================================================= */
 
 async function openPublicProfile(uid) {
 
-  if (!profileModalContent) {
+  if (
+    !profileModalContent ||
+    !profileModal ||
+    !uid
+  ) {
+
     return;
+
   }
+
 
   profileModalContent.innerHTML = `
     <div class="empty-state">
-
       <div>⏳</div>
 
       <p>
@@ -4673,9 +1541,9 @@ async function openPublicProfile(uid) {
           t("loading")
         )}
       </p>
-
     </div>
   `;
+
 
   profileModal.classList.add(
     "active"
@@ -4690,10 +1558,10 @@ async function openPublicProfile(uid) {
     "modal-open"
   );
 
+
   const profile =
-    await getUserProfile(
-      uid
-    );
+    await getUserProfile(uid);
+
 
   if (!profile) {
 
@@ -4710,13 +1578,9 @@ async function openPublicProfile(uid) {
     `;
 
     return;
+
   }
 
-  const user = {
-    uid,
-    email:
-      profile.email || ""
-  };
 
   const userProducts =
     products.filter(
@@ -4724,7 +1588,20 @@ async function openPublicProfile(uid) {
         product.sellerId === uid
     );
 
+
+  const displayName =
+    profile.name?.trim() ||
+    profile.email ||
+    t("member");
+
+
+  const profilePhoto =
+    profile.photoURL ||
+    getDefaultAvatar();
+
+
   profileModalContent.innerHTML = `
+
     <div class="profile-public">
 
       <div class="profile-public-cover"></div>
@@ -4736,23 +1613,24 @@ async function openPublicProfile(uid) {
           <img
             class="public-avatar"
             src="${escapeHTML(
-              profile.photoURL ||
-              getDefaultAvatar()
+              profilePhoto
             )}"
             alt="${escapeHTML(
-              profile.name ||
-              profile.email ||
-              "User"
+              displayName
             )}"
+            onerror="
+              this.onerror=null;
+              this.src='${escapeHTML(
+                getDefaultAvatar()
+              )}';
+            "
           >
 
           <div class="public-heading">
 
             <h2>
               ${escapeHTML(
-                profile.name ||
-                profile.email ||
-                t("member")
+                displayName
               )}
             </h2>
 
@@ -4765,6 +1643,7 @@ async function openPublicProfile(uid) {
           </div>
 
         </div>
+
 
         <div class="public-info">
 
@@ -4784,6 +1663,7 @@ async function openPublicProfile(uid) {
 
           </div>
 
+
           <div class="public-info-item">
 
             <span>
@@ -4801,6 +1681,7 @@ async function openPublicProfile(uid) {
 
           </div>
 
+
           <div class="public-info-item">
 
             <span>
@@ -4817,6 +1698,7 @@ async function openPublicProfile(uid) {
             </strong>
 
           </div>
+
 
           <div class="public-info-item">
 
@@ -4838,6 +1720,7 @@ async function openPublicProfile(uid) {
 
         </div>
 
+
         <div class="public-bio">
 
           <h3>
@@ -4855,6 +1738,7 @@ async function openPublicProfile(uid) {
 
         </div>
 
+
         <div class="public-actions">
 
           ${
@@ -4862,7 +1746,7 @@ async function openPublicProfile(uid) {
               ? `
                 <a
                   class="secondary-btn"
-                  href="tel:${escapeHTML(
+                  href="tel:${encodeURIComponent(
                     profile.phone
                   )}"
                 >
@@ -4873,6 +1757,7 @@ async function openPublicProfile(uid) {
               `
               : ""
           }
+
 
           <button
             type="button"
@@ -4886,6 +1771,7 @@ async function openPublicProfile(uid) {
 
         </div>
 
+
         <div class="profile-listings">
 
           <h3>
@@ -4895,56 +1781,62 @@ async function openPublicProfile(uid) {
             (${userProducts.length})
           </h3>
 
+
           ${
             userProducts.length
+
               ? `
                 <div class="mini-products">
 
-                  ${userProducts
-                    .map(
-                      product => `
-                        <div
-                          class="mini-product"
-                          data-public-product-id="${escapeHTML(
-                            product.id
-                          )}"
-                        >
-
-                          <img
-                            src="${escapeHTML(
-                              product.image ||
-                              "https://via.placeholder.com/500x300?text=Mazad"
-                            )}"
-                            alt="${escapeHTML(
-                              product.title ||
-                              "Product"
+                  ${
+                    userProducts
+                      .map(
+                        product => `
+                          <div
+                            class="mini-product"
+                            data-public-product-id="${escapeHTML(
+                              product.id
                             )}"
                           >
 
-                          <div class="mini-product-info">
-
-                            <strong>
-                              ${escapeHTML(
+                            <img
+                              src="${escapeHTML(
+                                product.image ||
+                                "https://via.placeholder.com/500x300?text=Mazad"
+                              )}"
+                              alt="${escapeHTML(
                                 product.title ||
-                                "Product"
-                              )}
-                            </strong>
+                                t("product")
+                              )}"
+                              loading="lazy"
+                            >
 
-                            <span>
-                              $${formatPrice(
-                                product.price
-                              )}
-                            </span>
+                            <div class="mini-product-info">
+
+                              <strong>
+                                ${escapeHTML(
+                                  product.title ||
+                                  t("product")
+                                )}
+                              </strong>
+
+                              <span>
+                                $${formatPrice(
+                                  product.price
+                                )}
+                              </span>
+
+                            </div>
 
                           </div>
-
-                        </div>
-                      `
-                    )
-                    .join("")}
+                        `
+                      )
+                      .join("")
+                  }
 
                 </div>
               `
+
               : `
                 <div class="empty-state">
 
@@ -4965,12 +1857,15 @@ async function openPublicProfile(uid) {
       </div>
 
     </div>
+
   `;
+
 
   const messageBtn =
     document.getElementById(
       "publicMessageBtn"
     );
+
 
   if (messageBtn) {
 
@@ -4978,9 +1873,12 @@ async function openPublicProfile(uid) {
       "click",
       () => {
 
+        const currentUser =
+          auth.currentUser;
+
         if (
-          auth.currentUser &&
-          auth.currentUser.uid === uid
+          currentUser &&
+          currentUser.uid === uid
         ) {
 
           alert(
@@ -4988,58 +1886,66 @@ async function openPublicProfile(uid) {
           );
 
           return;
+
         }
 
         closeProfileModal();
 
-        startConversation(
-          uid
-        );
+        startConversation(uid);
+
       }
     );
+
   }
+
 
   profileModalContent
     .querySelectorAll(
       "[data-public-product-id]"
     )
-    .forEach(
-      card => {
+    .forEach(card => {
 
-        card.addEventListener(
-          "click",
-          () => {
+      card.addEventListener(
+        "click",
+        () => {
 
-            const id =
-              card.dataset
-                .publicProductId;
+          const id =
+            card.dataset
+              .publicProductId;
 
-            const product =
-              products.find(
-                item =>
-                  item.id === id
-              );
+          const product =
+            products.find(
+              item =>
+                item.id === id
+            );
 
-            if (product) {
+          if (product) {
 
-              closeProfileModal();
+            closeProfileModal();
 
-              openProductDetails(
-                product
-              );
-            }
+            openProductDetails(
+              product
+            );
+
           }
-        );
-      }
-    );
+
+        }
+      );
+
+    });
+
 }
 
 
-/* =======================================================
-   Close Public Profile
-======================================================= */
+/* =========================================================
+   CLOSE PROFILE MODAL
+   ========================================================= */
 
 function closeProfileModal() {
+
+  if (!profileModal) {
+    return;
+  }
 
   profileModal.classList.remove(
     "active"
@@ -5053,7 +1959,9 @@ function closeProfileModal() {
   document.body.classList.remove(
     "modal-open"
   );
+
 }
+
 
 if (closeProfileModalBtn) {
 
@@ -5061,7 +1969,9 @@ if (closeProfileModalBtn) {
     "click",
     closeProfileModal
   );
+
 }
+
 
 if (profileModalOverlay) {
 
@@ -5069,12 +1979,13 @@ if (profileModalOverlay) {
     "click",
     closeProfileModal
   );
+
 }
 
 
-/* =======================================================
-   Edit Profile
-======================================================= */
+/* =========================================================
+   EDIT PROFILE
+   ========================================================= */
 
 function openEditProfile() {
 
@@ -5088,28 +1999,60 @@ function openEditProfile() {
     );
 
     return;
+
   }
+
+  if (!editProfileModal) {
+    return;
+  }
+
 
   const profile =
     currentProfile || {};
 
-  profileNameInput.value =
-    profile.name || "";
 
-  profilePhoneInput.value =
-    profile.phone || "";
+  if (profileNameInput) {
 
-  profileLocationInput.value =
-    profile.location || "";
+    profileNameInput.value =
+      profile.name || "";
 
-  profileBioInput.value =
-    profile.bio || "";
+  }
 
-  profileImageStatus.textContent =
-    "";
+  if (profilePhoneInput) {
 
-  profileSaveStatus.textContent =
-    "";
+    profilePhoneInput.value =
+      profile.phone || "";
+
+  }
+
+  if (profileLocationInput) {
+
+    profileLocationInput.value =
+      profile.location || "";
+
+  }
+
+  if (profileBioInput) {
+
+    profileBioInput.value =
+      profile.bio || "";
+
+  }
+
+  if (profileImageStatus) {
+
+    profileImageStatus.textContent =
+      "";
+
+  }
+
+  if (profileSaveStatus) {
+
+    profileSaveStatus.textContent =
+      "";
+
+  }
+
 
   editProfileModal.classList.add(
     "active"
@@ -5123,10 +2066,15 @@ function openEditProfile() {
   document.body.classList.add(
     "modal-open"
   );
+
 }
 
 
 function closeEditProfile() {
+
+  if (!editProfileModal) {
+    return;
+  }
 
   editProfileModal.classList.remove(
     "active"
@@ -5140,6 +2088,7 @@ function closeEditProfile() {
   document.body.classList.remove(
     "modal-open"
   );
+
 }
 
 
@@ -5149,6 +2098,7 @@ if (closeEditProfileModal) {
     "click",
     closeEditProfile
   );
+
 }
 
 
@@ -5158,17 +2108,13 @@ if (editProfileModalOverlay) {
     "click",
     closeEditProfile
   );
+
 }
 
 
-/* =======================================================
-   Part 3 শেষ
-   Part 4 শুরু হবে Cloudinary Upload থেকে
-======================================================= */
-
- /* =======================================================
-   Cloudinary Upload
-======================================================= */
+/* =========================================================
+   CLOUDINARY UPLOAD
+   ========================================================= */
 
 async function uploadImageToCloudinary(
   file,
@@ -5179,22 +2125,30 @@ async function uploadImageToCloudinary(
     return "";
   }
 
+
   if (
     file.size >
     10 * 1024 * 1024
   ) {
+
     throw new Error(
       t("imageTooLarge")
     );
+
   }
 
+
   if (
+    !file.type ||
     !file.type.startsWith("image/")
   ) {
+
     throw new Error(
       t("validImage")
     );
+
   }
+
 
   if (statusElement) {
 
@@ -5203,7 +2157,9 @@ async function uploadImageToCloudinary(
 
     statusElement.style.color =
       "black";
+
   }
+
 
   const formData =
     new FormData();
@@ -5218,48 +2174,80 @@ async function uploadImageToCloudinary(
     CLOUDINARY_UPLOAD_PRESET
   );
 
-  const response =
-    await fetch(
-      CLOUDINARY_UPLOAD_URL,
-      {
-        method: "POST",
-        body: formData
-      }
-    );
 
-  if (!response.ok) {
+  try {
 
-    throw new Error(
-      t("uploadFailed")
-    );
+    const response =
+      await fetch(
+        CLOUDINARY_UPLOAD_URL,
+        {
+          method: "POST",
+          body: formData
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        t("uploadFailed")
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data ||
+      !data.secure_url
+    ) {
+
+      throw new Error(
+        t("imageUrlFailed")
+      );
+
+    }
+
+
+    if (statusElement) {
+
+      statusElement.textContent =
+        t("imageUploaded");
+
+      statusElement.style.color =
+        "green";
+
+    }
+
+
+    return data.secure_url;
+
+  } catch (error) {
+
+    if (statusElement) {
+
+      statusElement.textContent =
+        error.message ||
+        t("uploadFailed");
+
+      statusElement.style.color =
+        "red";
+
+    }
+
+    throw error;
+
   }
 
-  const data =
-    await response.json();
-
-  if (!data.secure_url) {
-
-    throw new Error(
-      t("imageUrlFailed")
-    );
-  }
-
-  if (statusElement) {
-
-    statusElement.textContent =
-      t("imageUploaded");
-
-    statusElement.style.color =
-      "green";
-  }
-
-  return data.secure_url;
 }
 
 
-/* =======================================================
-   Profile Photo Preview
-======================================================= */
+/* =========================================================
+   PROFILE IMAGE VALIDATION
+   ========================================================= */
 
 if (profilePhotoFile) {
 
@@ -5268,11 +2256,19 @@ if (profilePhotoFile) {
     () => {
 
       const file =
-        profilePhotoFile.files[0];
+        profilePhotoFile.files?.[0];
 
       if (!file) {
+
+        if (profileImageStatus) {
+          profileImageStatus.textContent =
+            "";
+        }
+
         return;
+
       }
+
 
       if (
         file.size >
@@ -5289,9 +2285,12 @@ if (profilePhotoFile) {
           "";
 
         return;
+
       }
 
+
       if (
+        !file.type ||
         !file.type.startsWith("image/")
       ) {
 
@@ -5305,21 +2304,25 @@ if (profilePhotoFile) {
           "";
 
         return;
+
       }
+
 
       profileImageStatus.textContent =
         file.name;
 
       profileImageStatus.style.color =
         "green";
+
     }
   );
+
 }
 
 
-/* =======================================================
-   Save Profile
-======================================================= */
+/* =========================================================
+   SAVE PROFILE
+   ========================================================= */
 
 if (editProfileForm) {
 
@@ -5329,27 +2332,40 @@ if (editProfileForm) {
 
       event.preventDefault();
 
+
       const user =
         auth.currentUser;
 
+
       if (!user) {
 
-        profileSaveStatus.textContent =
-          t("editProfileLogin");
+        if (profileSaveStatus) {
 
-        profileSaveStatus.style.color =
-          "red";
+          profileSaveStatus.textContent =
+            t("editProfileLogin");
+
+          profileSaveStatus.style.color =
+            "red";
+
+        }
 
         return;
+
       }
 
-      saveProfileBtn.disabled =
-        true;
 
-      saveProfileBtn.textContent =
-        currentLanguage === "ar"
-          ? "جاري الحفظ..."
-          : "Saving...";
+      if (saveProfileBtn) {
+
+        saveProfileBtn.disabled =
+          true;
+
+        saveProfileBtn.textContent =
+          currentLanguage === "ar"
+            ? "جاري الحفظ..."
+            : "Saving...";
+
+      }
+
 
       try {
 
@@ -5357,10 +2373,12 @@ if (editProfileForm) {
           currentProfile?.photoURL ||
           "";
 
+
         const file =
           profilePhotoFile
-            ? profilePhotoFile.files[0]
-            : null;
+            ?.files?.[0] ||
+          null;
+
 
         if (file) {
 
@@ -5369,7 +2387,9 @@ if (editProfileForm) {
               file,
               profileImageStatus
             );
+
         }
+
 
         const profileRef =
           doc(
@@ -5378,39 +2398,53 @@ if (editProfileForm) {
             user.uid
           );
 
+
         const existing =
           await getDoc(
             profileRef
           );
+
 
         const oldData =
           existing.exists()
             ? existing.data()
             : {};
 
+
         await setDoc(
           profileRef,
           {
-            uid:
-              user.uid,
+            uid: user.uid,
 
             name:
-              profileNameInput.value.trim(),
+              profileNameInput
+                ?.value
+                .trim() ||
+              "",
 
             phone:
-              profilePhoneInput.value.trim(),
+              profilePhoneInput
+                ?.value
+                .trim() ||
+              "",
 
             email:
-              user.email || "",
+              user.email ||
+              "",
 
             location:
-              profileLocationInput.value.trim(),
+              profileLocationInput
+                ?.value
+                .trim() ||
+              "",
 
             bio:
-              profileBioInput.value.trim(),
+              profileBioInput
+                ?.value
+                .trim() ||
+              "",
 
-            photoURL:
-              photoURL,
+            photoURL,
 
             createdAt:
               oldData.createdAt ||
@@ -5424,24 +2458,34 @@ if (editProfileForm) {
           }
         );
 
+
         currentProfile =
           await getUserProfile(
             user.uid
           );
 
-        profileSaveStatus.textContent =
-          t("profileSaved");
 
-        profileSaveStatus.style.color =
-          "green";
+        if (profileSaveStatus) {
+
+          profileSaveStatus.textContent =
+            t("profileSaved");
+
+          profileSaveStatus.style.color =
+            "green";
+
+        }
+
 
         if (profilePhotoFile) {
 
           profilePhotoFile.value =
             "";
+
         }
 
+
         await renderMyProfile();
+
 
         setTimeout(
           () => {
@@ -5450,6 +2494,7 @@ if (editProfileForm) {
           700
         );
 
+
       } catch (error) {
 
         console.error(
@@ -5457,29 +2502,41 @@ if (editProfileForm) {
           error
         );
 
-        profileSaveStatus.textContent =
-          error.message ||
-          t("publishFailed");
 
-        profileSaveStatus.style.color =
-          "red";
+        if (profileSaveStatus) {
+
+          profileSaveStatus.textContent =
+            error.message ||
+            t("somethingWentWrong");
+
+          profileSaveStatus.style.color =
+            "red";
+
+        }
 
       } finally {
 
-        saveProfileBtn.disabled =
-          false;
+        if (saveProfileBtn) {
 
-        saveProfileBtn.textContent =
-          t("saveProfile");
+          saveProfileBtn.disabled =
+            false;
+
+          saveProfileBtn.textContent =
+            t("saveProfile");
+
+        }
+
       }
+
     }
   );
+
 }
 
 
-/* =======================================================
-   Image Selection
-======================================================= */
+/* =========================================================
+   PRODUCT IMAGE VALIDATION
+   ========================================================= */
 
 if (productImageFile) {
 
@@ -5488,15 +2545,20 @@ if (productImageFile) {
     () => {
 
       const file =
-        productImageFile.files[0];
+        productImageFile.files?.[0];
+
 
       if (!file) {
 
-        imageStatus.textContent =
-          "";
+        if (imageStatus) {
+          imageStatus.textContent =
+            "";
+        }
 
         return;
+
       }
+
 
       if (
         file.size >
@@ -5513,9 +2575,12 @@ if (productImageFile) {
           "";
 
         return;
+
       }
 
+
       if (
+        !file.type ||
         !file.type.startsWith("image/")
       ) {
 
@@ -5529,23 +2594,31 @@ if (productImageFile) {
           "";
 
         return;
+
       }
+
 
       imageStatus.textContent =
         file.name;
 
       imageStatus.style.color =
         "green";
+
     }
   );
+
 }
 
 
-/* =======================================================
-   Product Modal
-======================================================= */
+/* =========================================================
+   PRODUCT MODAL
+   ========================================================= */
 
 function closeProductDetails() {
+
+  if (!productModal) {
+    return;
+  }
 
   productModal.classList.remove(
     "active"
@@ -5559,212 +2632,305 @@ function closeProductDetails() {
   document.body.classList.remove(
     "modal-open"
   );
+
 }
 
 
-async function openProductDetails(product) {
+async function openProductDetails(
+  product
+) {
 
-  if (!product) {
+  if (
+    !product ||
+    !productModal
+  ) {
+
     return;
+
   }
+
 
   const image =
     product.image ||
     "https://via.placeholder.com/800x500?text=Mazad+Product";
 
-  modalProductImage.src =
-    image;
 
-  modalProductImage.alt =
-    product.title ||
-    "Mazad Product";
+  if (modalProductImage) {
 
-  modalProductCategory.textContent =
-    product.category ||
-    t("others");
+    modalProductImage.src =
+      image;
 
-  modalProductTitle.textContent =
-    product.title ||
-    "Untitled Product";
+    modalProductImage.alt =
+      product.title ||
+      t("product");
 
-  modalProductPrice.textContent =
-    `$${formatPrice(
-      product.price
-    )}`;
+  }
 
-  modalProductLocation.textContent =
-    product.location ||
-    t("unknown");
 
-  modalProductDescription.textContent =
-    product.description ||
-    t("noDescription");
+  if (modalProductCategory) {
 
-  const sellerProfile =
-    await getUserProfile(
-      product.sellerId
-    );
+    modalProductCategory.textContent =
+      product.category ||
+      t("others");
 
-  modalSellerPhoto.src =
-    sellerProfile?.photoURL ||
-    getDefaultAvatar();
+  }
 
-  modalSellerName.textContent =
-    sellerProfile?.name ||
-    product.sellerEmail ||
-    t("sellerUnavailable");
 
-  modalSellerEmail.textContent =
-    sellerProfile?.email ||
-    product.sellerEmail ||
-    "";
+  if (modalProductTitle) {
 
-  sellerActions.innerHTML =
-    "";
+    modalProductTitle.textContent =
+      product.title ||
+      t("product");
+
+  }
+
+
+  if (modalProductPrice) {
+
+    modalProductPrice.textContent =
+      `$${formatPrice(
+        product.price
+      )}`;
+
+  }
+
+
+  if (modalProductLocation) {
+
+    modalProductLocation.textContent =
+      product.location ||
+      t("unknown");
+
+  }
+
+
+  if (modalProductDescription) {
+
+    modalProductDescription.textContent =
+      product.description ||
+      t("noDescription");
+
+  }
+
+
+  let sellerProfile = null;
+
+
+  if (product.sellerId) {
+
+    sellerProfile =
+      await getUserProfile(
+        product.sellerId
+      );
+
+  }
+
+
+  if (modalSellerPhoto) {
+
+    modalSellerPhoto.src =
+      sellerProfile?.photoURL ||
+      getDefaultAvatar();
+
+  }
+
+
+  if (modalSellerName) {
+
+    modalSellerName.textContent =
+      sellerProfile?.name ||
+      product.sellerEmail ||
+      t("sellerUnavailable");
+
+  }
+
+
+  if (modalSellerEmail) {
+
+    modalSellerEmail.textContent =
+      sellerProfile?.email ||
+      product.sellerEmail ||
+      "";
+
+  }
+
+
+  if (sellerActions) {
+
+    sellerActions.innerHTML =
+      "";
+
+  }
+
 
   const currentUser =
     auth.currentUser;
 
-  const viewProfileButton =
-    document.createElement(
-      "button"
-    );
 
-  viewProfileButton.type =
-    "button";
+  if (sellerActions) {
 
-  viewProfileButton.className =
-    "profile-view-btn";
-
-  viewProfileButton.textContent =
-    t("viewProfile");
-
-  viewProfileButton.addEventListener(
-    "click",
-    () => {
-
-      closeProductDetails();
-
-      openPublicProfile(
-        product.sellerId
-      );
-    }
-  );
-
-  sellerActions.appendChild(
-    viewProfileButton
-  );
-
-
-  /* =====================================================
-     Seller Own Product
-  ===================================================== */
-
-  if (
-    currentUser &&
-    product.sellerId ===
-      currentUser.uid
-  ) {
-
-    const deleteButton =
+    const viewProfileButton =
       document.createElement(
         "button"
       );
 
-    deleteButton.type =
+    viewProfileButton.type =
       "button";
 
-    deleteButton.className =
-      "delete-product-btn";
+    viewProfileButton.className =
+      "profile-view-btn";
 
-    deleteButton.textContent =
-      t("deleteProduct");
+    viewProfileButton.textContent =
+      t("viewProfile");
 
-    deleteButton.addEventListener(
-      "click",
-      async () => {
 
-        await deleteProduct(
-          product.id
-        );
-      }
-    );
-
-    sellerActions.appendChild(
-      deleteButton
-    );
-
-  } else {
-
-    /* ===================================================
-       Message Seller
-    =================================================== */
-
-    const messageButton =
-      document.createElement(
-        "button"
-      );
-
-    messageButton.type =
-      "button";
-
-    messageButton.className =
-      "message-user-btn";
-
-    messageButton.textContent =
-      `💬 ${t("message")}`;
-
-    messageButton.addEventListener(
+    viewProfileButton.addEventListener(
       "click",
       () => {
 
-        if (!auth.currentUser) {
-
-          alert(
-            t("loginToMessage")
-          );
-
-          return;
-        }
-
         closeProductDetails();
 
-        startConversation(
-          product.sellerId
-        );
+        if (product.sellerId) {
+
+          openPublicProfile(
+            product.sellerId
+          );
+
+        }
+
       }
     );
 
+
     sellerActions.appendChild(
-      messageButton
+      viewProfileButton
     );
 
 
-    /* ===================================================
-       Call Seller
-    =================================================== */
+    if (
+      currentUser &&
+      product.sellerId ===
+        currentUser.uid
+    ) {
 
-    if (sellerProfile?.phone) {
-
-      const callLink =
+      const deleteButton =
         document.createElement(
-          "a"
+          "button"
         );
 
-      callLink.className =
-        "contact-seller-btn";
+      deleteButton.type =
+        "button";
 
-      callLink.href =
-        `tel:${sellerProfile.phone}`;
+      deleteButton.className =
+        "delete-product-btn";
 
-      callLink.textContent =
-        `📞 ${t("call")}`;
+      deleteButton.textContent =
+        t("deleteProduct");
+
+
+      deleteButton.addEventListener(
+        "click",
+        async () => {
+
+          await deleteProduct(
+            product.id
+          );
+
+        }
+      );
+
 
       sellerActions.appendChild(
-        callLink
+        deleteButton
       );
+
+    } else {
+
+      const messageButton =
+        document.createElement(
+          "button"
+        );
+
+      messageButton.type =
+        "button";
+
+      messageButton.className =
+        "message-user-btn";
+
+      messageButton.textContent =
+        `💬 ${t("message")}`;
+
+
+      messageButton.addEventListener(
+        "click",
+        () => {
+
+          if (!auth.currentUser) {
+
+            alert(
+              t("loginToMessage")
+            );
+
+            return;
+
+          }
+
+
+          if (!product.sellerId) {
+
+            alert(
+              t("profileNotFound")
+            );
+
+            return;
+
+          }
+
+
+          closeProductDetails();
+
+          startConversation(
+            product.sellerId
+          );
+
+        }
+      );
+
+
+      sellerActions.appendChild(
+        messageButton
+      );
+
+
+      if (sellerProfile?.phone) {
+
+        const callLink =
+          document.createElement(
+            "a"
+          );
+
+        callLink.className =
+          "contact-seller-btn";
+
+        callLink.href =
+          `tel:${encodeURIComponent(
+            sellerProfile.phone
+          )}`;
+
+        callLink.textContent =
+          `📞 ${t("call")}`;
+
+
+        sellerActions.appendChild(
+          callLink
+        );
+
+      }
+
     }
+
   }
+
 
   productModal.classList.add(
     "active"
@@ -5778,12 +2944,9 @@ async function openProductDetails(product) {
   document.body.classList.add(
     "modal-open"
   );
+
 }
 
-
-/* =======================================================
-   Product Modal Close Events
-======================================================= */
 
 if (closeProductModal) {
 
@@ -5791,7 +2954,9 @@ if (closeProductModal) {
     "click",
     closeProductDetails
   );
+
 }
+
 
 if (productModalOverlay) {
 
@@ -5799,12 +2964,13 @@ if (productModalOverlay) {
     "click",
     closeProductDetails
   );
+
 }
 
 
-/* =======================================================
-   Delete Product
-======================================================= */
+/* =========================================================
+   DELETE PRODUCT
+   ========================================================= */
 
 async function deleteProduct(
   productId
@@ -5813,6 +2979,7 @@ async function deleteProduct(
   const currentUser =
     auth.currentUser;
 
+
   if (!currentUser) {
 
     alert(
@@ -5820,13 +2987,16 @@ async function deleteProduct(
     );
 
     return;
+
   }
+
 
   const product =
     products.find(
       item =>
         item.id === productId
     );
+
 
   if (!product) {
 
@@ -5835,7 +3005,9 @@ async function deleteProduct(
     );
 
     return;
+
   }
+
 
   if (
     product.sellerId !==
@@ -5847,7 +3019,9 @@ async function deleteProduct(
     );
 
     return;
+
   }
+
 
   if (
     !confirm(
@@ -5856,7 +3030,9 @@ async function deleteProduct(
   ) {
 
     return;
+
   }
+
 
   try {
 
@@ -5868,18 +3044,17 @@ async function deleteProduct(
       )
     );
 
+
     closeProductDetails();
 
     alert(
       t("deleted")
     );
 
+
     await loadProducts();
 
-    if (auth.currentUser) {
-
-      await renderMyProfile();
-    }
+    await renderMyProfile();
 
   } catch (error) {
 
@@ -5891,154 +3066,1568 @@ async function deleteProduct(
     alert(
       t("deleteFailed")
     );
+
   }
+
 }
 
 
-/* =======================================================
-   Part 4 শেষ
-   Part 5 শুরু হবে Display Products থেকে
-======================================================= */ 
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
 
-     /* =======================================================
-       MESSENGER
-    ======================================================= */
+function productCardTemplate(
+  product
+) {
 
-    function createConversationId(uid1, uid2) {
-      return [uid1, uid2]
-        .sort()
-        .join("_");
+  const image =
+    product.image ||
+    "https://via.placeholder.com/500x300?text=Mazad";
+
+  const title =
+    product.title ||
+    t("product");
+
+  const category =
+    product.category ||
+    t("others");
+
+  const location =
+    product.location ||
+    t("unknown");
+
+  const price =
+    formatPrice(product.price);
+
+
+  return `
+
+    <article
+      class="product-card"
+      data-product-id="${escapeHTML(
+        product.id || ""
+      )}"
+    >
+
+      <div class="product-image-wrap">
+
+        <img
+          class="product-image"
+          src="${escapeHTML(image)}"
+          alt="${escapeHTML(title)}"
+          loading="lazy"
+          onerror="
+            this.onerror=null;
+            this.src='https://via.placeholder.com/500x300?text=Mazad';
+          "
+        >
+
+      </div>
+
+
+      <div class="product-card-content">
+
+        <span class="product-category">
+          ${escapeHTML(category)}
+        </span>
+
+        <h3 class="product-title">
+          ${escapeHTML(title)}
+        </h3>
+
+        <strong class="product-price">
+          $${escapeHTML(price)}
+        </strong>
+
+        <div class="product-location">
+          📍 ${escapeHTML(location)}
+        </div>
+
+      </div>
+
+    </article>
+
+  `;
+
+}
+
+
+/* =========================================================
+   DISPLAY PRODUCTS
+   ========================================================= */
+
+function displayProducts(
+  productList = []
+) {
+
+  if (!productsContainer) {
+    return;
+  }
+
+
+  if (!Array.isArray(productList)) {
+
+    productList = [];
+
+  }
+
+
+  if (productList.length === 0) {
+
+    productsContainer.innerHTML = `
+
+      <div class="empty-state">
+
+        <div>📦</div>
+
+        <p>
+          ${escapeHTML(
+            t("noProducts")
+          )}
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  productsContainer.innerHTML =
+    productList
+      .map(productCardTemplate)
+      .join("");
+
+
+  productsContainer
+    .querySelectorAll(
+      "[data-product-id]"
+    )
+    .forEach(card => {
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          const productId =
+            card.dataset
+              .productId;
+
+
+          const product =
+            products.find(
+              item =>
+                item.id ===
+                productId
+            );
+
+
+          if (product) {
+
+            openProductDetails(
+              product
+            );
+
+          }
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   FILTER PRODUCTS
+   ========================================================= */
+
+function filterProducts() {
+
+  const searchTerm =
+    searchInput?.value
+      ?.trim()
+      .toLowerCase() ||
+    "";
+
+
+  const selectedCategory =
+    categorySelect?.value
+      ?.trim()
+      .toLowerCase() ||
+    "";
+
+
+  const filteredProducts =
+    products.filter(
+      product => {
+
+        const title =
+          String(
+            product.title || ""
+          ).toLowerCase();
+
+
+        const description =
+          String(
+            product.description || ""
+          ).toLowerCase();
+
+
+        const location =
+          String(
+            product.location || ""
+          ).toLowerCase();
+
+
+        const category =
+          String(
+            product.category || ""
+          ).toLowerCase();
+
+
+        const matchesSearch =
+          !searchTerm ||
+          title.includes(
+            searchTerm
+          ) ||
+          description.includes(
+            searchTerm
+          ) ||
+          location.includes(
+            searchTerm
+          ) ||
+          category.includes(
+            searchTerm
+          );
+
+
+        const matchesCategory =
+          !selectedCategory ||
+          selectedCategory === "all" ||
+          category ===
+            selectedCategory;
+
+
+        return (
+          matchesSearch &&
+          matchesCategory
+        );
+
+      }
+    );
+
+
+  displayProducts(
+    filteredProducts
+  );
+
+}
+
+
+if (searchBtn) {
+
+  searchBtn.addEventListener(
+    "click",
+    filterProducts
+  );
+
+}
+
+
+if (searchInput) {
+
+  searchInput.addEventListener(
+    "input",
+    filterProducts
+  );
+
+
+  searchInput.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        filterProducts();
+
+      }
+
     }
+  );
 
-    async function startConversation(otherUid) {
-      const currentUser = auth.currentUser;
+}
+
+
+if (categorySelect) {
+
+  categorySelect.addEventListener(
+    "change",
+    filterProducts
+  );
+
+}
+
+
+/* =========================================================
+   LOAD PRODUCTS
+   ========================================================= */
+
+async function loadProducts() {
+
+  if (!productsContainer) {
+    return;
+  }
+
+
+  productsContainer.innerHTML = `
+
+    <div class="empty-state">
+
+      <div>⏳</div>
+
+      <p>
+        ${escapeHTML(
+          t("loading")
+        )}
+      </p>
+
+    </div>
+
+  `;
+
+
+  try {
+
+    const productsRef =
+      collection(
+        db,
+        "products"
+      );
+
+
+    const snapshot =
+      await getDocs(
+        productsRef
+      );
+
+
+    const loadedProducts = [];
+
+
+    snapshot.forEach(
+      productDoc => {
+
+        loadedProducts.push({
+
+          id:
+            productDoc.id,
+
+          ...productDoc.data()
+
+        });
+
+      }
+    );
+
+
+    loadedProducts.sort(
+      (a, b) => {
+
+        const aTime =
+          a.createdAt?.toMillis
+            ? a.createdAt.toMillis()
+            : 0;
+
+
+        const bTime =
+          b.createdAt?.toMillis
+            ? b.createdAt.toMillis()
+            : 0;
+
+
+        return bTime - aTime;
+
+      }
+    );
+
+
+    products =
+      loadedProducts;
+
+
+    filterProducts();
+
+  } catch (error) {
+
+    console.error(
+      "Product loading error:",
+      error
+    );
+
+
+    products = [];
+
+
+    productsContainer.innerHTML = `
+
+      <div class="empty-state">
+
+        <div>⚠️</div>
+
+        <p>
+          ${escapeHTML(
+            t("firestoreError")
+          )}
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   PUBLISH PRODUCT
+   ========================================================= */
+
+if (sellProductForm) {
+
+  sellProductForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const currentUser =
+        auth.currentUser;
+
 
       if (!currentUser) {
-        alert(t("loginToMessage"));
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("loginFirst");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
         return;
+
       }
 
-      if (currentUser.uid === otherUid) {
-        alert(t("cannotMessageSelf"));
+
+      const titleInput =
+        document.getElementById(
+          "productTitle"
+        );
+
+      const priceInput =
+        document.getElementById(
+          "productPrice"
+        );
+
+      const categoryInput =
+        document.getElementById(
+          "productCategory"
+        );
+
+      const locationInput =
+        document.getElementById(
+          "productLocation"
+        );
+
+      const descriptionInput =
+        document.getElementById(
+          "productDescription"
+        );
+
+
+      const title =
+        titleInput?.value.trim() ||
+        "";
+
+      const price =
+        priceInput?.value.trim() ||
+        "";
+
+      const category =
+        categoryInput?.value.trim() ||
+        "";
+
+      const location =
+        locationInput?.value.trim() ||
+        "";
+
+      const description =
+        descriptionInput?.value.trim() ||
+        "";
+
+
+      if (!title) {
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("enterProductTitle");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+        titleInput?.focus();
+
         return;
+
       }
 
-      const otherProfile = await getUserProfile(otherUid);
 
-      if (!otherProfile) {
-        alert(t("profileNotFound"));
+      if (!price) {
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("enterPrice");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+        priceInput?.focus();
+
         return;
+
       }
 
-      selectedConversationId = createConversationId(
+
+      const numericPrice =
+        Number(price);
+
+
+      if (
+        !Number.isFinite(
+          numericPrice
+        ) ||
+        numericPrice < 0
+      ) {
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("invalidPrice");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+        priceInput?.focus();
+
+        return;
+
+      }
+
+
+      if (!category) {
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("selectCategory");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+        categoryInput?.focus();
+
+        return;
+
+      }
+
+
+      if (!location) {
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("enterLocation");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+        locationInput?.focus();
+
+        return;
+
+      }
+
+
+      const imageFile =
+        productImageFile
+          ?.files?.[0] ||
+        null;
+
+
+      if (!imageFile) {
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("selectImage");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+        productImageFile?.focus();
+
+        return;
+
+      }
+
+
+      if (publishProductBtn) {
+
+        publishProductBtn.disabled =
+          true;
+
+        publishProductBtn.textContent =
+          currentLanguage === "ar"
+            ? "جاري النشر..."
+            : "Publishing...";
+
+      }
+
+
+      try {
+
+        const imageURL =
+          await uploadImageToCloudinary(
+            imageFile,
+            imageStatus
+          );
+
+
+        await addDoc(
+          collection(
+            db,
+            "products"
+          ),
+          {
+            title,
+
+            price:
+              numericPrice,
+
+            category,
+
+            location,
+
+            description,
+
+            image:
+              imageURL,
+
+            sellerId:
+              currentUser.uid,
+
+            sellerEmail:
+              currentUser.email ||
+              "",
+
+            createdAt:
+              serverTimestamp(),
+
+            updatedAt:
+              serverTimestamp()
+          }
+        );
+
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            t("published");
+
+          sellStatus.style.color =
+            "green";
+
+        }
+
+
+        sellProductForm.reset();
+
+
+        if (imageStatus) {
+
+          imageStatus.textContent =
+            "";
+
+        }
+
+
+        await loadProducts();
+
+
+        if (auth.currentUser) {
+
+          await renderMyProfile();
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Product publish error:",
+          error
+        );
+
+
+        if (sellStatus) {
+
+          sellStatus.textContent =
+            error.message ||
+            t("publishFailed");
+
+          sellStatus.style.color =
+            "red";
+
+        }
+
+      } finally {
+
+        if (publishProductBtn) {
+
+          publishProductBtn.disabled =
+            false;
+
+          publishProductBtn.textContent =
+            t("publishProduct");
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SHOW REGISTER FORM
+   ========================================================= */
+
+if (showRegisterBtn) {
+
+  showRegisterBtn.addEventListener(
+    "click",
+    event => {
+
+      event.preventDefault();
+
+
+      if (loginForm) {
+
+        loginForm.style.display =
+          "none";
+
+      }
+
+
+      if (registerForm) {
+
+        registerForm.style.display =
+          "block";
+
+      }
+
+
+      if (authTitle) {
+
+        authTitle.textContent =
+          t("createAccount");
+
+      }
+
+
+      if (authStatus) {
+
+        authStatus.textContent =
+          "";
+
+      }
+
+
+      if (authMessage) {
+
+        authMessage.textContent =
+          "";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SHOW LOGIN FORM
+   ========================================================= */
+
+if (showLoginBtn) {
+
+  showLoginBtn.addEventListener(
+    "click",
+    event => {
+
+      event.preventDefault();
+
+
+      if (registerForm) {
+
+        registerForm.style.display =
+          "none";
+
+      }
+
+
+      if (loginForm) {
+
+        loginForm.style.display =
+          "block";
+
+      }
+
+
+      if (authTitle) {
+
+        authTitle.textContent =
+          t("login");
+
+      }
+
+
+      if (authStatus) {
+
+        authStatus.textContent =
+          "";
+
+      }
+
+
+      if (authMessage) {
+
+        authMessage.textContent =
+          "";
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   REGISTER USER
+   ========================================================= */
+
+if (registerForm) {
+
+  registerForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const emailInput =
+        document.getElementById(
+          "registerEmail"
+        );
+
+      const passwordInput =
+        document.getElementById(
+          "registerPassword"
+        );
+
+      const confirmPasswordInput =
+        document.getElementById(
+          "registerConfirmPassword"
+        );
+
+
+      const email =
+        emailInput?.value
+          .trim()
+          .toLowerCase() ||
+        "";
+
+      const password =
+        passwordInput?.value ||
+        "";
+
+      const confirmPassword =
+        confirmPasswordInput?.value ||
+        "";
+
+
+      if (!email) {
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "يرجى إدخال البريد الإلكتروني."
+            : "Please enter your email."
+        );
+
+        emailInput?.focus();
+
+        return;
+
+      }
+
+
+      if (!password) {
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "يرجى إدخال كلمة المرور."
+            : "Please enter a password."
+        );
+
+        passwordInput?.focus();
+
+        return;
+
+      }
+
+
+      if (
+        password.length < 6
+      ) {
+
+        showAuthMessage(
+          t("weakPassword")
+        );
+
+        passwordInput?.focus();
+
+        return;
+
+      }
+
+
+      if (
+        confirmPasswordInput &&
+        password !== confirmPassword
+      ) {
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "كلمتا المرور غير متطابقتين."
+            : "Passwords do not match."
+        );
+
+        confirmPasswordInput.focus();
+
+        return;
+
+      }
+
+
+      const registerButton =
+        registerForm.querySelector(
+          'button[type="submit"]'
+        );
+
+
+      if (registerButton) {
+
+        registerButton.disabled =
+          true;
+
+        registerButton.dataset.originalText =
+          registerButton.textContent;
+
+        registerButton.textContent =
+          currentLanguage === "ar"
+            ? "جاري إنشاء الحساب..."
+            : "Creating account...";
+
+      }
+
+
+      showAuthMessage(
+        currentLanguage === "ar"
+          ? "جاري إنشاء الحساب..."
+          : "Creating account..."
+      );
+
+
+      try {
+
+        const userCredential =
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+
+        const user =
+          userCredential.user;
+
+
+        await createUserProfile(
+          user
+        );
+
+
+        currentProfile =
+          await getUserProfile(
+            user.uid
+          );
+
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "تم إنشاء الحساب بنجاح."
+            : "Account created successfully.",
+          true
+        );
+
+
+        registerForm.reset();
+
+      } catch (error) {
+
+        console.error(
+          "Registration error:",
+          error
+        );
+
+
+        showAuthMessage(
+          getFirebaseErrorMessage(
+            error
+          )
+        );
+
+      } finally {
+
+        if (registerButton) {
+
+          registerButton.disabled =
+            false;
+
+          registerButton.textContent =
+            registerButton.dataset
+              .originalText ||
+            t("register");
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LOGIN USER
+   ========================================================= */
+
+if (loginForm) {
+
+  loginForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+
+      const emailInput =
+        document.getElementById(
+          "loginEmail"
+        );
+
+      const passwordInput =
+        document.getElementById(
+          "loginPassword"
+        );
+
+
+      const email =
+        emailInput?.value
+          .trim()
+          .toLowerCase() ||
+        "";
+
+      const password =
+        passwordInput?.value ||
+        "";
+
+
+      if (!email) {
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "يرجى إدخال البريد الإلكتروني."
+            : "Please enter your email."
+        );
+
+        emailInput?.focus();
+
+        return;
+
+      }
+
+
+      if (!password) {
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "يرجى إدخال كلمة المرور."
+            : "Please enter your password."
+        );
+
+        passwordInput?.focus();
+
+        return;
+
+      }
+
+
+      const loginButton =
+        loginForm.querySelector(
+          'button[type="submit"]'
+        );
+
+
+      if (loginButton) {
+
+        loginButton.disabled =
+          true;
+
+        loginButton.dataset.originalText =
+          loginButton.textContent;
+
+        loginButton.textContent =
+          currentLanguage === "ar"
+            ? "جاري تسجيل الدخول..."
+            : "Logging in...";
+
+      }
+
+
+      showAuthMessage(
+        currentLanguage === "ar"
+          ? "جاري تسجيل الدخول..."
+          : "Logging in..."
+      );
+
+
+      try {
+
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+
+        showAuthMessage(
+          currentLanguage === "ar"
+            ? "تم تسجيل الدخول بنجاح."
+            : "Logged in successfully.",
+          true
+        );
+
+
+        loginForm.reset();
+
+      } catch (error) {
+
+        console.error(
+          "Login error:",
+          error
+        );
+
+
+        showAuthMessage(
+          getFirebaseErrorMessage(
+            error
+          )
+        );
+
+      } finally {
+
+        if (loginButton) {
+
+          loginButton.disabled =
+            false;
+
+          loginButton.textContent =
+            loginButton.dataset
+              .originalText ||
+            t("login");
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   AUTH UI
+   ========================================================= */
+
+function updateAuthUIForUser(
+  user
+) {
+
+  if (!user) {
+
+    if (authMessage) {
+
+      authMessage.textContent =
+        "";
+
+    }
+
+    return;
+
+  }
+
+
+  if (authMessage) {
+
+    authMessage.textContent =
+      `${t("loggedInAs")} ${
+        user.email || ""
+      }`;
+
+  }
+
+}
+
+
+/* =========================================================
+   MESSENGER
+   ========================================================= */
+
+function createConversationId(
+  uid1,
+  uid2
+) {
+
+  return [
+    uid1,
+    uid2
+  ]
+    .sort()
+    .join("_");
+
+}
+
+
+async function startConversation(
+  otherUid
+) {
+
+  const currentUser =
+    auth.currentUser;
+
+
+  if (!currentUser) {
+
+    alert(
+      t("loginToMessage")
+    );
+
+    return;
+
+  }
+
+
+  if (!otherUid) {
+
+    alert(
+      t("profileNotFound")
+    );
+
+    return;
+
+  }
+
+
+  if (
+    currentUser.uid ===
+    otherUid
+  ) {
+
+    alert(
+      t("cannotMessageSelf")
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const otherProfile =
+      await getUserProfile(
+        otherUid
+      );
+
+
+    if (!otherProfile) {
+
+      alert(
+        t("profileNotFound")
+      );
+
+      return;
+
+    }
+
+
+    selectedConversationId =
+      createConversationId(
         currentUser.uid,
         otherUid
       );
 
-      selectedChatUser = {
-        uid: otherUid,
-        name:
-          otherProfile.name ||
-          otherProfile.email ||
-          t("member"),
-        email: otherProfile.email || "",
-        photoURL:
-          otherProfile.photoURL ||
-          getDefaultAvatar()
-      };
 
-      if (chatHeader) {
-        chatHeader.innerHTML = `
-          <img
-            src="${escapeHTML(
-              selectedChatUser.photoURL
-            )}"
-            class="conversation-avatar"
-            alt=""
-          >
-          <span>
-            ${escapeHTML(
-              selectedChatUser.name
-            )}
-          </span>
-        `;
-      }
+    selectedChatUser = {
 
-      if (chatMessages) {
-        chatMessages.innerHTML = "";
-      }
+      uid:
+        otherUid,
 
-      document
-        .getElementById("messages")
-        ?.scrollIntoView({
-          behavior: "smooth"
-        });
+      name:
+        otherProfile.name ||
+        otherProfile.email ||
+        t("member"),
 
-      listenToMessages();
+      email:
+        otherProfile.email ||
+        "",
 
-      await loadConversations();
+      photoURL:
+        otherProfile.photoURL ||
+        getDefaultAvatar()
+
+    };
+
+
+    if (chatHeader) {
+
+      chatHeader.innerHTML = `
+
+        <img
+          src="${escapeHTML(
+            selectedChatUser.photoURL
+          )}"
+          class="conversation-avatar"
+          alt=""
+          onerror="
+            this.onerror=null;
+            this.src='${escapeHTML(
+              getDefaultAvatar()
+            )}';
+          "
+        >
+
+        <span>
+          ${escapeHTML(
+            selectedChatUser.name
+          )}
+        </span>
+
+      `;
+
     }
 
-    /* =======================================================
-       Listen To Messages
 
-       IMPORTANT:
-       No orderBy() here.
-       This avoids Firestore composite index problems.
-    ======================================================= */
+    if (chatMessages) {
 
-    function listenToMessages() {
-      if (unsubscribeMessages) {
-        unsubscribeMessages();
-        unsubscribeMessages = null;
-      }
+      chatMessages.innerHTML = `
 
-      if (!selectedConversationId) {
-        return;
-      }
+        <div class="chat-empty">
 
-      const messagesQuery = query(
-        collection(db, "messages"),
-        where(
-          "conversationId",
-          "==",
-          selectedConversationId
-        )
+          <div>💬</div>
+
+          <p>
+            ${escapeHTML(
+              t("loading")
+            )}
+          </p>
+
+        </div>
+
+      `;
+
+    }
+
+
+    const messagesSection =
+      document.getElementById(
+        "messages"
       );
 
-      unsubscribeMessages = onSnapshot(
-        messagesQuery,
-        snapshot => {
-          if (!chatMessages) {
-            return;
-          }
 
-          chatMessages.innerHTML = "";
+    if (messagesSection) {
 
-          if (snapshot.empty) {
-            chatMessages.innerHTML = `
-              <div class="chat-empty">
-                💬
-                <p>
-                  ${escapeHTML(
-                    t("noMessages")
-                  )}
-                </p>
-              </div>
-            `;
-            return;
-          }
+      messagesSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
 
-          const messageList = [];
+    }
 
-          snapshot.forEach(messageDoc => {
+
+    listenToMessages();
+
+    await loadConversations();
+
+  } catch (error) {
+
+    console.error(
+      "Start conversation error:",
+      error
+    );
+
+    alert(
+      t("firestoreError")
+    );
+
+  }
+
+}
+
+
+function listenToMessages() {
+
+  if (unsubscribeMessages) {
+
+    unsubscribeMessages();
+
+    unsubscribeMessages =
+      null;
+
+  }
+
+
+  if (!selectedConversationId) {
+    return;
+  }
+
+
+  const messagesQuery =
+    query(
+      collection(
+        db,
+        "messages"
+      ),
+
+      where(
+        "conversationId",
+        "==",
+        selectedConversationId
+      )
+    );
+
+
+  unsubscribeMessages =
+    onSnapshot(
+      messagesQuery,
+
+      snapshot => {
+
+        if (!chatMessages) {
+          return;
+        }
+
+
+        chatMessages.innerHTML =
+          "";
+
+
+        if (snapshot.empty) {
+
+          chatMessages.innerHTML = `
+
+            <div class="chat-empty">
+
+              <div>💬</div>
+
+              <p>
+                ${escapeHTML(
+                  t("noMessages")
+                )}
+              </p>
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        const messageList = [];
+
+
+        snapshot.forEach(
+          messageDoc => {
+
             messageList.push({
-              id: messageDoc.id,
-              ...messageDoc.data()
-            });
-          });
 
-          messageList.sort((a, b) => {
+              id:
+                messageDoc.id,
+
+              ...messageDoc.data()
+
+            });
+
+          }
+        );
+
+
+        messageList.sort(
+          (a, b) => {
+
             const aTime =
               a.createdAt?.toMillis
                 ? a.createdAt.toMillis()
@@ -6049,610 +4638,712 @@ async function deleteProduct(
                 ? b.createdAt.toMillis()
                 : 0;
 
-            return aTime - bTime;
-          });
 
-          messageList.forEach(message => {
+            return (
+              aTime -
+              bTime
+            );
+
+          }
+        );
+
+
+        messageList.forEach(
+          message => {
+
             const mine =
               message.senderId ===
               auth.currentUser?.uid;
 
+
             const bubble =
-              document.createElement("div");
+              document.createElement(
+                "div"
+              );
+
 
             bubble.className =
               `message-bubble ${
-                mine ? "mine" : "theirs"
+                mine
+                  ? "mine"
+                  : "theirs"
               }`;
 
+
             const text =
-              document.createElement("div");
+              document.createElement(
+                "div"
+              );
+
+
+            text.className =
+              "message-text";
+
 
             text.textContent =
               message.text || "";
 
-            const time =
-              document.createElement("small");
 
-            time.className = "message-time";
+            const time =
+              document.createElement(
+                "small"
+              );
+
+
+            time.className =
+              "message-time";
+
 
             time.textContent =
               formatDateTime(
                 message.createdAt
               );
 
-            bubble.appendChild(text);
-            bubble.appendChild(time);
+
+            bubble.appendChild(
+              text
+            );
+
+            bubble.appendChild(
+              time
+            );
 
             chatMessages.appendChild(
               bubble
             );
-          });
 
-          chatMessages.scrollTop =
-            chatMessages.scrollHeight;
-        },
-        error => {
-          console.error(
-            "Messages listener error:",
-            error
-          );
-
-          if (chatMessages) {
-            chatMessages.innerHTML = `
-              <div class="chat-empty">
-                ⚠️
-                <p>
-                  ${escapeHTML(
-                    t("firestoreError")
-                  )}
-                </p>
-              </div>
-            `;
           }
+        );
+
+
+        chatMessages.scrollTop =
+          chatMessages.scrollHeight;
+
+      },
+
+      error => {
+
+        console.error(
+          "Messages listener error:",
+          error
+        );
+
+
+        if (chatMessages) {
+
+          chatMessages.innerHTML = `
+
+            <div class="chat-empty">
+
+              <div>⚠️</div>
+
+              <p>
+                ${escapeHTML(
+                  t("firestoreError")
+                )}
+              </p>
+
+            </div>
+
+          `;
+
         }
-      );
-    }
 
-    function formatDateTime(value) {
-      if (!value) {
-        return "";
       }
+    );
 
-      const date =
-        typeof value.toDate === "function"
-          ? value.toDate()
-          : new Date(value);
+}
 
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return "";
-      }
 
-      return date.toLocaleString(
-        currentLanguage === "ar"
-          ? "ar-SA"
-          : "en-US",
-        {
-          hour: "numeric",
-          minute: "2-digit"
-        }
-      );
+function formatDateTime(
+  value
+) {
+
+  if (!value) {
+    return "";
+  }
+
+
+  let date;
+
+
+  if (
+    value &&
+    typeof value.toDate ===
+      "function"
+  ) {
+
+    date =
+      value.toDate();
+
+  } else if (
+    value instanceof Date
+  ) {
+
+    date = value;
+
+  } else {
+
+    date =
+      new Date(value);
+
+  }
+
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+
+    return "";
+
+  }
+
+
+  return date.toLocaleTimeString(
+    currentLanguage === "ar"
+      ? "ar-SA"
+      : "en-US",
+    {
+      hour: "numeric",
+      minute: "2-digit"
     }
+  );
 
-    /* =======================================================
-       Send Message
-    ======================================================= */
+}
 
-    if (chatForm) {
-      chatForm.addEventListener(
-        "submit",
-        async event => {
-          event.preventDefault();
 
-          const currentUser =
-            auth.currentUser;
+/* =========================================================
+   SEND MESSAGE
+   ========================================================= */
 
-          if (!currentUser) {
-            alert(
-              t("loginToMessage")
-            );
-            return;
-          }
+if (chatForm) {
 
-          if (
-            !selectedConversationId ||
-            !selectedChatUser
-          ) {
-            return;
-          }
+  chatForm.addEventListener(
+    "submit",
+    async event => {
 
-          const text =
-            chatInput.value.trim();
+      event.preventDefault();
 
-          if (!text) {
-            return;
-          }
-
-          chatInput.disabled = true;
-
-          try {
-            /* -----------------------------------------------
-               Save Message
-            ------------------------------------------------ */
-
-            await addDoc(
-              collection(
-                db,
-                "messages"
-              ),
-              {
-                conversationId:
-                  selectedConversationId,
-
-                senderId:
-                  currentUser.uid,
-
-                receiverId:
-                  selectedChatUser.uid,
-
-                senderEmail:
-                  currentUser.email || "",
-
-                text: text,
-
-                createdAt:
-                  serverTimestamp()
-              }
-            );
-
-            /* -----------------------------------------------
-               Save / Update Conversation
-            ------------------------------------------------ */
-
-            const conversationRef =
-              doc(
-                db,
-                "conversations",
-                selectedConversationId
-              );
-
-            await setDoc(
-              conversationRef,
-              {
-                participants: [
-                  currentUser.uid,
-                  selectedChatUser.uid
-                ],
-
-                participantEmails: {
-                  [currentUser.uid]:
-                    currentUser.email || "",
-
-                  [selectedChatUser.uid]:
-                    selectedChatUser.email || ""
-                },
-
-                lastMessage: text,
-
-                lastMessageSenderId:
-                  currentUser.uid,
-
-                updatedAt:
-                  serverTimestamp()
-              },
-              {
-                merge: true
-              }
-            );
-
-            chatInput.value = "";
-
-            await loadConversations();
-
-          } catch (error) {
-            console.error(
-              "Send message error:",
-              error
-            );
-
-            alert(
-              currentLanguage === "ar"
-                ? "تعذر إرسال الرسالة. يرجى التحقق من إعدادات Firestore."
-                : "Message could not be sent. Please check your Firestore rules."
-            );
-
-          } finally {
-            chatInput.disabled = false;
-            chatInput.focus();
-          }
-        }
-      );
-    }
-
-    /* =======================================================
-       Load Conversations
-
-       IMPORTANT:
-       No orderBy() here.
-       This avoids Firestore composite index problems.
-    ======================================================= */
-
-    async function loadConversations() {
-      if (!conversationList) {
-        return;
-      }
 
       const currentUser =
         auth.currentUser;
 
+
       if (!currentUser) {
-        conversationList.innerHTML = `
-          <div class="chat-empty">
-            <p>
-              ${escapeHTML(
-                t("profileRequired")
-              )}
-            </p>
-          </div>
-        `;
+
+        alert(
+          t("loginToMessage")
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !selectedConversationId ||
+        !selectedChatUser
+      ) {
+
+        return;
+
+      }
+
+
+      const text =
+        chatInput?.value
+          ?.trim() ||
+        "";
+
+
+      if (!text) {
         return;
       }
 
+
+      if (
+        text.length > 5000
+      ) {
+
+        alert(
+          currentLanguage === "ar"
+            ? "الرسالة طويلة جداً."
+            : "Message is too long."
+        );
+
+        return;
+
+      }
+
+
+      if (chatInput) {
+
+        chatInput.disabled =
+          true;
+
+      }
+
+
+      const sendButton =
+        chatForm.querySelector(
+          'button[type="submit"]'
+        );
+
+
+      if (sendButton) {
+
+        sendButton.disabled =
+          true;
+
+      }
+
+
       try {
-        const conversationsQuery =
-          query(
-            collection(
-              db,
-              "conversations"
-            ),
-            where(
-              "participants",
-              "array-contains",
-              currentUser.uid
-            )
-          );
 
-        const snapshot =
-          await getDocs(
-            conversationsQuery
-          );
+        await addDoc(
+          collection(
+            db,
+            "messages"
+          ),
+          {
 
-        conversationList.innerHTML = "";
+            conversationId:
+              selectedConversationId,
 
-        if (snapshot.empty) {
-          conversationList.innerHTML = `
-            <div class="chat-empty">
-              💬
-              <p>
-                ${escapeHTML(
-                  t("noConversations")
-                )}
-              </p>
-            </div>
-          `;
+            senderId:
+              currentUser.uid,
 
-          return;
-        }
+            receiverId:
+              selectedChatUser.uid,
 
-        const conversationData =
-          snapshot.docs.map(
-            conversationDoc => ({
-              id:
-                conversationDoc.id,
-              ...conversationDoc.data()
-            })
-          );
+            senderEmail:
+              currentUser.email ||
+              "",
 
-        /* Sort newest conversation first */
+            text,
 
-        conversationData.sort(
-          (a, b) => {
-            const aTime =
-              a.updatedAt?.toMillis
-                ? a.updatedAt.toMillis()
-                : 0;
+            createdAt:
+              serverTimestamp()
 
-            const bTime =
-              b.updatedAt?.toMillis
-                ? b.updatedAt.toMillis()
-                : 0;
-
-            return bTime - aTime;
           }
         );
 
-        for (
-          const conversation
-          of conversationData
-        ) {
-          const otherUid =
-            conversation.participants?.find(
-              uid =>
-                uid !==
-                currentUser.uid
-            );
 
-          if (!otherUid) {
-            continue;
-          }
-
-          const otherProfile =
-            await getUserProfile(
-              otherUid
-            );
-
-          const item =
-            document.createElement(
-              "div"
-            );
-
-          item.className =
-            "conversation-item";
-
-          if (
-            selectedConversationId ===
-            conversation.id
-          ) {
-            item.classList.add(
-              "active"
-            );
-          }
-
-          const photo =
-            otherProfile?.photoURL ||
-            getDefaultAvatar();
-
-          const name =
-            otherProfile?.name ||
-            otherProfile?.email ||
-            t("member");
-
-          item.innerHTML = `
-            <img
-              class="conversation-avatar"
-              src="${escapeHTML(photo)}"
-              alt=""
-            >
-
-            <div class="conversation-info">
-              <strong>
-                ${escapeHTML(name)}
-              </strong>
-
-              <span>
-                ${escapeHTML(
-                  conversation.lastMessage ||
-                  ""
-                )}
-              </span>
-            </div>
-          `;
-
-          item.addEventListener(
-            "click",
-            () => {
-              startConversation(
-                otherUid
-              );
-            }
+        const conversationRef =
+          doc(
+            db,
+            "conversations",
+            selectedConversationId
           );
 
-          conversationList.appendChild(
-            item
-          );
+
+        await setDoc(
+          conversationRef,
+          {
+
+            participants: [
+
+              currentUser.uid,
+
+              selectedChatUser.uid
+
+            ],
+
+            participantEmails: {
+
+              [currentUser.uid]:
+                currentUser.email ||
+                "",
+
+              [selectedChatUser.uid]:
+                selectedChatUser.email ||
+                ""
+
+            },
+
+            lastMessage:
+              text,
+
+            lastMessageSenderId:
+              currentUser.uid,
+
+            updatedAt:
+              serverTimestamp()
+
+          },
+
+          {
+            merge: true
+          }
+        );
+
+
+        if (chatInput) {
+
+          chatInput.value =
+            "";
+
         }
 
+
+        await loadConversations();
+
       } catch (error) {
+
         console.error(
-          "Conversation loading error:",
+          "Send message error:",
           error
         );
 
-        conversationList.innerHTML = `
-          <div class="chat-empty">
-            ⚠️
-            <p>
-              ${escapeHTML(
-                t("firestoreError")
-              )}
-            </p>
-          </div>
-        `;
+
+        alert(
+          currentLanguage === "ar"
+            ? "تعذر إرسال الرسالة. يرجى التحقق من إعدادات Firestore."
+            : "Message could not be sent. Please check your Firestore rules."
+        );
+
+      } finally {
+
+        if (chatInput) {
+
+          chatInput.disabled =
+            false;
+
+          chatInput.focus();
+
+        }
+
+
+        if (sendButton) {
+
+          sendButton.disabled =
+            false;
+
+        }
+
       }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   LOAD CONVERSATIONS
+   ========================================================= */
+
+async function loadConversations() {
+
+  if (!conversationList) {
+    return;
+  }
+
+
+  const currentUser =
+    auth.currentUser;
+
+
+  if (!currentUser) {
+
+    conversationList.innerHTML = `
+
+      <div class="chat-empty">
+
+        <p>
+          ${escapeHTML(
+            t("profileRequired")
+          )}
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  try {
+
+    const conversationsQuery =
+      query(
+        collection(
+          db,
+          "conversations"
+        ),
+
+        where(
+          "participants",
+          "array-contains",
+          currentUser.uid
+        )
+      );
+
+
+    const snapshot =
+      await getDocs(
+        conversationsQuery
+      );
+
+
+    conversationList.innerHTML =
+      "";
+
+
+    if (snapshot.empty) {
+
+      conversationList.innerHTML = `
+
+        <div class="chat-empty">
+
+          <div>💬</div>
+
+          <p>
+            ${escapeHTML(
+              t("noConversations")
+            )}
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+
     }
 
-        /* =======================================================
-       Auth State
-    ======================================================= */
 
-    onAuthStateChanged(
-      auth,
-      async user => {
-        if (user) {
-          console.log(
-            "Logged in user:",
-            user.email
-          );
+    const conversationData =
+      snapshot.docs.map(
+        conversationDoc => ({
 
-          await createUserProfile(
-            user
-          );
+          id:
+            conversationDoc.id,
 
-          currentProfile =
-            await getUserProfile(
-              user.uid
-            );
+          ...conversationDoc.data()
 
-          if (authMessage) {
-            authMessage.textContent =
-              `${t("loggedInAs")} ${user.email}`;
-          }
+        })
+      );
 
-          let logoutBtn =
-            document.getElementById(
-              "logoutBtn"
-            );
 
-          if (!logoutBtn) {
-            logoutBtn =
-              document.createElement(
-                "button"
-              );
+    conversationData.sort(
+      (a, b) => {
 
-            logoutBtn.id =
-              "logoutBtn";
+        const aTime =
+          a.updatedAt?.toMillis
+            ? a.updatedAt.toMillis()
+            : 0;
 
-            logoutBtn.type =
-              "button";
+        const bTime =
+          b.updatedAt?.toMillis
+            ? b.updatedAt.toMillis()
+            : 0;
 
-            logoutBtn.className =
-              "secondary-btn";
 
-            if (
-              loginForm?.parentNode
-            ) {
-              loginForm.parentNode.insertBefore(
-                logoutBtn,
-                loginForm
-              );
-            }
+        return (
+          bTime -
+          aTime
+        );
 
-            logoutBtn.addEventListener(
-              "click",
-              async () => {
-                try {
-                  if (
-                    unsubscribeMessages
-                  ) {
-                    unsubscribeMessages();
-
-                    unsubscribeMessages =
-                      null;
-                  }
-
-                  await signOut(
-                    auth
-                  );
-
-                  alert(
-                    t("loggedOut")
-                  );
-
-                  location.reload();
-
-                } catch (error) {
-                  console.error(
-                    error
-                  );
-                }
-              }
-            );
-          }
-
-          logoutBtn.textContent =
-            t("logout");
-
-          await renderMyProfile();
-
-          await loadConversations();
-
-        } else {
-          if (
-            unsubscribeMessages
-          ) {
-            unsubscribeMessages();
-
-            unsubscribeMessages =
-              null;
-          }
-
-          selectedConversationId =
-            null;
-
-          selectedChatUser =
-            null;
-
-          const logoutBtn =
-            document.getElementById(
-              "logoutBtn"
-            );
-
-          if (logoutBtn) {
-            logoutBtn.remove();
-          }
-
-          if (profileContent) {
-            profileContent.innerHTML = `
-              <div class="not-logged-profile">
-                <div class="hero-icon">
-                  👤
-                </div>
-
-                <h3>
-                  ${escapeHTML(
-                    t("profileRequired")
-                  )}
-                </h3>
-              </div>
-            `;
-          }
-
-          loadConversations();
-        }
       }
     );
 
-    /* =======================================================
-       Escape Key
-    ======================================================= */
 
-    document.addEventListener(
-      "keydown",
-      event => {
-        if (
-          event.key !==
-          "Escape"
-        ) {
-          return;
-        }
+    for (
+      const conversation
+      of conversationData
+    ) {
 
-        if (
-          productModal &&
-          productModal.classList.contains(
-            "active"
-          )
-        ) {
-          closeProductDetails();
-        }
+      const otherUid =
+        conversation
+          .participants
+          ?.find(
+            uid =>
+              uid !==
+              currentUser.uid
+          );
 
-        if (
-          profileModal &&
-          profileModal.classList.contains(
-            "active"
-          )
-        ) {
-          closeProfileModal();
-        }
 
-        if (
-          editProfileModal &&
-          editProfileModal.classList.contains(
-            "active"
-          )
-        ) {
-          closeEditProfile();
-        }
+      if (!otherUid) {
+        continue;
       }
+
+
+      const otherProfile =
+        await getUserProfile(
+          otherUid
+        );
+
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "conversation-item";
+
+
+      if (
+        selectedConversationId ===
+        conversation.id
+      ) {
+
+        item.classList.add(
+          "active"
+        );
+
+      }
+
+
+      const photo =
+        otherProfile?.photoURL ||
+        getDefaultAvatar();
+
+
+      const name =
+        otherProfile?.name ||
+        otherProfile?.email ||
+        t("member");
+
+
+      item.innerHTML = `
+
+        <img
+          class="conversation-avatar"
+          src="${escapeHTML(photo)}"
+          alt=""
+          onerror="
+            this.onerror=null;
+            this.src='${escapeHTML(
+              getDefaultAvatar()
+            )}';
+          "
+        >
+
+        <div class="conversation-info">
+
+          <strong>
+            ${escapeHTML(name)}
+          </strong>
+
+          <span>
+            ${escapeHTML(
+              conversation.lastMessage ||
+              ""
+            )}
+          </span>
+
+        </div>
+
+      `;
+
+
+      item.addEventListener(
+        "click",
+        () => {
+
+          startConversation(
+            otherUid
+          );
+
+        }
+      );
+
+
+      conversationList.appendChild(
+        item
+      );
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Conversation loading error:",
+      error
     );
 
-    /* =======================================================
-       Initial Load
-    ======================================================= */
 
-    loadProducts();
+    conversationList.innerHTML = `
 
-  });                      
+      <div class="chat-empty">
+
+        <div>⚠️</div>
+
+        <p>
+          ${escapeHTML(
+            t("firestoreError")
+          )}
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+async function handleLogout() {
+
+  try {
+
+    if (unsubscribeMessages) {
+
+      unsubscribeMessages();
+
+      unsubscribeMessages =
+        null;
+
+    }
+
+
+    await signOut(auth);
+
+
+    selectedConversationId =
+      null;
+
+    selectedChatUser =
+      null;
+
+    currentProfile =
+      null;
+
+
+    alert(
+      t("loggedOut")
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Logout error:",
+      error
+    );
+
+
+    alert(
+      currentLanguage === "ar"
+        ? "تعذر تسجيل الخروج."
+        : "Unable to log out."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH STATE
