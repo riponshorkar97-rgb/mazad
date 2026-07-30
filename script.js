@@ -5343,7 +5343,143 @@ async function handleLogout() {
   }
 
 }
+/* MAZAD LANGUAGE COMPLETION */
 
+Object.assign(translations.en, {
+  home: "Home",
+  categories: "Categories",
+  listings: "Listings",
+  profile: "Profile",
+  sellProduct: "Sell Product",
+
+  welcome: "Welcome to Mazad",
+  buySell: "Buy & Sell",
+  anythingEasily: "Anything Easily",
+  heroDescription:
+    "Find great products near you or sell your products quickly and easily on Mazad.",
+  browseProducts: "Browse Products",
+  sellSomething: "Sell Something",
+  simpleFastSecure: "Simple • Fast • Secure",
+
+  searchPlaceholder: "What are you looking for?",
+
+  cars: "Cars",
+  mobiles: "Mobiles",
+  electronics: "Electronics",
+  property: "Property",
+  fashion: "Fashion",
+  jobs: "Jobs",
+
+  explore: "Explore",
+  popularCategories: "Popular Categories",
+  findNextCar: "Find your next car",
+  phonesAccessories: "Phones & accessories",
+  devicesGadgets: "Devices & gadgets",
+  homesLand: "Homes & land",
+  clothesAccessories: "Clothes & accessories",
+  findOpportunities: "Find opportunities",
+
+  marketplace: "Marketplace",
+  latestListings: "Latest Listings",
+  loadingProducts: "Loading products...",
+  pleaseWait: "Please wait.",
+
+  sellYourProduct: "Sell Your Product",
+  productTitle: "Product title",
+  account: "Account",
+  myProfile: "My Profile",
+
+  communication: "Communication",
+  messages: "Messages",
+  selectConversation: "Select a conversation",
+  writeMessage: "Write a message...",
+
+  description: "Description",
+  seller: "Seller",
+
+  profilePhoto: "Profile Photo",
+  yourName: "Your name",
+  phoneNumber: "Phone number",
+  aboutBio: "About you",
+
+  emailAddress: "Email address",
+  passwordMin: "Password (minimum 6 characters)",
+  createNewAccount: "Create new account",
+  alreadyAccount: "Already have an account? Login",
+
+  sellProduct: "Sell Product",
+
+  buySellProducts: "Buy and sell products easily.",
+  allRightsReserved: "All rights reserved."
+});
+
+Object.assign(translations.ar, {
+  home: "الرئيسية",
+  categories: "الفئات",
+  listings: "الإعلانات",
+  profile: "الملف الشخصي",
+  sellProduct: "بيع منتج",
+
+  welcome: "مرحباً بك في مزاد",
+  buySell: "بيع وشراء",
+  anythingEasily: "أي شيء بسهولة",
+  heroDescription:
+    "اعثر على منتجات رائعة بالقرب منك أو قم ببيع منتجاتك بسرعة وسهولة على مزاد.",
+  browseProducts: "تصفح المنتجات",
+  sellSomething: "بيع شيء ما",
+  simpleFastSecure: "بسيط • سريع • آمن",
+
+  searchPlaceholder: "ماذا تبحث عنه؟",
+
+  cars: "سيارات",
+  mobiles: "هواتف",
+  electronics: "إلكترونيات",
+  property: "عقارات",
+  fashion: "أزياء",
+  jobs: "وظائف",
+
+  explore: "استكشف",
+  popularCategories: "الفئات الشائعة",
+  findNextCar: "اعثر على سيارتك القادمة",
+  phonesAccessories: "الهواتف والإكسسوارات",
+  devicesGadgets: "الأجهزة والأدوات",
+  homesLand: "المنازل والأراضي",
+  clothesAccessories: "الملابس والإكسسوارات",
+  findOpportunities: "اعثر على فرص",
+
+  marketplace: "السوق",
+  latestListings: "أحدث الإعلانات",
+  loadingProducts: "جار تحميل المنتجات...",
+  pleaseWait: "يرجى الانتظار.",
+
+  sellYourProduct: "بيع منتجك",
+  productTitle: "اسم المنتج",
+  account: "الحساب",
+  myProfile: "ملفي الشخصي",
+
+  communication: "التواصل",
+  messages: "الرسائل",
+  selectConversation: "اختر محادثة",
+  writeMessage: "اكتب رسالة...",
+
+  description: "الوصف",
+  seller: "البائع",
+
+  profilePhoto: "الصورة الشخصية",
+  yourName: "اسمك",
+  phoneNumber: "رقم الهاتف",
+  aboutBio: "نبذة عنك",
+
+  emailAddress: "البريد الإلكتروني",
+  passwordMin: "كلمة المرور (6 أحرف على الأقل)",
+  createNewAccount: "إنشاء حساب جديد",
+  alreadyAccount: "لديك حساب بالفعل؟ تسجيل الدخول",
+
+  buySellProducts: "اشترِ وبع المنتجات بسهولة.",
+  allRightsReserved: "جميع الحقوق محفوظة."
+});
+
+applyLanguage();
 
 /* =========================================================
    AUTH STATE
