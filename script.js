@@ -1,5 +1,5 @@
 /* =========================================================
-   MAZAD — Step 12 Complete
+   MAZAD â€” Step 12 Complete
    Profile + Buyer/Seller + Messenger
    Firebase Authentication + Firestore
    Cloudinary Image Upload
@@ -94,7 +94,7 @@ const translations = {
 
     browseProducts: "Browse Products",
     sellSomething: "Sell Something",
-    simpleFastSecure: "Simple • Fast • Secure",
+    simpleFastSecure: "Simple â€¢ Fast â€¢ Secure",
 
     searchPlaceholder:
       "What are you looking for?",
@@ -182,7 +182,7 @@ const translations = {
       "Please select a valid image.",
 
     imageUploaded:
-      "Image uploaded successfully! ✅",
+      "Image uploaded successfully! âœ…",
 
     uploadingImage:
       "Uploading image to Cloudinary...",
@@ -194,7 +194,7 @@ const translations = {
       "Saving product...",
 
     published:
-      "Product published successfully! 🎉",
+      "Product published successfully! ðŸŽ‰",
 
     loginBeforeSell:
       "Please login or create an account before selling a product.",
@@ -203,10 +203,10 @@ const translations = {
       "Please login before publishing a product.",
 
     accountCreated:
-      "Account created successfully! 🎉",
+      "Account created successfully! ðŸŽ‰",
 
     loginSuccessful:
-      "Login successful! 🎉",
+      "Login successful! ðŸŽ‰",
 
     creatingAccount:
       "Creating account...",
@@ -260,7 +260,7 @@ const translations = {
     saveProfile: "Save Profile",
 
     profileSaved:
-      "Profile updated successfully! 🎉",
+      "Profile updated successfully! ðŸŽ‰",
 
     profileRequired:
       "Please login to view your profile.",
@@ -318,242 +318,242 @@ const translations = {
 
   ar: {
 
-    home: "الرئيسية",
-    categories: "الفئات",
-    listings: "الإعلانات",
-    login: "تسجيل الدخول",
-    profile: "الملف الشخصي",
-    sellProduct: "بيع منتج",
+    home: "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©",
+    categories: "Ø§Ù„ÙØ¦Ø§Øª",
+    listings: "Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª",
+    login: "ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„",
+    profile: "Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ",
+    sellProduct: "Ø¨ÙŠØ¹ Ù…Ù†ØªØ¬",
 
-    welcome: "مرحباً بك في مزاد",
-    buySell: "بيع وشراء",
-    anythingEasily: "أي شيء بسهولة",
+    welcome: "Ù…Ø±Ø­Ø¨Ø§Ù‹ Ø¨Ùƒ ÙÙŠ Ù…Ø²Ø§Ø¯",
+    buySell: "Ø¨ÙŠØ¹ ÙˆØ´Ø±Ø§Ø¡",
+    anythingEasily: "Ø£ÙŠ Ø´ÙŠØ¡ Ø¨Ø³Ù‡ÙˆÙ„Ø©",
 
     heroDescription:
-      "اعثر على منتجات رائعة بالقرب منك أو قم ببيع منتجاتك بسرعة وسهولة على مزاد.",
+      "Ø§Ø¹Ø«Ø± Ø¹Ù„Ù‰ Ù…Ù†ØªØ¬Ø§Øª Ø±Ø§Ø¦Ø¹Ø© Ø¨Ø§Ù„Ù‚Ø±Ø¨ Ù…Ù†Ùƒ Ø£Ùˆ Ù‚Ù… Ø¨Ø¨ÙŠØ¹ Ù…Ù†ØªØ¬Ø§ØªÙƒ Ø¨Ø³Ø±Ø¹Ø© ÙˆØ³Ù‡ÙˆÙ„Ø© Ø¹Ù„Ù‰ Ù…Ø²Ø§Ø¯.",
 
-    browseProducts: "تصفح المنتجات",
-    sellSomething: "بيع شيء ما",
-    simpleFastSecure: "بسيط • سريع • آمن",
+    browseProducts: "ØªØµÙØ­ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª",
+    sellSomething: "Ø¨ÙŠØ¹ Ø´ÙŠØ¡ Ù…Ø§",
+    simpleFastSecure: "Ø¨Ø³ÙŠØ· â€¢ Ø³Ø±ÙŠØ¹ â€¢ Ø¢Ù…Ù†",
 
     searchPlaceholder:
-      "ما الذي تبحث عنه؟",
+      "Ù…Ø§ Ø§Ù„Ø°ÙŠ ØªØ¨Ø­Ø« Ø¹Ù†Ù‡ØŸ",
 
-    allCategories: "جميع الفئات",
-    search: "بحث",
-    explore: "استكشف",
+    allCategories: "Ø¬Ù…ÙŠØ¹ Ø§Ù„ÙØ¦Ø§Øª",
+    search: "Ø¨Ø­Ø«",
+    explore: "Ø§Ø³ØªÙƒØ´Ù",
 
-    popularCategories: "الفئات الشائعة",
+    popularCategories: "Ø§Ù„ÙØ¦Ø§Øª Ø§Ù„Ø´Ø§Ø¦Ø¹Ø©",
 
-    cars: "سيارات",
-    mobiles: "جوالات",
-    electronics: "إلكترونيات",
-    property: "عقارات",
-    fashion: "أزياء",
-    jobs: "وظائف",
-    others: "أخرى",
+    cars: "Ø³ÙŠØ§Ø±Ø§Øª",
+    mobiles: "Ø¬ÙˆØ§Ù„Ø§Øª",
+    electronics: "Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠØ§Øª",
+    property: "Ø¹Ù‚Ø§Ø±Ø§Øª",
+    fashion: "Ø£Ø²ÙŠØ§Ø¡",
+    jobs: "ÙˆØ¸Ø§Ø¦Ù",
+    others: "Ø£Ø®Ø±Ù‰",
 
-    findNextCar: "اعثر على سيارتك القادمة",
-    phonesAccessories: "جوالات وإكسسوارات",
-    devicesGadgets: "أجهزة وأدوات",
-    homesLand: "منازل وأراضٍ",
-    clothesAccessories: "ملابس وإكسسوارات",
-    findOpportunities: "ابحث عن فرص",
+    findNextCar: "Ø§Ø¹Ø«Ø± Ø¹Ù„Ù‰ Ø³ÙŠØ§Ø±ØªÙƒ Ø§Ù„Ù‚Ø§Ø¯Ù…Ø©",
+    phonesAccessories: "Ø¬ÙˆØ§Ù„Ø§Øª ÙˆØ¥ÙƒØ³Ø³ÙˆØ§Ø±Ø§Øª",
+    devicesGadgets: "Ø£Ø¬Ù‡Ø²Ø© ÙˆØ£Ø¯ÙˆØ§Øª",
+    homesLand: "Ù…Ù†Ø§Ø²Ù„ ÙˆØ£Ø±Ø§Ø¶Ù",
+    clothesAccessories: "Ù…Ù„Ø§Ø¨Ø³ ÙˆØ¥ÙƒØ³Ø³ÙˆØ§Ø±Ø§Øª",
+    findOpportunities: "Ø§Ø¨Ø­Ø« Ø¹Ù† ÙØ±Øµ",
 
-    marketplace: "السوق",
-    latestListings: "أحدث الإعلانات",
+    marketplace: "Ø§Ù„Ø³ÙˆÙ‚",
+    latestListings: "Ø£Ø­Ø¯Ø« Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª",
 
-    loadingProducts: "جاري تحميل المنتجات...",
-    pleaseWait: "يرجى الانتظار.",
+    loadingProducts: "Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª...",
+    pleaseWait: "ÙŠØ±Ø¬Ù‰ Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±.",
 
-    sellYourProduct: "بيع منتجك",
-    productTitle: "عنوان المنتج",
-    selectCategory: "اختر الفئة",
-    price: "السعر",
-    location: "الموقع",
-    productImage: "صورة المنتج",
-    productDescription: "وصف المنتج",
-    publishProduct: "نشر المنتج",
+    sellYourProduct: "Ø¨ÙŠØ¹ Ù…Ù†ØªØ¬Ùƒ",
+    productTitle: "Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ù†ØªØ¬",
+    selectCategory: "Ø§Ø®ØªØ± Ø§Ù„ÙØ¦Ø©",
+    price: "Ø§Ù„Ø³Ø¹Ø±",
+    location: "Ø§Ù„Ù…ÙˆÙ‚Ø¹",
+    productImage: "ØµÙˆØ±Ø© Ø§Ù„Ù…Ù†ØªØ¬",
+    productDescription: "ÙˆØµÙ Ø§Ù„Ù…Ù†ØªØ¬",
+    publishProduct: "Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬",
 
-    welcomeMazad: "مرحباً بك في مزاد",
+    welcomeMazad: "Ù…Ø±Ø­Ø¨Ø§Ù‹ Ø¨Ùƒ ÙÙŠ Ù…Ø²Ø§Ø¯",
 
     loginRegisterMessage:
-      "سجل الدخول أو أنشئ حساباً لبدء البيع والشراء.",
+      "Ø³Ø¬Ù„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø£Ùˆ Ø£Ù†Ø´Ø¦ Ø­Ø³Ø§Ø¨Ø§Ù‹ Ù„Ø¨Ø¯Ø¡ Ø§Ù„Ø¨ÙŠØ¹ ÙˆØ§Ù„Ø´Ø±Ø§Ø¡.",
 
-    emailAddress: "البريد الإلكتروني",
-    password: "كلمة المرور",
-    passwordMin: "كلمة المرور (6 أحرف على الأقل)",
+    emailAddress: "Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ",
+    password: "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±",
+    passwordMin: "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± (6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„)",
 
-    createAccount: "إنشاء حساب",
-    createNewAccount: "إنشاء حساب جديد",
-    alreadyAccount: "لديك حساب بالفعل؟ تسجيل الدخول",
+    createAccount: "Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨",
+    createNewAccount: "Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø¬Ø¯ÙŠØ¯",
+    alreadyAccount: "Ù„Ø¯ÙŠÙƒ Ø­Ø³Ø§Ø¨ Ø¨Ø§Ù„ÙØ¹Ù„ØŸ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„",
 
-    description: "الوصف",
-    seller: "البائع",
+    description: "Ø§Ù„ÙˆØµÙ",
+    seller: "Ø§Ù„Ø¨Ø§Ø¦Ø¹",
 
     buySellProducts:
-      "اشترِ وبع المنتجات بسهولة.",
+      "Ø§Ø´ØªØ±Ù ÙˆØ¨Ø¹ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª Ø¨Ø³Ù‡ÙˆÙ„Ø©.",
 
     allRightsReserved:
-      "جميع الحقوق محفوظة.",
+      "Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø­Ù‚ÙˆÙ‚ Ù…Ø­ÙÙˆØ¸Ø©.",
 
-    viewDetails: "عرض التفاصيل",
-    noProducts: "لم يتم العثور على منتجات",
-    tryAnother: "جرب بحثاً أو فئة أخرى.",
+    viewDetails: "Ø¹Ø±Ø¶ Ø§Ù„ØªÙØ§ØµÙŠÙ„",
+    noProducts: "Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ù…Ù†ØªØ¬Ø§Øª",
+    tryAnother: "Ø¬Ø±Ø¨ Ø¨Ø­Ø«Ø§Ù‹ Ø£Ùˆ ÙØ¦Ø© Ø£Ø®Ø±Ù‰.",
 
-    unknown: "غير معروف",
-    noDescription: "لا يوجد وصف متاح.",
+    unknown: "ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ",
+    noDescription: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ ÙˆØµÙ Ù…ØªØ§Ø­.",
 
     sellerUnavailable:
-      "معلومات البائع غير متاحة",
+      "Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„Ø¨Ø§Ø¦Ø¹ ØºÙŠØ± Ù…ØªØ§Ø­Ø©",
 
-    contactSeller: "تواصل مع البائع",
-    deleteProduct: "حذف المنتج",
+    contactSeller: "ØªÙˆØ§ØµÙ„ Ù…Ø¹ Ø§Ù„Ø¨Ø§Ø¦Ø¹",
+    deleteProduct: "Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬",
 
     loadingError:
-      "تعذر تحميل المنتجات",
+      "ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ù†ØªØ¬Ø§Øª",
 
     firestoreError:
-      "يرجى التحقق من إعدادات Firestore والمحاولة مرة أخرى.",
+      "ÙŠØ±Ø¬Ù‰ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Firestore ÙˆØ§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.",
 
     imageTooLarge:
-      "يجب أن يكون حجم الصورة أقل من 10 ميجابايت.",
+      "ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø­Ø¬Ù… Ø§Ù„ØµÙˆØ±Ø© Ø£Ù‚Ù„ Ù…Ù† 10 Ù…ÙŠØ¬Ø§Ø¨Ø§ÙŠØª.",
 
     validImage:
-      "يرجى اختيار صورة صالحة.",
+      "ÙŠØ±Ø¬Ù‰ Ø§Ø®ØªÙŠØ§Ø± ØµÙˆØ±Ø© ØµØ§Ù„Ø­Ø©.",
 
     imageUploaded:
-      "تم رفع الصورة بنجاح! ✅",
+      "ØªÙ… Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø© Ø¨Ù†Ø¬Ø§Ø­! âœ…",
 
     uploadingImage:
-      "جاري رفع الصورة إلى Cloudinary...",
+      "Ø¬Ø§Ø±ÙŠ Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø© Ø¥Ù„Ù‰ Cloudinary...",
 
     preparingProduct:
-      "جاري تجهيز المنتج...",
+      "Ø¬Ø§Ø±ÙŠ ØªØ¬Ù‡ÙŠØ² Ø§Ù„Ù…Ù†ØªØ¬...",
 
     savingProduct:
-      "جاري حفظ المنتج...",
+      "Ø¬Ø§Ø±ÙŠ Ø­ÙØ¸ Ø§Ù„Ù…Ù†ØªØ¬...",
 
     published:
-      "تم نشر المنتج بنجاح! 🎉",
+      "ØªÙ… Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­! ðŸŽ‰",
 
     loginBeforeSell:
-      "يرجى تسجيل الدخول أو إنشاء حساب قبل بيع منتج.",
+      "ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø£Ùˆ Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ù‚Ø¨Ù„ Ø¨ÙŠØ¹ Ù…Ù†ØªØ¬.",
 
     loginBeforePublish:
-      "يرجى تسجيل الدخول قبل نشر المنتج.",
+      "ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù‚Ø¨Ù„ Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬.",
 
     accountCreated:
-      "تم إنشاء الحساب بنجاح! 🎉",
+      "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ù†Ø¬Ø§Ø­! ðŸŽ‰",
 
     loginSuccessful:
-      "تم تسجيل الدخول بنجاح! 🎉",
+      "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ù†Ø¬Ø§Ø­! ðŸŽ‰",
 
     creatingAccount:
-      "جاري إنشاء الحساب...",
+      "Ø¬Ø§Ø±ÙŠ Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨...",
 
     loggingIn:
-      "جاري تسجيل الدخول...",
+      "Ø¬Ø§Ø±ÙŠ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„...",
 
     loggedInAs:
-      "تم تسجيل الدخول باسم",
+      "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø§Ø³Ù…",
 
     logout:
-      "تسجيل الخروج",
+      "ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬",
 
     loggedOut:
-      "تم تسجيل الخروج بنجاح.",
+      "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬ Ø¨Ù†Ø¬Ø§Ø­.",
 
     deleteConfirm:
-      "هل أنت متأكد من رغبتك في حذف هذا المنتج؟",
+      "Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø±ØºØ¨ØªÙƒ ÙÙŠ Ø­Ø°Ù Ù‡Ø°Ø§ Ø§Ù„Ù…Ù†ØªØ¬ØŸ",
 
     deleted:
-      "تم حذف المنتج بنجاح.",
+      "ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬ Ø¨Ù†Ø¬Ø§Ø­.",
 
     deleteFailed:
-      "تعذر حذف المنتج. يرجى المحاولة مرة أخرى.",
+      "ØªØ¹Ø°Ø± Ø­Ø°Ù Ø§Ù„Ù…Ù†ØªØ¬. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.",
 
     productNotFound:
-      "لم يتم العثور على المنتج.",
+      "Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù†ØªØ¬.",
 
     ownProduct:
-      "يمكنك حذف منتجاتك فقط.",
+      "ÙŠÙ…ÙƒÙ†Ùƒ Ø­Ø°Ù Ù…Ù†ØªØ¬Ø§ØªÙƒ ÙÙ‚Ø·.",
 
     loginFirst:
-      "يرجى تسجيل الدخول أولاً.",
+      "ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø£ÙˆÙ„Ø§Ù‹.",
 
     uploadFailed:
-      "فشل رفع الصورة إلى Cloudinary.",
+      "ÙØ´Ù„ Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø© Ø¥Ù„Ù‰ Cloudinary.",
 
     imageUrlFailed:
-      "لم يُرجع Cloudinary رابط الصورة.",
+      "Ù„Ù… ÙŠÙØ±Ø¬Ø¹ Cloudinary Ø±Ø§Ø¨Ø· Ø§Ù„ØµÙˆØ±Ø©.",
 
     publishFailed:
-      "فشل نشر المنتج. يرجى المحاولة مرة أخرى.",
+      "ÙØ´Ù„ Ù†Ø´Ø± Ø§Ù„Ù…Ù†ØªØ¬. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.",
 
-    account: "الحساب",
-    myProfile: "ملفي الشخصي",
-    editProfile: "تعديل الملف الشخصي",
-    profilePhoto: "الصورة الشخصية",
-    yourName: "اسمك",
-    phoneNumber: "رقم الهاتف",
-    aboutBio: "نبذة عنك",
-    saveProfile: "حفظ الملف الشخصي",
+    account: "Ø§Ù„Ø­Ø³Ø§Ø¨",
+    myProfile: "Ù…Ù„ÙÙŠ Ø§Ù„Ø´Ø®ØµÙŠ",
+    editProfile: "ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ",
+    profilePhoto: "Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø´Ø®ØµÙŠØ©",
+    yourName: "Ø§Ø³Ù…Ùƒ",
+    phoneNumber: "Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ",
+    aboutBio: "Ù†Ø¨Ø°Ø© Ø¹Ù†Ùƒ",
+    saveProfile: "Ø­ÙØ¸ Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ",
 
     profileSaved:
-      "تم تحديث الملف الشخصي بنجاح! 🎉",
+      "ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ Ø¨Ù†Ø¬Ø§Ø­! ðŸŽ‰",
 
     profileRequired:
-      "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
+      "ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù„Ø¹Ø±Ø¶ Ù…Ù„ÙÙƒ Ø§Ù„Ø´Ø®ØµÙŠ.",
 
-    joinDate: "تاريخ الانضمام",
-    phone: "الهاتف",
-    email: "البريد الإلكتروني",
-    bio: "نبذة",
+    joinDate: "ØªØ§Ø±ÙŠØ® Ø§Ù„Ø§Ù†Ø¶Ù…Ø§Ù…",
+    phone: "Ø§Ù„Ù‡Ø§ØªÙ",
+    email: "Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ",
+    bio: "Ù†Ø¨Ø°Ø©",
 
-    myListings: "إعلاناتي",
-    noListings: "لا توجد إعلانات بعد.",
+    myListings: "Ø¥Ø¹Ù„Ø§Ù†Ø§ØªÙŠ",
+    noListings: "Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¥Ø¹Ù„Ø§Ù†Ø§Øª Ø¨Ø¹Ø¯.",
 
-    viewProfile: "عرض الملف الشخصي",
-    message: "رسالة",
-    call: "اتصال",
+    viewProfile: "Ø¹Ø±Ø¶ Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ",
+    message: "Ø±Ø³Ø§Ù„Ø©",
+    call: "Ø§ØªØµØ§Ù„",
 
-    communication: "التواصل",
-    messages: "الرسائل",
-    noConversations: "لا توجد محادثات بعد.",
-    selectConversation: "اختر محادثة",
-    writeMessage: "اكتب رسالة...",
-    send: "إرسال",
+    communication: "Ø§Ù„ØªÙˆØ§ØµÙ„",
+    messages: "Ø§Ù„Ø±Ø³Ø§Ø¦Ù„",
+    noConversations: "Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø­Ø§Ø¯Ø«Ø§Øª Ø¨Ø¹Ø¯.",
+    selectConversation: "Ø§Ø®ØªØ± Ù…Ø­Ø§Ø¯Ø«Ø©",
+    writeMessage: "Ø§ÙƒØªØ¨ Ø±Ø³Ø§Ù„Ø©...",
+    send: "Ø¥Ø±Ø³Ø§Ù„",
 
     profileNotFound:
-      "لم يتم العثور على الملف الشخصي.",
+      "Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…Ù„Ù Ø§Ù„Ø´Ø®ØµÙŠ.",
 
     loginToMessage:
-      "يرجى تسجيل الدخول لإرسال رسالة.",
+      "ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù„Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø©.",
 
     cannotMessageSelf:
-      "لا يمكنك إرسال رسالة إلى نفسك.",
+      "Ù„Ø§ ÙŠÙ…ÙƒÙ†Ùƒ Ø¥Ø±Ø³Ø§Ù„ Ø±Ø³Ø§Ù„Ø© Ø¥Ù„Ù‰ Ù†ÙØ³Ùƒ.",
 
     messageSent:
-      "تم إرسال الرسالة.",
+      "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø³Ø§Ù„Ø©.",
 
     noMessages:
-      "لا توجد رسائل بعد.",
+      "Ù„Ø§ ØªÙˆØ¬Ø¯ Ø±Ø³Ø§Ø¦Ù„ Ø¨Ø¹Ø¯.",
 
     loading:
-      "جاري التحميل...",
+      "Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...",
 
     member:
-      "عضو",
+      "Ø¹Ø¶Ùˆ",
 
     editProfileLogin:
-      "يرجى تسجيل الدخول قبل تعديل ملفك الشخصي.",
+      "ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù‚Ø¨Ù„ ØªØ¹Ø¯ÙŠÙ„ Ù…Ù„ÙÙƒ Ø§Ù„Ø´Ø®ØµÙŠ.",
 
     profileImageUploaded:
-      "تم رفع الصورة الشخصية بنجاح.",
+      "ØªÙ… Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø´Ø®ØµÙŠØ© Ø¨Ù†Ø¬Ø§Ø­.",
 
     profileImageUploadFailed:
-      "تعذر رفع الصورة الشخصية."
+      "ØªØ¹Ø°Ø± Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø´Ø®ØµÙŠØ©."
   }
 
 };
@@ -624,7 +624,7 @@ function applyLanguage() {
 
     languageBtn.textContent =
       currentLanguage === "en"
-        ? "العربية"
+        ? "Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©"
         : "English";
 
   }
@@ -632,8 +632,8 @@ function applyLanguage() {
 
   document.title =
     currentLanguage === "ar"
-      ? "مزاد — سوق البيع والشراء"
-      : "Mazad — Buy & Sell Marketplace";
+      ? "Ù…Ø²Ø§Ø¯ â€” Ø³ÙˆÙ‚ Ø§Ù„Ø¨ÙŠØ¹ ÙˆØ§Ù„Ø´Ø±Ø§Ø¡"
+      : "Mazad â€” Buy & Sell Marketplace";
 
 }
 
@@ -1116,49 +1116,49 @@ document.addEventListener(
         case "auth/email-already-in-use":
 
           return currentLanguage === "ar"
-            ? "هذا البريد الإلكتروني مسجل بالفعل."
+            ? "Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù…Ø³Ø¬Ù„ Ø¨Ø§Ù„ÙØ¹Ù„."
             : "This email is already registered.";
 
         case "auth/invalid-email":
 
           return currentLanguage === "ar"
-            ? "يرجى إدخال بريد إلكتروني صالح."
+            ? "ÙŠØ±Ø¬Ù‰ Ø¥Ø¯Ø®Ø§Ù„ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØµØ§Ù„Ø­."
             : "Please enter a valid email address.";
 
         case "auth/weak-password":
 
           return currentLanguage === "ar"
-            ? "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل."
+            ? "ÙŠØ¬Ø¨ Ø£Ù† ØªØªÙƒÙˆÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù…Ù† 6 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„."
             : "Password must be at least 6 characters.";
 
         case "auth/invalid-credential":
 
           return currentLanguage === "ar"
-            ? "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+            ? "Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø£Ùˆ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± ØµØ­ÙŠØ­Ø©."
             : "Email or password is incorrect.";
 
         case "auth/user-not-found":
 
           return currentLanguage === "ar"
-            ? "لا يوجد حساب بهذا البريد الإلكتروني."
+            ? "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø­Ø³Ø§Ø¨ Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ."
             : "No account found with this email.";
 
         case "auth/wrong-password":
 
           return currentLanguage === "ar"
-            ? "كلمة المرور غير صحيحة."
+            ? "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± ØµØ­ÙŠØ­Ø©."
             : "Incorrect password.";
 
         case "auth/too-many-requests":
 
           return currentLanguage === "ar"
-            ? "محاولات كثيرة جداً. يرجى المحاولة لاحقاً."
+            ? "Ù…Ø­Ø§ÙˆÙ„Ø§Øª ÙƒØ«ÙŠØ±Ø© Ø¬Ø¯Ø§Ù‹. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù„Ø§Ø­Ù‚Ø§Ù‹."
             : "Too many attempts. Please try again later.";
 
         default:
 
           return currentLanguage === "ar"
-            ? "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+            ? "Ø­Ø¯Ø« Ø®Ø·Ø£ Ù…Ø§. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±Ø© Ø£Ø®Ø±Ù‰."
             : "Something went wrong. Please try again.";
 
       }
@@ -1492,7 +1492,7 @@ document.addEventListener(
                   : `
                     <div class="empty-state">
 
-                      <div>📦</div>
+                      <div>ðŸ“¦</div>
 
                       <p>
                         ${escapeHTML(
@@ -1531,7 +1531,7 @@ document.addEventListener(
           <div class="not-logged-profile">
 
             <div class="hero-icon">
-              👤
+              ðŸ‘¤
             </div>
 
             <h3>
@@ -1553,7 +1553,7 @@ document.addEventListener(
 
         <div class="empty-state">
 
-          <div>⏳</div>
+          <div>â³</div>
 
           <p>
             ${escapeHTML(
@@ -1667,7 +1667,7 @@ document.addEventListener(
 
         <div class="empty-state">
 
-          <div>⏳</div>
+          <div>â³</div>
 
           <p>
             ${escapeHTML(
@@ -1882,7 +1882,7 @@ document.addEventListener(
                         profile.phone
                       )}"
                     >
-                      📞 ${escapeHTML(
+                      ðŸ“ž ${escapeHTML(
                         t("call")
                       )}
                     </a>
@@ -1896,7 +1896,7 @@ document.addEventListener(
                 class="primary-btn"
                 id="publicMessageBtn"
               >
-                💬 ${escapeHTML(
+                ðŸ’¬ ${escapeHTML(
                   t("message")
                 )}
               </button>
@@ -1972,7 +1972,7 @@ document.addEventListener(
 
                     <div class="empty-state">
 
-                      <div>📦</div>
+                      <div>ðŸ“¦</div>
 
                       <p>
                         ${escapeHTML(
@@ -2424,7 +2424,7 @@ document.addEventListener(
 
           saveProfileBtn.textContent =
             currentLanguage === "ar"
-              ? "جاري الحفظ..."
+              ? "Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø­ÙØ¸..."
               : "Saving...";
 
 
@@ -2831,7 +2831,7 @@ document.addEventListener(
           "message-user-btn";
 
         messageButton.textContent =
-          `💬 ${t("message")}`;
+          `ðŸ’¬ ${t("message")}`;
 
 
         messageButton.addEventListener(
@@ -2879,7 +2879,7 @@ document.addEventListener(
             `tel:${sellerProfile.phone}`;
 
           callLink.textContent =
-            `📞 ${t("call")}`;
+            `ðŸ“ž ${t("call")}`;
 
 
           sellerActions.appendChild(
@@ -3055,7 +3055,7 @@ document.addEventListener(
 
           <div class="empty-state">
 
-            <div>📦</div>
+            <div>ðŸ“¦</div>
 
             <h3>
               ${escapeHTML(
@@ -3139,7 +3139,7 @@ document.addEventListener(
 
                     <p class="product-location">
 
-                      📍 ${escapeHTML(
+                      ðŸ“ ${escapeHTML(
                         product.location ||
                         t("unknown")
                       )}
@@ -3230,7 +3230,7 @@ document.addEventListener(
 
         <div class="empty-state">
 
-          <div>⏳</div>
+          <div>â³</div>
 
           <h3>
             ${escapeHTML(
@@ -3328,7 +3328,7 @@ document.addEventListener(
 
           <div class="empty-state">
 
-            <div>⚠️</div>
+            <div>âš ï¸</div>
 
             <h3>
               ${escapeHTML(
@@ -3544,13 +3544,13 @@ document.addEventListener(
 
           authTitle.textContent =
             currentLanguage === "ar"
-              ? "إنشاء حساب مزاد"
+              ? "Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ù…Ø²Ø§Ø¯"
               : "Create Mazad Account";
 
 
           authMessage.textContent =
             currentLanguage === "ar"
-              ? "سجل لإنشاء حساب والبدء بالبيع والشراء."
+              ? "Ø³Ø¬Ù„ Ù„Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ ÙˆØ§Ù„Ø¨Ø¯Ø¡ Ø¨Ø§Ù„Ø¨ÙŠØ¹ ÙˆØ§Ù„Ø´Ø±Ø§Ø¡."
               : "Register to start buying and selling.";
 
 
@@ -3950,7 +3950,7 @@ document.addEventListener(
 
           publishProductBtn.textContent =
             currentLanguage === "ar"
-              ? "جاري النشر..."
+              ? "Ø¬Ø§Ø±ÙŠ Ø§Ù„Ù†Ø´Ø±..."
               : "Publishing...";
 
 
@@ -4273,7 +4273,7 @@ document.addEventListener(
 
                 <div class="chat-empty">
 
-                  💬
+                  ðŸ’¬
 
                   <p>
                     ${escapeHTML(
@@ -4412,7 +4412,7 @@ document.addEventListener(
 
                 <div class="chat-empty">
 
-                  ⚠️
+                  âš ï¸
 
                   <p>
                     ${escapeHTML(
@@ -4621,7 +4621,7 @@ document.addEventListener(
 
             alert(
               currentLanguage === "ar"
-                ? "تعذر إرسال الرسالة. يرجى التحقق من إعدادات Firestore."
+                ? "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±Ø³Ø§Ù„Ø©. ÙŠØ±Ø¬Ù‰ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Firestore."
                 : "Message could not be sent. Please check your Firestore rules."
             );
 
@@ -4713,7 +4713,7 @@ document.addEventListener(
 
             <div class="chat-empty">
 
-              💬
+              ðŸ’¬
 
               <p>
                 ${escapeHTML(
@@ -4878,7 +4878,7 @@ document.addEventListener(
 
           <div class="chat-empty">
 
-            ⚠️
+            âš ï¸
 
             <p>
               ${escapeHTML(
@@ -5063,7 +5063,7 @@ document.addEventListener(
               <div class="not-logged-profile">
 
                 <div class="hero-icon">
-                  👤
+                  ðŸ‘¤
                 </div>
 
                 <h3>
