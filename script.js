@@ -1,10 +1,11 @@
 /* =========================================================
-   MAZAD — Complete Main JavaScript
+   MAZAD — Step 12 Complete
+   Profile + Buyer/Seller + Messenger
    Firebase Authentication + Firestore
    Cloudinary Image Upload
-   English + Arabic
-   Products + Profiles + Messenger
-   ========================================================= */
+   English + Arabic Language
+   Firebase Storage is NOT used.
+========================================================= */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
@@ -19,22 +20,87 @@ import {
 import {
   getFirestore,
   collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
   addDoc,
-  deleteDoc,
+  getDocs,
+  getDoc,
+  setDoc,
   query,
   where,
-  onSnapshot,
-  serverTimestamp
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+/* =========================================================
+   Firebase Configuration
+========================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfiON-27mz4OlD2Hl8uGNMk_2iS2cp2Qw",
+  authDomain: "mazad-b8b34.firebaseapp.com",
+  projectId: "mazad-b8b34",
+  storageBucket: "mazad-b8b34.firebasestorage.app",
+  messagingSenderId: "720192718299",
+  appId: "1:720192718299:web:703589b39b9ef03e5a13fe",
+  measurementId: "G-6HKL7P0H83"
+};
+
+/* =========================================================
+   Cloudinary
+========================================================= */
+
+const CLOUDINARY_CLOUD_NAME = "bhpccaio";
+const CLOUDINARY_UPLOAD_PRESET = "mazad_upload";
+
+const CLOUDINARY_UPLOAD_URL =
+  `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+
+/* =========================================================
+   Initialize Firebase
+========================================================= */
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+/* =========================================================
+   MAZAD — Step 12 Complete
+   Profile + Buyer/Seller + Messenger
+   Firebase Authentication + Firestore
+   Cloudinary Image Upload
+   English + Arabic Language
+   Firebase Storage is NOT used.
+========================================================= */
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  getDoc,
+  setDoc,
+  query,
+  where,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 
 /* =========================================================
-   FIREBASE CONFIGURATION
-   ========================================================= */
+   Firebase Configuration
+========================================================= */
 
 const firebaseConfig = {
   apiKey: "AIzaSyBfiON-27mz4OlD2Hl8uGNMk_2iS2cp2Qw",
@@ -48,17 +114,8 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   FIREBASE INITIALIZATION
-   ========================================================= */
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-
-/* =========================================================
-   CLOUDINARY
-   ========================================================= */
+   Cloudinary
+========================================================= */
 
 const CLOUDINARY_CLOUD_NAME = "bhpccaio";
 const CLOUDINARY_UPLOAD_PRESET = "mazad_upload";
@@ -68,24 +125,19 @@ const CLOUDINARY_UPLOAD_URL =
 
 
 /* =========================================================
-   GLOBAL STATE
-   ========================================================= */
+   Initialize Firebase
+========================================================= */
 
-let products = [];
-let currentProfile = null;
+const app = initializeApp(firebaseConfig);
 
-let selectedConversationId = null;
-let selectedChatUser = null;
+const auth = getAuth(app);
 
-let unsubscribeMessages = null;
-
-let currentLanguage =
-  localStorage.getItem("mazadLanguage") || "en";
+const db = getFirestore(app);
 
 
 /* =========================================================
-   TRANSLATIONS
-   ========================================================= */
+   Translations
+========================================================= */
 
 const translations = {
 
@@ -94,11 +146,11 @@ const translations = {
     home: "Home",
     categories: "Categories",
     listings: "Listings",
+    login: "Login",
     profile: "Profile",
     sellProduct: "Sell Product",
 
     welcome: "Welcome to Mazad",
-    welcomeMazad: "Welcome to Mazad",
     buySell: "Buy & Sell",
     anythingEasily: "Anything Easily",
 
@@ -109,10 +161,13 @@ const translations = {
     sellSomething: "Sell Something",
     simpleFastSecure: "Simple • Fast • Secure",
 
-    searchPlaceholder: "What are you looking for?",
-    search: "Search",
+    searchPlaceholder:
+      "What are you looking for?",
 
+    allCategories: "All Categories",
+    search: "Search",
     explore: "Explore",
+
     popularCategories: "Popular Categories",
 
     cars: "Cars",
@@ -134,582 +189,23 @@ const translations = {
     latestListings: "Latest Listings",
 
     loadingProducts: "Loading products...",
-    pleaseWait: "Please wait.",
-
-    sellYourProduct: "Sell Your Product",
-
-    productTitle: "Product title",
-    productDescription: "Product description",
-    productImage: "Product Image",
-    price: "Price",
-
-    selectCategory: "Select Category",
-
-    publish: "Publish",
-    publishProduct: "Publish Product",
-    published: "Product published successfully.",
-    publishFailed: "Failed to publish product.",
-
-    enterProductTitle:
-      "Please enter a product title.",
-
-    enterPrice:
-      "Please enter a price.",
-
-    invalidPrice:
-      "Please enter a valid price.",
-
-    enterLocation:
-      "Please enter a location.",
-
-    selectImage:
-      "Please select a product image.",
-
-    noProducts:
-      "No products found.",
-
-    deleteProduct:
-      "Delete Product",
-
-    deleteConfirm:
-      "Are you sure you want to delete this product?",
-
-    deleted:
-      "Product deleted successfully.",
-
-    deleteFailed:
-      "Failed to delete product.",
-
-    ownProduct:
-      "You can only delete your own product.",
-
-    productNotFound:
-      "Product not found.",
-
-    description:
-      "Description",
-
-    seller:
-      "Seller",
-
-    sellerUnavailable:
-      "Seller unavailable",
-
-    viewProfile:
-      "View Profile",
-
-    message:
-      "Message",
-
-    call:
-      "Call",
-
-    member:
-      "Member",
-
-    unknown:
-      "Unknown",
-
-    loading:
-      "Loading...",
-
-    noDescription:
-      "No description available.",
-
-    product:
-      "Product",
-
-    account:
-      "Account",
-
-    myProfile:
-      "My Profile",
-
-    editProfile:
-      "Edit Profile",
-
-    editProfileLogin:
-      "Please login to edit your profile.",
-
-    profileRequired:
-      "Please login to view your profile.",
-
-    profileNotFound:
-      "Profile not found.",
-
-    saveProfile:
-      "Save Profile",
-
-    profileSaved:
-      "Profile saved successfully.",
-
-    profilePhoto:
-      "Profile Photo",
-
-    yourName:
-      "Your name",
-
-    phoneNumber:
-      "Phone number",
-
-    aboutBio:
-      "About you",
-
-    bio:
-      "Bio",
-
-    joinDate:
-      "Joined",
-
-    myListings:
-      "My Listings",
-
-    noListings:
-      "No listings yet.",
-
-    email:
-      "Email",
-
-    password:
-      "Password",
-
-    emailAddress:
-      "Email address",
-
-    passwordMin:
-      "Password (minimum 6 characters)",
-
-    login:
-      "Login",
-
-    register:
-      "Register",
-
-    createAccount:
-      "Create Account",
-
-    createNewAccount:
-      "Create new account",
-
-    alreadyAccount:
-      "Already have an account? Login",
-
-    logout:
-      "Logout",
-
-    loggedInAs:
-      "Logged in as",
-
-    loginRegisterMessage:
-      "Login or register to start buying and selling.",
-
-    emailAlreadyRegistered:
-      "This email is already registered.",
-
-    invalidEmail:
-      "Please enter a valid email address.",
-
-    weakPassword:
-      "Password must be at least 6 characters.",
-
-    invalidCredential:
-      "Email or password is incorrect.",
-
-    userNotFound:
-      "No account found with this email.",
-
-    wrongPassword:
-      "Incorrect password.",
-
-    tooManyRequests:
-      "Too many attempts. Please try again later.",
-
-    loginFirst:
-      "Please login first.",
-
-    loginToMessage:
-      "Please login to send a message.",
-
-    cannotMessageSelf:
-      "You cannot message yourself.",
-
-    loggedOut:
-      "You have been logged out.",
-
-    communication:
-      "Communication",
-
-    messages:
-      "Messages",
-
-    selectConversation:
-      "Select a conversation",
-
-    writeMessage:
-      "Write a message...",
-
-    send:
-      "Send",
-
-    noMessages:
-      "No messages yet.",
-
-    noConversations:
-      "No conversations yet.",
-
-    firestoreError:
-      "Something went wrong with Firestore.",
-
-    imageTooLarge:
-      "Image must be 10 MB or smaller.",
-
-    validImage:
-      "Please select a valid image file.",
-
-    uploadingImage:
-      "Uploading image...",
-
-    imageUploaded:
-      "Image uploaded successfully.",
-
-    uploadFailed:
-      "Image upload failed.",
-
-    imageUrlFailed:
-      "Could not get image URL.",
-
-    buySellProducts:
-      "Buy and sell products easily.",
-
-    allRightsReserved:
-      "All rights reserved.",
-
-    somethingWentWrong:
-      "Something went wrong. Please try again."
-
-  },
-
-
-  ar: {
-
-    home: "الرئيسية",
-    categories: "الفئات",
-    listings: "الإعلانات",
-    profile: "الملف الشخصي",
-    sellProduct: "بيع منتج",
-
-    welcome: "مرحباً بك في مزاد",
-    welcomeMazad: "مرحباً بك في مزاد",
-    buySell: "بيع وشراء",
-    anythingEasily: "أي شيء بسهولة",
-
-    heroDescription:
-      "اعثر على منتجات رائعة بالقرب منك أو قم ببيع منتجاتك بسرعة وسهولة على مزاد.",
-
-    browseProducts: "تصفح المنتجات",
-    sellSomething: "بيع شيء ما",
-    simpleFastSecure: "بسيط • سريع • آمن",
-
-    searchPlaceholder: "ماذا تبحث عنه؟",
-    search: "بحث",
-
-    explore: "استكشف",
-    popularCategories: "الفئات الشائعة",
-
-    cars: "سيارات",
-    mobiles: "هواتف",
-    electronics: "إلكترونيات",
-    property: "عقارات",
-    fashion: "أزياء",
-    jobs: "وظائف",
-    others: "أخرى",
-
-    findNextCar: "اعثر على سيارتك القادمة",
-    phonesAccessories: "الهواتف والإكسسوارات",
-    devicesGadgets: "الأجهزة والأدوات",
-    homesLand: "المنازل والأراضي",
-    clothesAccessories: "الملابس والإكسسوارات",
-    findOpportunities: "اعثر على فرص",
-
-    marketplace: "السوق",
-    latestListings: "أحدث الإعلانات",
-
-    loadingProducts: "جار تحميل المنتجات...",
-    pleaseWait: "يرجى الانتظار.",
-
-    sellYourProduct: "بيع منتجك",
-
-    productTitle: "اسم المنتج",
-    productDescription: "وصف المنتج",
-    productImage: "صورة المنتج",
-    price: "السعر",
-
-    selectCategory: "اختر الفئة",
-
-    publish: "نشر",
-    publishProduct: "نشر المنتج",
-    published: "تم نشر المنتج بنجاح.",
-    publishFailed: "فشل نشر المنتج.",
-
-    enterProductTitle:
-      "يرجى إدخال اسم المنتج.",
-
-    enterPrice:
-      "يرجى إدخال السعر.",
-
-    invalidPrice:
-      "يرجى إدخال سعر صالح.",
-
-    enterLocation:
-      "يرجى إدخال الموقع.",
-
-    selectImage:
-      "يرجى اختيار صورة المنتج.",
-
-    noProducts:
-      "لم يتم العثور على منتجات.",
-
-    deleteProduct:
-      "حذف المنتج",
-
-    deleteConfirm:
-      "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
-
-    deleted:
-      "تم حذف المنتج بنجاح.",
-
-    deleteFailed:
-      "فشل حذف المنتج.",
-
-    ownProduct:
-      "يمكنك حذف منتجاتك فقط.",
-
-    productNotFound:
-      "لم يتم العثور على المنتج.",
-
-    description:
-      "الوصف",
-
-    seller:
-      "البائع",
-
-    sellerUnavailable:
-      "البائع غير متاح",
-
-    viewProfile:
-      "عرض الملف الشخصي",
-
-    message:
-      "رسالة",
-
-    call:
-      "اتصال",
-
-    member:
-      "عضو",
-
-    unknown:
-      "غير معروف",
-
-    loading:
-      "جار التحميل...",
-
-    noDescription:
-      "لا يوجد وصف متاح.",
-
-    product:
-      "منتج",
-
-    account:
-      "الحساب",
-
-    myProfile:
-      "ملفي الشخصي",
-
-    editProfile:
-      "تعديل الملف الشخصي",
-
-    editProfileLogin:
-      "يرجى تسجيل الدخول لتعديل ملفك الشخصي.",
-
-    profileRequired:
-      "يرجى تسجيل الدخول لعرض ملفك الشخصي.",
-
-    profileNotFound:
-      "لم يتم العثور على الملف الشخصي.",
-
-    saveProfile:
-      "حفظ الملف الشخصي",
-
-    profileSaved:
-      "تم حفظ الملف الشخصي بنجاح.",
-
-    profilePhoto:
-      "الصورة الشخصية",
-
-    yourName:
-      "اسمك",
-
-    phoneNumber:
-      "رقم الهاتف",
-
-    aboutBio:
-      "نبذة عنك",
-
-    bio:
-      "نبذة",
-
-    joinDate:
-      "تاريخ الانضمام",
-
-    myListings:
-      "إعلاناتي",
-
-    noListings:
-      "لا توجد إعلانات حتى الآن.",
-
-    email:
-      "البريد الإلكتروني",
-
-    password:
-      "كلمة المرور",
-
-    emailAddress:
-      "البريد الإلكتروني",
-
-    passwordMin:
-      "كلمة المرور (6 أحرف على الأقل)",
-
-    login:
-      "تسجيل الدخول",
-
-    register:
-      "إنشاء حساب",
-
-    createAccount:
-      "إنشاء حساب",
-
-    createNewAccount:
-      "إنشاء حساب جديد",
-
-    alreadyAccount:
-      "لديك حساب بالفعل؟ تسجيل الدخول",
-
-    logout:
-      "تسجيل الخروج",
-
-    loggedInAs:
-      "تم تسجيل الدخول باسم",
-
-    loginRegisterMessage:
-      "قم بتسجيل الدخول أو إنشاء حساب لبدء البيع والشراء.",
-
-    emailAlreadyRegistered:
-      "هذا البريد الإلكتروني مسجل بالفعل.",
-
-    invalidEmail:
-      "يرجى إدخال بريد إلكتروني صالح.",
-
-    weakPassword:
-      "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.",
-
-    invalidCredential:
-      "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
-
-    userNotFound:
-      "لا يوجد حساب بهذا البريد الإلكتروني.",
-
-    wrongPassword:
-      "كلمة المرور غير صحيحة.",
-
-    tooManyRequests:
-      "محاولات كثيرة جداً. يرجى المحاولة لاحقاً.",
-
-    loginFirst:
-      "يرجى تسجيل الدخول أولاً.",
-
-    loginToMessage:
-      "يرجى تسجيل الدخول لإرسال رسالة.",
-
-    cannotMessageSelf:
-      "لا يمكنك مراسلة نفسك.",
-
-    loggedOut:
-      "تم تسجيل خروجك.",
-
-    communication:
-      "التواصل",
-
-    messages:
-      "الرسائل",
-
-    selectConversation:
-      "اختر محادثة",
-
-    writeMessage:
-      "اكتب رسالة...",
-
-    send:
-      "إرسال",
-
-    noMessages:
-      "لا توجد رسائل حتى الآن.",
-
-    noConversations:
-      "لا توجد محادثات حتى الآن.",
-
-    firestoreError:
-      "حدث خطأ في Firestore.",
-
-    imageTooLarge:
-      "يجب ألا يتجاوز حجم الصورة 10 ميجابايت.",
-
-    validImage:
-      "يرجى اختيار ملف صورة صالح.",
-
-    uploadingImage:
-      "جار رفع الصورة...",
-
-    imageUploaded:
-      "تم رفع الصورة بنجاح.",
-
-    uploadFailed:
-      "فشل رفع الصورة.",
-
-    imageUrlFailed:
-      "تعذر الحصول على رابط الصورة.",
-
-    buySellProducts:
-      "اشترِ وبع المنتجات بسهولة.",
-
-    allRightsReserved:
-      "جميع الحقوق محفوظة.",
-
-    somethingWentWrong:
-      "حدث خطأ ما. يرجى المحاولة مرة أخرى."
-
-  }
-
-};
-
-
-/* =========================================================
-   TRANSLATION
-   ========================================================= */
+    pleaseWait: "Please wait."
+     /* =========================================================
+   Language
+========================================================= */
+
+let currentLanguage =
+  localStorage.getItem("mazadLanguage") || "en";
 
 function t(key) {
-
   return (
     translations[currentLanguage]?.[key] ||
-    translations.en?.[key] ||
+    translations.en[key] ||
     key
   );
-
 }
 
-
 function applyLanguage() {
-
   document.documentElement.lang =
     currentLanguage;
 
@@ -718,158 +214,295 @@ function applyLanguage() {
       ? "rtl"
       : "ltr";
 
-
   document
     .querySelectorAll("[data-i18n]")
     .forEach(element => {
-
       const key =
-        element.getAttribute("data-i18n");
+        element.dataset.i18n;
 
-      if (key) {
-        element.textContent = t(key);
-      }
-
+      element.textContent = t(key);
     });
-
 
   document
     .querySelectorAll("[data-i18n-placeholder]")
     .forEach(element => {
-
       const key =
-        element.getAttribute(
-          "data-i18n-placeholder"
-        );
+        element.dataset.i18nPlaceholder;
 
-      if (key) {
-        element.placeholder = t(key);
-      }
-
+      element.placeholder = t(key);
     });
-
-
-  document
-    .querySelectorAll("[data-i18n-title]")
-    .forEach(element => {
-
-      const key =
-        element.getAttribute(
-          "data-i18n-title"
-        );
-
-      if (key) {
-        element.title = t(key);
-      }
-
-    });
-
-
-  const button =
-    document.getElementById("languageBtn");
-
-  if (button) {
-
-    button.textContent =
-      currentLanguage === "en"
-        ? "العربية"
-        : "English";
-
-  }
-
-}
-
-
-function switchLanguage() {
-
-  currentLanguage =
-    currentLanguage === "en"
-      ? "ar"
-      : "en";
-
-  localStorage.setItem(
-    "mazadLanguage",
-    currentLanguage
-  );
-
-  applyLanguage();
-
-  displayProducts(products);
-
-  if (auth.currentUser) {
-
-    renderMyProfile();
-    loadConversations();
-
-  }
-
 }
 
 
 /* =========================================================
-   DOM ELEMENTS
-   ========================================================= */
+   Helpers
+========================================================= */
 
-const languageBtn =
-  document.getElementById("languageBtn");
+function escapeHTML(value) {
+  const div =
+    document.createElement("div");
 
-const searchInput =
-  document.getElementById("searchInput");
+  div.textContent =
+    value == null ? "" : String(value);
 
-const categorySelect =
-  document.getElementById("categorySelect");
+  return div.innerHTML;
+}
 
-const searchBtn =
-  document.getElementById("searchBtn");
+
+function formatPrice(value) {
+  const number =
+    Number(value);
+
+  if (Number.isNaN(number)) {
+    return "0.00";
+  }
+
+  return number.toLocaleString(
+    "en-US",
+    {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  );
+}
+
+
+function formatDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  let date;
+
+  if (
+    typeof value.toDate ===
+    "function"
+  ) {
+    date = value.toDate();
+  } else {
+    date = new Date(value);
+  }
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+    return "";
+  }
+
+  return date.toLocaleDateString(
+    currentLanguage === "ar"
+      ? "ar-SA"
+      : "en-US",
+    {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }
+  );
+}
+
+
+/* =========================================================
+   Default Avatar
+========================================================= */
+
+function getDefaultAvatar() {
+  return (
+    "https://ui-avatars.com/api/" +
+    "?name=User&background=random"
+  );
+}
+
+
+/* =========================================================
+   Global State
+========================================================= */
+
+let products = [];
+
+let currentProfile = null;
+
+let selectedConversationId = null;
+
+let selectedChatUser = null;
+
+let unsubscribeMessages = null;
+
+
+/* =========================================================
+   DOM Elements
+========================================================= */
 
 const productsContainer =
-  document.getElementById("productsContainer");
+  document.getElementById(
+    "productsContainer"
+  );
 
-const loginForm =
-  document.getElementById("loginForm");
+const searchInput =
+  document.getElementById(
+    "searchInput"
+  );
 
-const registerForm =
-  document.getElementById("registerForm");
+const searchBtn =
+  document.getElementById(
+    "searchBtn"
+  );
 
-const showRegisterBtn =
-  document.getElementById("showRegisterBtn");
-
-const showLoginBtn =
-  document.getElementById("showLoginBtn");
-
-const authTitle =
-  document.getElementById("authTitle");
-
-const authMessage =
-  document.getElementById("authMessage");
-
-const authStatus =
-  document.getElementById("authStatus");
+const categorySelect =
+  document.getElementById(
+    "categorySelect"
+  );
 
 const sellProductForm =
-  document.getElementById("sellProductForm");
-
-const sellStatus =
-  document.getElementById("sellStatus");
-
-const imageStatus =
-  document.getElementById("imageStatus");
-
-const publishProductBtn =
-  document.getElementById("publishProductBtn");
+  document.getElementById(
+    "sellProductForm"
+  );
 
 const productImageFile =
-  document.getElementById("productImageFile");
+  document.getElementById(
+    "productImageFile"
+  );
+
+const imageStatus =
+  document.getElementById(
+    "imageStatus"
+  );
+
+const publishProductBtn =
+  document.getElementById(
+    "publishProductBtn"
+  );
+
+const sellStatus =
+  document.getElementById(
+    "sellStatus"
+  );
+
+
+/* =========================================================
+   Authentication Elements
+========================================================= */
+
+const loginForm =
+  document.getElementById(
+    "loginForm"
+  );
+
+const registerForm =
+  document.getElementById(
+    "registerForm"
+  );
+
+const showRegisterBtn =
+  document.getElementById(
+    "showRegisterBtn"
+  );
+
+const showLoginBtn =
+  document.getElementById(
+    "showLoginBtn"
+  );
+
+const authTitle =
+  document.getElementById(
+    "authTitle"
+  );
+
+const authMessage =
+  document.getElementById(
+    "authMessage"
+  );
+
+
+/* =========================================================
+   Profile Elements
+========================================================= */
 
 const profileContent =
-  document.getElementById("profileContent");
+  document.getElementById(
+    "profileContent"
+  );
+
+const profileNavBtn =
+  document.getElementById(
+    "profileNavBtn"
+  );
+
+const editProfileModal =
+  document.getElementById(
+    "editProfileModal"
+  );
+
+const editProfileModalOverlay =
+  document.getElementById(
+    "editProfileModalOverlay"
+  );
+
+const closeEditProfileModal =
+  document.getElementById(
+    "closeEditProfileModal"
+  );
+
+const editProfileForm =
+  document.getElementById(
+    "editProfileForm"
+  );
+
+const profileNameInput =
+  document.getElementById(
+    "profileName"
+  );
+
+const profilePhoneInput =
+  document.getElementById(
+    "profilePhone"
+  );
+
+const profileLocationInput =
+  document.getElementById(
+    "profileLocation"
+  );
+
+const profileBioInput =
+  document.getElementById(
+    "profileBio"
+  );
+
+const profilePhotoFile =
+  document.getElementById(
+    "profilePhotoFile"
+  );
+
+const profileImageStatus =
+  document.getElementById(
+    "profileImageStatus"
+  );
+
+const profileSaveStatus =
+  document.getElementById(
+    "profileSaveStatus"
+  );
+
+const saveProfileBtn =
+  document.getElementById(
+    "saveProfileBtn"
+  );
+
+
+/* =========================================================
+   Product Modal Elements
+========================================================= */
 
 const productModal =
-  document.getElementById("productModal");
+  document.getElementById(
+    "productModal"
+  );
 
 const productModalOverlay =
-  document.querySelector(
-    ".product-modal-overlay"
+  document.getElementById(
+    "productModalOverlay"
   );
 
 const closeProductModal =
@@ -927,17 +560,22 @@ const sellerActions =
     "sellerActions"
   );
 
+
+/* =========================================================
+   Public Profile Modal
+========================================================= */
+
 const profileModal =
   document.getElementById(
     "profileModal"
   );
 
 const profileModalOverlay =
-  document.querySelector(
-    "#profileModal .profile-modal-overlay"
+  document.getElementById(
+    "profileModalOverlay"
   );
 
-const closeProfileModalBtn =
+const closePublicProfileModal =
   document.getElementById(
     "closeProfileModal"
   );
@@ -947,74 +585,14 @@ const profileModalContent =
     "profileModalContent"
   );
 
-const editProfileModal =
-  document.getElementById(
-    "editProfileModal"
-  );
 
-const editProfileModalOverlay =
-  document.querySelector(
-    "#editProfileModal .profile-modal-overlay"
-  );
-
-const closeEditProfileModal =
-  document.getElementById(
-    "closeEditProfileModal"
-  );
-
-const editProfileForm =
-  document.getElementById(
-    "editProfileForm"
-  );
-
-const profilePhotoFile =
-  document.getElementById(
-    "profilePhotoFile"
-  );
-
-const profileImageStatus =
-  document.getElementById(
-    "profileImageStatus"
-  );
-
-const profileSaveStatus =
-  document.getElementById(
-    "profileSaveStatus"
-  );
-
-const profileNameInput =
-  document.getElementById(
-    "profileNameInput"
-  );
-
-const profilePhoneInput =
-  document.getElementById(
-    "profilePhoneInput"
-  );
-
-const profileLocationInput =
-  document.getElementById(
-    "profileLocationInput"
-  );
-
-const profileBioInput =
-  document.getElementById(
-    "profileBioInput"
-  );
-
-const saveProfileBtn =
-  document.getElementById(
-    "saveProfileBtn"
-  );
+/* =========================================================
+   Messenger Elements
+========================================================= */
 
 const conversationList =
   document.getElementById(
     "conversationList"
-  );
-
-const chatHeader =
-  document.getElementById(
-    "chatHeader"
   );
 
 const chatMessages =
@@ -1032,244 +610,1245 @@ const chatInput =
     "chatInput"
   );
 
+const chatHeader =
+  document.getElementById(
+    "chatHeader"
+  );
+
 
 /* =========================================================
-   HELPERS
-   ========================================================= */
+   Navigation
+========================================================= */
 
-function escapeHTML(value) {
-
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-function formatPrice(price) {
-
-  const number = Number(price);
-
-  if (!Number.isFinite(number)) {
-    return "0";
-  }
-
-  return number.toLocaleString(
-    currentLanguage === "ar"
-      ? "ar-SA"
-      : "en-US",
-    {
-      minimumFractionDigits:
-        Number.isInteger(number)
-          ? 0
-          : 2,
-      maximumFractionDigits: 2
-    }
+const headerSellBtn =
+  document.getElementById(
+    "headerSellBtn"
   );
 
-}
-
-
-function getDefaultAvatar() {
-
-  return "https://via.placeholder.com/200x200?text=User";
-
-}
-
-
-function formatDate(value) {
-
-  if (!value) {
-    return t("unknown");
-  }
-
-  let date;
-
-  try {
-
-    if (
-      value &&
-      typeof value.toDate === "function"
-    ) {
-
-      date = value.toDate();
-
-    } else if (
-      value instanceof Date
-    ) {
-
-      date = value;
-
-    } else {
-
-      date = new Date(value);
-
-    }
-
-  } catch {
-
-    return t("unknown");
-
-  }
-
-  if (
-    !date ||
-    Number.isNaN(date.getTime())
-  ) {
-
-    return t("unknown");
-
-  }
-
-  return date.toLocaleDateString(
-    currentLanguage === "ar"
-      ? "ar-SA"
-      : "en-US",
-    {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    }
+const heroSellBtn =
+  document.getElementById(
+    "heroSellBtn"
   );
 
-}
 
-
-function formatDateTime(value) {
-
-  if (!value) {
-    return "";
-  }
-
-  let date;
-
-  try {
-
-    if (
-      value &&
-      typeof value.toDate === "function"
-    ) {
-
-      date = value.toDate();
-
-    } else if (
-      value instanceof Date
-    ) {
-
-      date = value;
-
-    } else {
-
-      date = new Date(value);
-
-    }
-
-  } catch {
-
-    return "";
-
-  }
-
-  if (
-    !date ||
-    Number.isNaN(date.getTime())
-  ) {
-
-    return "";
-
-  }
-
-  return date.toLocaleTimeString(
-    currentLanguage === "ar"
-      ? "ar-SA"
-      : "en-US",
-    {
-      hour: "numeric",
-      minute: "2-digit"
-    }
-  );
-
-}
-
+/* =========================================================
+   Auth Message
+========================================================= */
 
 function showAuthMessage(
   message,
   success = false
 ) {
-
-  if (!authStatus) {
+  if (!authMessage) {
     return;
   }
 
-  authStatus.textContent =
+  authMessage.textContent =
     message || "";
 
-  authStatus.style.color =
+  authMessage.style.color =
     success
       ? "green"
-      : "red";
-
-}
-
-
-function getFirebaseErrorMessage(error) {
-
-  if (!error) {
-    return t("somethingWentWrong");
-  }
-
-  switch (error.code) {
-
-    case "auth/email-already-in-use":
-      return t("emailAlreadyRegistered");
-
-    case "auth/invalid-email":
-      return t("invalidEmail");
-
-    case "auth/weak-password":
-      return t("weakPassword");
-
-    case "auth/invalid-credential":
-      return t("invalidCredential");
-
-    case "auth/user-not-found":
-      return t("userNotFound");
-
-    case "auth/wrong-password":
-      return t("wrongPassword");
-
-    case "auth/too-many-requests":
-      return t("tooManyRequests");
-
-    case "auth/network-request-failed":
-      return currentLanguage === "ar"
-        ? "تحقق من اتصال الإنترنت وحاول مرة أخرى."
-        : "Please check your internet connection and try again.";
-
-    case "auth/operation-not-allowed":
-      return currentLanguage === "ar"
-        ? "طريقة تسجيل الدخول هذه غير مفعلة في Firebase."
-        : "This sign-in method is not enabled in Firebase.";
-
-    default:
-      console.error(
-        "Firebase Auth Error:",
-        error
-      );
-
-      return t("somethingWentWrong");
-
-  }
-
+      : "";
 }
 
 
 /* =========================================================
-   CLOUDINARY IMAGE UPLOAD
-   ========================================================= */
+   Initial Language
+========================================================= */
+
+applyLanguage();
+    async function createUserProfile(user) {
+
+      if (!user) {
+        return;
+      }
+
+      const profileRef =
+        doc(
+          db,
+          "users",
+          user.uid
+        );
+
+      const existing =
+        await getDoc(profileRef);
+
+      if (existing.exists()) {
+        return;
+      }
+
+      await setDoc(
+        profileRef,
+        {
+          uid: user.uid,
+          name: "",
+          phone: "",
+          email: user.email || "",
+          location: "",
+          bio: "",
+          photoURL: "",
+          createdAt:
+            serverTimestamp(),
+          updatedAt:
+            serverTimestamp()
+        }
+      );
+
+    }
+
+
+    /* =======================================================
+       Profile Display
+    ======================================================= */
+
+    function profileTemplate(
+      profile,
+      user,
+      isOwnProfile = false
+    ) {
+
+      const photo =
+        profile?.photoURL ||
+        getDefaultAvatar();
+
+      const name =
+        profile?.name?.trim() ||
+        user?.email ||
+        t("member");
+
+      const email =
+        profile?.email ||
+        user?.email ||
+        "";
+
+      const phone =
+        profile?.phone ||
+        t("unknown");
+
+      const location =
+        profile?.location ||
+        t("unknown");
+
+      const bio =
+        profile?.bio ||
+        t("noDescription");
+
+      const joined =
+        formatDate(
+          profile?.createdAt
+        );
+
+      const userProducts =
+        products.filter(
+          product =>
+            product.sellerId ===
+            (profile?.uid || user?.uid)
+        );
+
+
+      return `
+
+        <div class="profile-card">
+
+          <div class="profile-cover"></div>
+
+          <div class="profile-main">
+
+            <div class="profile-top">
+
+              <img
+                class="profile-avatar-image"
+                src="${escapeHTML(photo)}"
+                alt="${escapeHTML(name)}"
+              >
+
+              <div class="profile-heading">
+
+                <h2>
+                  ${escapeHTML(name)}
+                </h2>
+
+                <p>
+                  ${escapeHTML(
+                    t("member")
+                  )}
+                </p>
+
+              </div>
+
+              ${
+                isOwnProfile
+                  ? `
+                    <div class="profile-actions">
+
+                      <button
+                        type="button"
+                        class="primary-btn"
+                        id="openEditProfileBtn"
+                      >
+                        ${escapeHTML(
+                          t("editProfile")
+                        )}
+                      </button>
+
+                    </div>
+                  `
+                  : ""
+              }
+
+            </div>
+
+
+            <div class="profile-info-grid">
+
+              <div class="profile-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("email")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(email)}
+                </strong>
+
+              </div>
+
+
+              <div class="profile-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("phone")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(phone)}
+                </strong>
+
+              </div>
+
+
+              <div class="profile-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("location")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(location)}
+                </strong>
+
+              </div>
+
+
+              <div class="profile-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("joinDate")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(joined)}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-bio">
+
+              <h3>
+                ${escapeHTML(
+                  t("bio")
+                )}
+              </h3>
+
+              <p>
+                ${escapeHTML(bio)}
+              </p>
+
+            </div>
+                        <div class="profile-listings">
+
+              <h3>
+                ${escapeHTML(
+                  t("myListings")
+                )}
+              </h3>
+
+              ${
+                userProducts.length
+                  ? `
+                    <div class="mini-products">
+
+                      ${userProducts
+                        .map(
+                          product => `
+
+                            <div
+                              class="mini-product"
+                              data-profile-product-id="${escapeHTML(
+                                product.id
+                              )}"
+                            >
+
+                              <img
+                                src="${escapeHTML(
+                                  product.image ||
+                                  "https://via.placeholder.com/500x300?text=Mazad"
+                                )}"
+                                alt="${escapeHTML(
+                                  product.title ||
+                                  "Product"
+                                )}"
+                              >
+
+                              <div class="mini-product-info">
+
+                                <strong>
+                                  ${escapeHTML(
+                                    product.title ||
+                                    "Product"
+                                  )}
+                                </strong>
+
+                                <span>
+                                  $${formatPrice(
+                                    product.price
+                                  )}
+                                </span>
+
+                              </div>
+
+                            </div>
+
+                          `
+                        )
+                        .join("")}
+
+                    </div>
+                  `
+                  : `
+                    <div class="empty-state">
+
+                      <div>📦</div>
+
+                      <p>
+                        ${escapeHTML(
+                          t("noListings")
+                        )}
+                      </p>
+
+                    </div>
+                  `
+              }
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    async function renderMyProfile() {
+
+      if (!profileContent) {
+        return;
+      }
+
+      const user =
+        auth.currentUser;
+
+      if (!user) {
+
+        profileContent.innerHTML = `
+
+          <div class="not-logged-profile">
+
+            <div class="hero-icon">
+              👤
+            </div>
+
+            <h3>
+              ${escapeHTML(
+                t("profileRequired")
+              )}
+            </h3>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      profileContent.innerHTML = `
+
+        <div class="empty-state">
+
+          <div>⏳</div>
+
+          <p>
+            ${escapeHTML(
+              t("loading")
+            )}
+          </p>
+
+        </div>
+
+      `;
+
+
+      let profile =
+        await getUserProfile(
+          user.uid
+        );
+
+
+      if (!profile) {
+
+        await createUserProfile(
+          user
+        );
+
+        profile =
+          await getUserProfile(
+            user.uid
+          );
+
+      }
+
+
+      currentProfile =
+        profile;
+
+
+      profileContent.innerHTML =
+        profileTemplate(
+          profile,
+          user,
+          true
+        );
+
+
+      const editBtn =
+        document.getElementById(
+          "openEditProfileBtn"
+        );
+
+
+      if (editBtn) {
+
+        editBtn.addEventListener(
+          "click",
+          openEditProfile
+        );
+
+      }
+
+
+      profileContent
+        .querySelectorAll(
+          "[data-profile-product-id]"
+        )
+        .forEach(
+          card => {
+
+            card.addEventListener(
+              "click",
+              () => {
+
+                const id =
+                  card.dataset
+                    .profileProductId;
+
+                const product =
+                  products.find(
+                    item =>
+                      item.id === id
+                  );
+
+                if (product) {
+
+                  openProductDetails(
+                    product
+                  );
+
+                }
+
+              }
+            );
+
+          }
+        );
+
+    }
+
+
+    /* =======================================================
+       Public Profile
+    ======================================================= */
+
+    async function openPublicProfile(
+      uid
+    ) {
+
+      if (!profileModalContent) {
+        return;
+      }
+
+
+      profileModalContent.innerHTML = `
+
+        <div class="empty-state">
+
+          <div>⏳</div>
+
+          <p>
+            ${escapeHTML(
+              t("loading")
+            )}
+          </p>
+
+        </div>
+
+      `;
+
+
+      profileModal.classList.add(
+        "active"
+      );
+
+      profileModal.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      document.body.classList.add(
+        "modal-open"
+      );
+
+
+      const profile =
+        await getUserProfile(uid);
+
+
+      if (!profile) {
+
+        profileModalContent.innerHTML = `
+
+          <div class="not-logged-profile">
+
+            <h3>
+              ${escapeHTML(
+                t("profileNotFound")
+              )}
+            </h3>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      const user = {
+        uid,
+        email:
+          profile.email || ""
+      };
+
+
+      const userProducts =
+        products.filter(
+          product =>
+            product.sellerId === uid
+        );
+
+
+      profileModalContent.innerHTML = `
+
+        <div class="profile-public">
+
+          <div class="profile-public-cover"></div>
+
+          <div class="profile-public-body">
+
+            <div class="profile-public-top">
+
+              <img
+                class="public-avatar"
+                src="${escapeHTML(
+                  profile.photoURL ||
+                  getDefaultAvatar()
+                )}"
+                alt="${escapeHTML(
+                  profile.name ||
+                  profile.email ||
+                  "User"
+                )}"
+              >
+
+              <div class="public-heading">
+
+                <h2>
+                  ${escapeHTML(
+                    profile.name ||
+                    profile.email ||
+                    t("member")
+                  )}
+                </h2>
+
+                <p>
+                  ${escapeHTML(
+                    t("member")
+                  )}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="public-info">
+
+              <div class="public-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("email")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    profile.email || ""
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="public-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("phone")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    profile.phone ||
+                    t("unknown")
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="public-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("location")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    profile.location ||
+                    t("unknown")
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="public-info-item">
+
+                <span>
+                  ${escapeHTML(
+                    t("joinDate")
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHTML(
+                    formatDate(
+                      profile.createdAt
+                    )
+                  )}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="public-bio">
+
+              <h3>
+                ${escapeHTML(
+                  t("bio")
+                )}
+              </h3>
+
+              <p>
+                ${escapeHTML(
+                  profile.bio ||
+                  t("noDescription")
+                )}
+              </p>
+
+            </div>
+                const messageBtn =
+        document.getElementById(
+          "publicMessageBtn"
+        );
+
+
+      if (messageBtn) {
+
+        messageBtn.addEventListener(
+          "click",
+          () => {
+
+            if (!auth.currentUser) {
+
+              alert(
+                t("loginToMessage")
+              );
+
+              return;
+
+            }
+
+
+            if (
+              auth.currentUser.uid ===
+              uid
+            ) {
+
+              alert(
+                t("cannotMessageSelf")
+              );
+
+              return;
+
+            }
+
+
+            closeProfileModal();
+
+            startConversation(
+              uid
+            );
+
+          }
+        );
+
+      }
+
+
+      profileModalContent
+        .querySelectorAll(
+          "[data-public-product-id]"
+        )
+        .forEach(
+          card => {
+
+            card.addEventListener(
+              "click",
+              () => {
+
+                const id =
+                  card.dataset
+                    .publicProductId;
+
+                const product =
+                  products.find(
+                    item =>
+                      item.id === id
+                  );
+
+                if (product) {
+
+                  closeProfileModal();
+
+                  openProductDetails(
+                    product
+                  );
+
+                }
+
+              }
+            );
+
+          }
+        );
+
+    }
+
+
+    /* =======================================================
+       Close Public Profile
+    ======================================================= */
+
+    function closeProfileModal() {
+
+      if (!profileModal) {
+        return;
+      }
+
+      profileModal.classList.remove(
+        "active"
+      );
+
+      profileModal.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      document.body.classList.remove(
+        "modal-open"
+      );
+
+    }
+
+
+    if (closePublicProfileModal) {
+
+      closePublicProfileModal.addEventListener(
+        "click",
+        closeProfileModal
+      );
+
+    }
+
+
+    if (profileModalOverlay) {
+
+      profileModalOverlay.addEventListener(
+        "click",
+        closeProfileModal
+      );
+
+    }
+
+
+    /* =======================================================
+       Edit Profile
+    ======================================================= */
+
+    function openEditProfile() {
+
+      const user =
+        auth.currentUser;
+
+      if (!user) {
+
+        alert(
+          t("editProfileLogin")
+        );
+
+        return;
+
+      }
+
+
+      const profile =
+        currentProfile || {};
+
+
+      if (profileNameInput) {
+
+        profileNameInput.value =
+          profile.name || "";
+
+      }
+
+
+      if (profilePhoneInput) {
+
+        profilePhoneInput.value =
+          profile.phone || "";
+
+      }
+
+
+      if (profileLocationInput) {
+
+        profileLocationInput.value =
+          profile.location || "";
+
+      }
+
+
+      if (profileBioInput) {
+
+        profileBioInput.value =
+          profile.bio || "";
+
+      }
+
+
+      if (profileImageStatus) {
+
+        profileImageStatus.textContent =
+          "";
+
+      }
+
+
+      if (profileSaveStatus) {
+
+        profileSaveStatus.textContent =
+          "";
+
+      }
+
+
+      if (editProfileModal) {
+
+        editProfileModal.classList.add(
+          "active"
+        );
+
+        editProfileModal.setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+        document.body.classList.add(
+          "modal-open"
+        );
+
+      }
+
+    }
+
+
+    function closeEditProfile() {
+
+      if (!editProfileModal) {
+        return;
+      }
+
+
+      editProfileModal.classList.remove(
+        "active"
+      );
+
+      editProfileModal.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      document.body.classList.remove(
+        "modal-open"
+      );
+
+    }
+
+
+    if (closeEditProfileModal) {
+
+      closeEditProfileModal.addEventListener(
+        "click",
+        closeEditProfile
+      );
+
+    }
+
+
+    if (editProfileModalOverlay) {
+
+      editProfileModalOverlay.addEventListener(
+        "click",
+        closeEditProfile
+      );
+
+    }
+
+
+    /* =======================================================
+       Image Upload
+    ======================================================= */
+
+    async function uploadImageToCloudinary(
+      file
+    ) {
+
+      if (!file) {
+        return "";
+      }
+
+
+      if (
+        !file.type.startsWith(
+          "image/"
+        )
+      ) {
+
+        throw new Error(
+          "INVALID_IMAGE"
+        );
+
+      }
+
+
+      if (
+        file.size >
+        10 * 1024 * 1024
+      ) {
+
+        throw new Error(
+          "IMAGE_TOO_LARGE"
+        );
+
+      }
+
+
+      const formData =
+        new FormData();
+
+
+      formData.append(
+        "file",
+        file
+      );
+
+      formData.append(
+        "upload_preset",
+        CLOUDINARY_UPLOAD_PRESET
+      );
+
+
+      const response =
+        await fetch(
+          CLOUDINARY_UPLOAD_URL,
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          "UPLOAD_FAILED"
+        );
+
+      }
+
+
+      const data =
+        await response.json();
+
+
+      return (
+        data.secure_url ||
+        data.url ||
+        ""
+      );
+
+    }  
+    /* =======================================================
+   FAST IMAGE RESIZE + COMPRESS
+   Cloudinary Upload
+======================================================= */
+
+async function compressImage(
+  file,
+  maxWidth = 1600,
+  maxHeight = 1600,
+  quality = 0.82
+) {
+
+  if (!file) {
+    return null;
+  }
+
+  if (
+    !file.type.startsWith("image/")
+  ) {
+    throw new Error(
+      t("validImage")
+    );
+  }
+
+  const image =
+    await new Promise(
+      (resolve, reject) => {
+
+        const img =
+          new Image();
+
+        const objectUrl =
+          URL.createObjectURL(
+            file
+          );
+
+        img.onload = () => {
+
+          URL.revokeObjectURL(
+            objectUrl
+          );
+
+          resolve(img);
+
+        };
+
+        img.onerror = () => {
+
+          URL.revokeObjectURL(
+            objectUrl
+          );
+
+          reject(
+            new Error(
+              t("validImage")
+            )
+          );
+
+        };
+
+        img.src =
+          objectUrl;
+
+      }
+    );
+
+
+  let width =
+    image.naturalWidth;
+
+  let height =
+    image.naturalHeight;
+
+
+  const scale =
+    Math.min(
+      1,
+      maxWidth / width,
+      maxHeight / height
+    );
+
+
+  width =
+    Math.round(
+      width * scale
+    );
+
+  height =
+    Math.round(
+      height * scale
+    );
+
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width =
+    width;
+
+  canvas.height =
+    height;
+
+
+  const context =
+    canvas.getContext(
+      "2d",
+      {
+        alpha: false
+      }
+    );
+
+
+  if (!context) {
+    throw new Error(
+      "Canvas is not supported."
+    );
+  }
+
+
+  context.imageSmoothingEnabled =
+    true;
+
+  context.imageSmoothingQuality =
+    "high";
+
+
+  context.drawImage(
+    image,
+    0,
+    0,
+    width,
+    height
+  );
+
+
+  const blob =
+    await new Promise(
+      resolve => {
+
+        canvas.toBlob(
+          resolve,
+          "image/jpeg",
+          quality
+        );
+
+      }
+    );
+
+
+  if (!blob) {
+
+    throw new Error(
+      "Image compression failed."
+    );
+
+  }
+
+
+  return new File(
+    [blob],
+    "mazad-image.jpg",
+    {
+      type:
+        "image/jpeg",
+      lastModified:
+        Date.now()
+    }
+  );
+
+}
+
+
+/* =======================================================
+   Cloudinary Upload — FAST VERSION
+======================================================= */
 
 async function uploadImageToCloudinary(
   file,
@@ -1280,1966 +1859,923 @@ async function uploadImageToCloudinary(
     return "";
   }
 
-  if (!(file instanceof File)) {
+
+  if (
+    !file.type.startsWith(
+      "image/"
+    )
+  ) {
+
     throw new Error(
       t("validImage")
     );
+
   }
 
-  if (!file.type.startsWith("image/")) {
-    throw new Error(
-      t("validImage")
-    );
-  }
 
-  if (file.size > 10 * 1024 * 1024) {
+  if (
+    file.size >
+    10 * 1024 * 1024
+  ) {
+
     throw new Error(
       t("imageTooLarge")
     );
+
   }
 
+
   if (statusElement) {
+
+    statusElement.textContent =
+      t("preparingProduct");
+
+    statusElement.style.color =
+      "black";
+
+  }
+
+
+  /* Compress before upload */
+
+  const compressedFile =
+    await compressImage(
+      file,
+      1600,
+      1600,
+      0.82
+    );
+
+
+  if (!compressedFile) {
+
+    throw new Error(
+      t("uploadFailed")
+    );
+
+  }
+
+
+  if (statusElement) {
+
     statusElement.textContent =
       t("uploadingImage");
+
+    statusElement.style.color =
+      "black";
+
   }
+
 
   const formData =
     new FormData();
 
+
   formData.append(
     "file",
-    file
+    compressedFile
   );
+
 
   formData.append(
     "upload_preset",
     CLOUDINARY_UPLOAD_PRESET
   );
 
-  try {
 
-    const response =
-      await fetch(
-        CLOUDINARY_UPLOAD_URL,
-        {
-          method: "POST",
-          body: formData
-        }
-      );
-
-    const data =
-      await response.json();
-
-    if (!response.ok) {
-
-      console.error(
-        "Cloudinary error:",
-        data
-      );
-
-      throw new Error(
-        data?.error?.message ||
-        t("uploadFailed")
-      );
-
-    }
-
-    if (!data.secure_url) {
-
-      throw new Error(
-        t("imageUrlFailed")
-      );
-
-    }
-
-    if (statusElement) {
-      statusElement.textContent =
-        t("imageUploaded");
-    }
-
-    return data.secure_url;
-
-  } catch (error) {
-
-    if (statusElement) {
-      statusElement.textContent =
-        error.message ||
-        t("uploadFailed");
-    }
-
-    throw error;
-
-  }
-
-}
-
-
-/* =========================================================
-   USER PROFILE
-   ========================================================= */
-
-async function getUserProfile(uid) {
-
-  if (!uid) {
-    return null;
-  }
-
-  try {
-
-    const profileDoc =
-      await getDoc(
-        doc(db, "users", uid)
-      );
-
-    if (profileDoc.exists()) {
-
-      return {
-        id: uid,
-        ...profileDoc.data()
-      };
-
-    }
-
-    return null;
-
-  } catch (error) {
-
-    console.error(
-      "Profile loading error:",
-      error
-    );
-
-    return null;
-
-  }
-
-}
-
-
-async function createUserProfile(user) {
-
-  if (!user?.uid) {
-    return;
-  }
-
-  try {
-
-    const profileRef =
-      doc(db, "users", user.uid);
-
-    const existing =
-      await getDoc(profileRef);
-
-    if (existing.exists()) {
-      return;
-    }
-
-    await setDoc(
-      profileRef,
+  const response =
+    await fetch(
+      CLOUDINARY_UPLOAD_URL,
       {
-        uid: user.uid,
-        email: user.email || "",
-        name: "",
-        phone: "",
-        location: "",
-        bio: "",
-        photoURL: "",
-        createdAt: serverTimestamp()
+        method: "POST",
+        body: formData
       }
     );
 
-  } catch (error) {
 
-    console.error(
-      "Create profile error:",
-      error
+  if (!response.ok) {
+
+    throw new Error(
+      t("uploadFailed")
     );
 
   }
+
+
+  const data =
+    await response.json();
+
+
+  if (!data.secure_url) {
+
+    throw new Error(
+      t("imageUrlFailed")
+    );
+
+  }
+
+
+  if (statusElement) {
+
+    statusElement.textContent =
+      t("imageUploaded");
+
+    statusElement.style.color =
+      "green";
+
+  }
+
+
+  return data.secure_url;
 
 }
+/* =======================================================
+   Publish Product — FAST VERSION
+======================================================= */
 
+if (sellProductForm) {
 
-/* =========================================================
-   PROFILE DISPLAY
-   ========================================================= */
+  sellProductForm.addEventListener(
+    "submit",
+    async event => {
 
-async function renderMyProfile() {
+      event.preventDefault();
 
-  if (!profileContent) {
-    return;
-  }
+      const currentUser =
+        auth.currentUser;
 
-  const user =
-    auth.currentUser;
 
-  if (!user) {
+      if (!currentUser) {
 
-    profileContent.innerHTML = `
-      <div class="empty-state">
-        <div>👤</div>
-        <h3>
-          ${escapeHTML(
-            t("profileRequired")
-          )}
-        </h3>
-      </div>
-    `;
+        sellStatus.textContent =
+          t("loginBeforePublish");
 
-    return;
+        sellStatus.style.color =
+          "red";
 
-  }
-
-  try {
-
-    const profile =
-      await getUserProfile(
-        user.uid
-      );
-
-    currentProfile =
-      profile || {
-        uid: user.uid,
-        email: user.email || ""
-      };
-
-    const name =
-      currentProfile.name ||
-      user.email ||
-      t("member");
-
-    const photo =
-      currentProfile.photoURL ||
-      getDefaultAvatar();
-
-    const phone =
-      currentProfile.phone ||
-      "";
-
-    const location =
-      currentProfile.location ||
-      "";
-
-    const bio =
-      currentProfile.bio ||
-      "";
-
-    profileContent.innerHTML = `
-      <div class="profile-card">
-
-        <div class="profile-header">
-
-          <img
-            src="${escapeHTML(photo)}"
-            alt="Profile"
-            class="profile-avatar-image"
-            onerror="
-              this.onerror=null;
-              this.src='${escapeHTML(
-                getDefaultAvatar()
-              )}';
-            "
-          >
-
-          <div class="profile-info">
-
-            <h3>
-              ${escapeHTML(name)}
-            </h3>
-
-            <p>
-              ${escapeHTML(
-                user.email || ""
-              )}
-            </p>
-
-            ${
-              phone
-                ? `<p>📞 ${escapeHTML(phone)}</p>`
-                : ""
-            }
-
-            ${
-              location
-                ? `<p>📍 ${escapeHTML(location)}</p>`
-                : ""
-            }
-
-          </div>
-
-        </div>
-
-        ${
-          bio
-            ? `
-              <div class="profile-bio">
-                <strong>
-                  ${escapeHTML(t("bio"))}
-                </strong>
-                <p>
-                  ${escapeHTML(bio)}
-                </p>
-              </div>
-            `
-            : ""
-        }
-
-        <div class="profile-actions">
-
-          <button
-            type="button"
-            class="primary-btn"
-            id="openEditProfileBtn"
-          >
-            ${escapeHTML(
-              t("editProfile")
-            )}
-          </button>
-
-          <button
-            type="button"
-            class="secondary-btn"
-            id="logoutBtn"
-          >
-            ${escapeHTML(
-              t("logout")
-            )}
-          </button>
-
-        </div>
-
-        <div class="profile-listings">
-
-          <h3>
-            ${escapeHTML(
-              t("myListings")
-            )}
-          </h3>
-
-          <div
-            id="myListingsContainer"
-            class="products-grid"
-          ></div>
-
-        </div>
-
-      </div>
-    `;
-
-    const editButton =
-      document.getElementById(
-        "openEditProfileBtn"
-      );
-
-    if (editButton) {
-
-      editButton.addEventListener(
-        "click",
-        openEditProfile
-      );
-
-    }
-
-    const logoutButton =
-      document.getElementById(
-        "logoutBtn"
-      );
-
-    if (logoutButton) {
-
-      logoutButton.addEventListener(
-        "click",
-        handleLogout
-      );
-
-    }
-
-    displayMyListings();
-
-  } catch (error) {
-
-    console.error(
-      "Render profile error:",
-      error
-    );
-
-    profileContent.innerHTML = `
-      <div class="empty-state">
-        <div>⚠️</div>
-        <p>
-          ${escapeHTML(
-            t("firestoreError")
-          )}
-        </p>
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* =========================================================
-   EDIT PROFILE
-   ========================================================= */
-
-function openEditProfile() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-
-    alert(
-      t("editProfileLogin")
-    );
-
-    return;
-
-  }
-
-  if (!editProfileModal) {
-    return;
-  }
-
-  profileNameInput.value =
-    currentProfile?.name || "";
-
-  profilePhoneInput.value =
-    currentProfile?.phone || "";
-
-  profileLocationInput.value =
-    currentProfile?.location || "";
-
-  profileBioInput.value =
-    currentProfile?.bio || "";
-
-  if (profileImageStatus) {
-    profileImageStatus.textContent =
-      "";
-  }
-
-  if (profileSaveStatus) {
-    profileSaveStatus.textContent =
-      "";
-  }
-
-  editProfileModal.style.display =
-    "flex";
-
-  editProfileModal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-}
-
-
-function closeEditProfile() {
-
-  if (!editProfileModal) {
-    return;
-  }
-
-  editProfileModal.style.display =
-    "none";
-
-  editProfileModal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-}
-
-
-async function saveProfile(event) {
-
-  event.preventDefault();
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-
-    alert(
-      t("editProfileLogin")
-    );
-
-    return;
-
-  }
-
-  const name =
-    profileNameInput.value
-      .trim();
-
-  const phone =
-    profilePhoneInput.value
-      .trim();
-
-  const location =
-    profileLocationInput.value
-      .trim();
-
-  const bio =
-    profileBioInput.value
-      .trim();
-
-  const button =
-    saveProfileBtn;
-
-  if (button) {
-    button.disabled = true;
-  }
-
-  try {
-
-    let photoURL =
-      currentProfile?.photoURL ||
-      "";
-
-    if (
-      profilePhotoFile?.files?.[0]
-    ) {
-
-      photoURL =
-        await uploadImageToCloudinary(
-          profilePhotoFile.files[0],
-          profileImageStatus
-        );
-
-    }
-
-    await setDoc(
-      doc(
-        db,
-        "users",
-        user.uid
-      ),
-      {
-        uid: user.uid,
-        email: user.email || "",
-        name,
-        phone,
-        location,
-        bio,
-        photoURL,
-        updatedAt: serverTimestamp()
-      },
-      {
-        merge: true
-      }
-    );
-
-    currentProfile =
-      await getUserProfile(
-        user.uid
-      );
-
-    if (profileSaveStatus) {
-
-      profileSaveStatus.textContent =
-        t("profileSaved");
-
-      profileSaveStatus.style.color =
-        "green";
-
-    }
-
-    await renderMyProfile();
-
-    setTimeout(
-      closeEditProfile,
-      700
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Save profile error:",
-      error
-    );
-
-    if (profileSaveStatus) {
-
-      profileSaveStatus.textContent =
-        error.message ||
-        t("somethingWentWrong");
-
-      profileSaveStatus.style.color =
-        "red";
-
-    }
-
-  } finally {
-
-    if (button) {
-      button.disabled = false;
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   PRODUCTS
-   ========================================================= */
-
-async function loadProducts() {
-
-  if (!productsContainer) {
-    return;
-  }
-
-  productsContainer.innerHTML = `
-    <div class="empty-state">
-      <div>📦</div>
-      <h3>
-        ${escapeHTML(
-          t("loadingProducts")
-        )}
-      </h3>
-      <p>
-        ${escapeHTML(
-          t("pleaseWait")
-        )}
-      </p>
-    </div>
-  `;
-
-  try {
-
-    const snapshot =
-      await getDocs(
-        collection(
-          db,
-          "products"
-        )
-      );
-
-    products =
-      snapshot.docs.map(
-        productDoc => ({
-          id: productDoc.id,
-          ...productDoc.data()
-        })
-      );
-
-    products.sort(
-      (a, b) => {
-
-        const aTime =
-          a.createdAt?.toMillis
-            ? a.createdAt.toMillis()
-            : 0;
-
-        const bTime =
-          b.createdAt?.toMillis
-            ? b.createdAt.toMillis()
-            : 0;
-
-        return bTime - aTime;
+        return;
 
       }
-    );
 
-    displayProducts(products);
-
-  } catch (error) {
-
-    console.error(
-      "Product loading error:",
-      error
-    );
-
-    productsContainer.innerHTML = `
-      <div class="empty-state">
-        <div>⚠️</div>
-        <h3>
-          ${escapeHTML(
-            t("firestoreError")
-          )}
-        </h3>
-        <p>
-          ${escapeHTML(
-            error.message || ""
-          )}
-        </p>
-      </div>
-    `;
-
-  }
-
-}
-
-
-function displayProducts(
-  list
-) {
-
-  if (!productsContainer) {
-    return;
-  }
-
-  productsContainer.innerHTML =
-    "";
-
-  if (!list.length) {
-
-    productsContainer.innerHTML = `
-      <div class="empty-state">
-        <div>📦</div>
-        <h3>
-          ${escapeHTML(
-            t("noProducts")
-          )}
-        </h3>
-      </div>
-    `;
-
-    return;
-
-  }
-
-  list.forEach(
-    product => {
-
-      const card =
-        document.createElement(
-          "article"
-        );
-
-      card.className =
-        "product-card";
-
-      const image =
-        product.imageURL ||
-        product.imageUrl ||
-        getDefaultAvatar();
 
       const title =
-        product.title ||
-        t("product");
+        document
+          .getElementById(
+            "productTitle"
+          )
+          .value
+          .trim();
+
 
       const category =
-        product.category ||
-        t("others");
+        document
+          .getElementById(
+            "productCategory"
+          )
+          .value;
+
 
       const price =
-        formatPrice(
-          product.price
-        );
+        document
+          .getElementById(
+            "productPrice"
+          )
+          .value;
+
 
       const location =
-        product.location ||
-        t("unknown");
+        document
+          .getElementById(
+            "productLocation"
+          )
+          .value
+          .trim();
+
 
       const description =
-        product.description ||
-        t("noDescription");
+        document
+          .getElementById(
+            "productDescription"
+          )
+          .value
+          .trim();
 
-      card.innerHTML = `
-        <div class="product-image-wrapper">
 
-          <img
-            class="product-image"
-            src="${escapeHTML(image)}"
-            alt="${escapeHTML(title)}"
-            loading="lazy"
-            onerror="
-              this.onerror=null;
-              this.src='${escapeHTML(
-                getDefaultAvatar()
-              )}';
-            "
-          >
+      const imageFile =
+        productImageFile
+          ? productImageFile.files[0]
+          : null;
 
-        </div>
 
-        <div class="product-card-content">
+      /* -----------------------------------------------
+         Disable button immediately
+      ------------------------------------------------ */
 
-          <span class="product-category">
-            ${escapeHTML(category)}
-          </span>
-
-          <h3>
-            ${escapeHTML(title)}
-          </h3>
-
-          <div class="product-price">
-            ${escapeHTML(price)}
-          </div>
-
-          <p class="product-location">
-            📍 ${escapeHTML(location)}
-          </p>
-
-          <p class="product-description">
-            ${escapeHTML(
-              description.length > 100
-                ? description.slice(0, 100) + "..."
-                : description
-            )}
-          </p>
-
-          <button
-            type="button"
-            class="primary-btn view-product-btn"
-          >
-            ${escapeHTML(
-              t("viewProfile")
-            ).replace(
-              t("viewProfile"),
-              t("product")
-            )}
-          </button>
-
-        </div>
-      `;
-
-      card.addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target.closest(
-              "button"
-            )
-          ) {
-
-            openProductModal(
-              product.id
-            );
-
-          } else {
-
-            openProductModal(
-              product.id
-            );
-
-          }
-
-        }
-      );
-
-      productsContainer.appendChild(
-        card
-      );
-
-    }
-  );
-
-}
-
-
-function displayMyListings() {
-
-  const container =
-    document.getElementById(
-      "myListingsContainer"
-    );
-
-  if (!container) {
-    return;
-  }
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    return;
-  }
-
-  const mine =
-    products.filter(
-      product =>
-        product.sellerId ===
-          user.uid ||
-        product.uid ===
-          user.uid
-    );
-
-  container.innerHTML =
-    "";
-
-  if (!mine.length) {
-
-    container.innerHTML = `
-      <div class="empty-state">
-        <p>
-          ${escapeHTML(
-            t("noListings")
-          )}
-        </p>
-      </div>
-    `;
-
-    return;
-
-  }
-
-  mine.forEach(
-    product => {
-
-      const card =
-        document.createElement(
-          "article"
-        );
-
-      card.className =
-        "product-card";
-
-      const image =
-        product.imageURL ||
-        product.imageUrl ||
-        getDefaultAvatar();
-
-      card.innerHTML = `
-        <div class="product-image-wrapper">
-
-          <img
-            class="product-image"
-            src="${escapeHTML(image)}"
-            alt=""
-            onerror="
-              this.onerror=null;
-              this.src='${escapeHTML(
-                getDefaultAvatar()
-              )}';
-            "
-          >
-
-        </div>
-
-        <div class="product-card-content">
-
-          <span class="product-category">
-            ${escapeHTML(
-              product.category ||
-              t("others")
-            )}
-          </span>
-
-          <h3>
-            ${escapeHTML(
-              product.title ||
-              t("product")
-            )}
-          </h3>
-
-          <div class="product-price">
-            ${escapeHTML(
-              formatPrice(
-                product.price
-              )
-            )}
-          </div>
-
-          <button
-            type="button"
-            class="secondary-btn"
-            data-delete-product="${escapeHTML(
-              product.id
-            )}"
-          >
-            ${escapeHTML(
-              t("deleteProduct")
-            )}
-          </button>
-
-        </div>
-      `;
-
-      const deleteButton =
-        card.querySelector(
-          "[data-delete-product]"
-        );
-
-      if (deleteButton) {
-
-        deleteButton.addEventListener(
-          "click",
-          event => {
-
-            event.stopPropagation();
-
-            deleteProduct(
-              product.id
-            );
-
-          }
-        );
-
-      }
-
-      card.addEventListener(
-        "click",
-        event => {
-
-          if (
-            event.target.closest(
-              "[data-delete-product]"
-            )
-          ) {
-            return;
-          }
-
-          openProductModal(
-            product.id
-          );
-
-        }
-      );
-
-      container.appendChild(
-        card
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   SEARCH / FILTER
-   ========================================================= */
-
-function filterProducts() {
-
-  const search =
-    searchInput?.value
-      ?.trim()
-      .toLowerCase() ||
-    "";
-
-  const category =
-    categorySelect?.value ||
-    "";
-
-  const filtered =
-    products.filter(
-      product => {
-
-        const title =
-          String(
-            product.title || ""
-          ).toLowerCase();
-
-        const description =
-          String(
-            product.description || ""
-          ).toLowerCase();
-
-        const location =
-          String(
-            product.location || ""
-          ).toLowerCase();
-
-        const productCategory =
-          String(
-            product.category || ""
-          );
-
-        const matchesSearch =
-          !search ||
-          title.includes(search) ||
-          description.includes(search) ||
-          location.includes(search);
-
-        const matchesCategory =
-          !category ||
-          productCategory === category;
-
-        return (
-          matchesSearch &&
-          matchesCategory
-        );
-
-      }
-    );
-
-  displayProducts(
-    filtered
-  );
-
-}
-
-
-/* =========================================================
-   PUBLISH PRODUCT
-   ========================================================= */
-
-async function publishProduct(
-  event
-) {
-
-  event.preventDefault();
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-
-    alert(
-      t("loginFirst")
-    );
-
-    return;
-
-  }
-
-  const title =
-    document
-      .getElementById(
-        "productTitle"
-      )
-      ?.value
-      ?.trim() || "";
-
-  const category =
-    document
-      .getElementById(
-        "productCategory"
-      )
-      ?.value || "";
-
-  const price =
-    document
-      .getElementById(
-        "productPrice"
-      )
-      ?.value || "";
-
-  const location =
-    document
-      .getElementById(
-        "productLocation"
-      )
-      ?.value
-      ?.trim() || "";
-
-  const description =
-    document
-      .getElementById(
-        "productDescription"
-      )
-      ?.value
-      ?.trim() || "";
-
-  const file =
-    productImageFile?.files?.[0];
-
-
-  if (!title) {
-
-    alert(
-      t("enterProductTitle")
-    );
-
-    return;
-
-  }
-
-  if (!price) {
-
-    alert(
-      t("enterPrice")
-    );
-
-    return;
-
-  }
-
-  if (
-    !Number.isFinite(
-      Number(price)
-    ) ||
-    Number(price) < 0
-  ) {
-
-    alert(
-      t("invalidPrice")
-    );
-
-    return;
-
-  }
-
-  if (!category) {
-
-    alert(
-      t("selectCategory")
-    );
-
-    return;
-
-  }
-
-  if (!location) {
-
-    alert(
-      t("enterLocation")
-    );
-
-    return;
-
-  }
-
-  if (!file) {
-
-    alert(
-      t("selectImage")
-    );
-
-    return;
-
-  }
-
-
-  if (publishProductBtn) {
-    publishProductBtn.disabled = true;
-  }
-
-  if (sellStatus) {
-    sellStatus.textContent =
-      t("uploadingImage");
-  }
-
-
-  try {
-
-    const imageURL =
-      await uploadImageToCloudinary(
-        file,
-        imageStatus
-      );
-
-    if (!imageURL) {
-
-      throw new Error(
-        t("imageUrlFailed")
-      );
-
-    }
-
-
-    await addDoc(
-      collection(
-        db,
-        "products"
-      ),
-      {
-
-        title,
-
-        category,
-
-        price: Number(price),
-
-        location,
-
-        description,
-
-        imageURL,
-
-        sellerId:
-          user.uid,
-
-        sellerEmail:
-          user.email || "",
-
-        createdAt:
-          serverTimestamp()
-
-      }
-    );
-
-
-    if (sellStatus) {
-
-      sellStatus.textContent =
-        t("published");
-
-      sellStatus.style.color =
-        "green";
-
-    }
-
-
-    sellProductForm.reset();
-
-    if (imageStatus) {
-      imageStatus.textContent =
-        "";
-    }
-
-    await loadProducts();
-
-    document
-      .getElementById("listings")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-
-  } catch (error) {
-
-    console.error(
-      "Publish product error:",
-      error
-    );
-
-    if (sellStatus) {
-
-      sellStatus.textContent =
-        error.message ||
-        t("publishFailed");
-
-      sellStatus.style.color =
-        "red";
-
-    }
-
-  } finally {
-
-    if (publishProductBtn) {
       publishProductBtn.disabled =
-        false;
-    }
+        true;
 
-  }
 
-}
+      publishProductBtn.textContent =
+        currentLanguage === "ar"
+          ? "جاري النشر..."
+          : "Publishing...";
 
 
-/* =========================================================
-   PRODUCT MODAL
-   ========================================================= */
+      sellStatus.textContent =
+        t("preparingProduct");
 
-async function openProductModal(
-  productId
-) {
+      sellStatus.style.color =
+        "black";
 
-  const product =
-    products.find(
-      item =>
-        item.id === productId
-    );
 
-  if (!product) {
+      try {
 
-    alert(
-      t("productNotFound")
-    );
+        let imageUrl = "";
 
-    return;
 
-  }
+        /* ---------------------------------------------
+           Upload image only if selected
+        --------------------------------------------- */
 
-  const image =
-    product.imageURL ||
-    product.imageUrl ||
-    getDefaultAvatar();
+        if (imageFile) {
 
-  if (modalProductImage) {
-
-    modalProductImage.src =
-      image;
-
-    modalProductImage.onerror =
-      () => {
-
-        modalProductImage.src =
-          getDefaultAvatar();
-
-      };
-
-  }
-
-  if (modalProductCategory) {
-
-    modalProductCategory.textContent =
-      product.category ||
-      t("others");
-
-  }
-
-  if (modalProductTitle) {
-
-    modalProductTitle.textContent =
-      product.title ||
-      t("product");
-
-  }
-
-  if (modalProductPrice) {
-
-    modalProductPrice.textContent =
-      formatPrice(
-        product.price
-      );
-
-  }
-
-  if (modalProductLocation) {
-
-    modalProductLocation.textContent =
-      product.location ||
-      t("unknown");
-
-  }
-
-  if (modalProductDescription) {
-
-    modalProductDescription.textContent =
-      product.description ||
-      t("noDescription");
-
-  }
-
-
-  let seller = null;
-
-  if (product.sellerId) {
-
-    seller =
-      await getUserProfile(
-        product.sellerId
-      );
-
-  }
-
-
-  const sellerName =
-    seller?.name ||
-    product.sellerEmail ||
-    t("sellerUnavailable");
-
-  const sellerEmail =
-    seller?.email ||
-    product.sellerEmail ||
-    "";
-
-  const sellerPhoto =
-    seller?.photoURL ||
-    getDefaultAvatar();
-
-
-  if (modalSellerPhoto) {
-
-    modalSellerPhoto.src =
-      sellerPhoto;
-
-    modalSellerPhoto.onerror =
-      () => {
-
-        modalSellerPhoto.src =
-          getDefaultAvatar();
-
-      };
-
-  }
-
-  if (modalSellerName) {
-
-    modalSellerName.textContent =
-      sellerName;
-
-  }
-
-  if (modalSellerEmail) {
-
-    modalSellerEmail.textContent =
-      sellerEmail;
-
-  }
-
-
-  if (sellerActions) {
-
-    sellerActions.innerHTML =
-      "";
-
-    const currentUser =
-      auth.currentUser;
-
-
-    if (
-      currentUser &&
-      product.sellerId ===
-        currentUser.uid
-    ) {
-
-      const deleteButton =
-        document.createElement(
-          "button"
-        );
-
-      deleteButton.type =
-        "button";
-
-      deleteButton.className =
-        "secondary-btn";
-
-      deleteButton.textContent =
-        t("deleteProduct");
-
-      deleteButton.addEventListener(
-        "click",
-        () => {
-
-          deleteProduct(
-            product.id
-          );
+          imageUrl =
+            await uploadImageToCloudinary(
+              imageFile,
+              imageStatus
+            );
 
         }
-      );
 
-      sellerActions.appendChild(
-        deleteButton
-      );
 
-    } else if (
-      product.sellerId
-    ) {
+        /* ---------------------------------------------
+           Save product to Firestore
+        --------------------------------------------- */
 
-      const profileButton =
-        document.createElement(
-          "button"
+        sellStatus.textContent =
+          t("savingProduct");
+
+
+        const productData = {
+
+          title:
+            title,
+
+          category:
+            category,
+
+          price:
+            Number(price),
+
+          location:
+            location,
+
+          description:
+            description,
+
+          image:
+            imageUrl,
+
+          sellerId:
+            currentUser.uid,
+
+          sellerEmail:
+            currentUser.email ||
+            "",
+
+          createdAt:
+            serverTimestamp()
+
+        };
+
+
+        const productRef =
+          await addDoc(
+            collection(
+              db,
+              "products"
+            ),
+            productData
+          );
+
+
+        /* ---------------------------------------------
+           Immediately add to local products list
+           so UI does not need full reload first
+        --------------------------------------------- */
+
+        products.unshift({
+
+          id:
+            productRef.id,
+
+          ...productData,
+
+          createdAt:
+            {
+              toMillis:
+                () => Date.now()
+            }
+
+        });
+
+
+        /* ---------------------------------------------
+           Show product immediately
+        --------------------------------------------- */
+
+        displayProducts(
+          products
         );
 
-      profileButton.type =
-        "button";
 
-      profileButton.className =
-        "secondary-btn";
+        /* ---------------------------------------------
+           Success
+        --------------------------------------------- */
 
-      profileButton.textContent =
-        t("viewProfile");
+        sellStatus.textContent =
+          t("published");
 
-      profileButton.addEventListener(
-        "click",
-        () => {
+        sellStatus.style.color =
+          "green";
 
-          closeProductModal();
 
-          openSellerProfile(
-            product.sellerId
-          );
+        if (imageStatus) {
+
+          imageStatus.textContent =
+            "";
 
         }
-      );
 
 
-      const messageButton =
-        document.createElement(
-          "button"
-        );
+        sellProductForm.reset();
 
-      messageButton.type =
-        "button";
 
-      messageButton.className =
-        "primary-btn";
+        /* ---------------------------------------------
+           Scroll to listings
+        --------------------------------------------- */
 
-      messageButton.textContent =
-        t("message");
+        document
+          .getElementById(
+            "listings"
+          )
+          ?.scrollIntoView({
+            behavior:
+              "smooth"
+          });
 
-      messageButton.addEventListener(
-        "click",
-        () => {
 
-          closeProductModal();
+        /* ---------------------------------------------
+           Refresh profile in background
+        --------------------------------------------- */
 
-          startConversation(
-            product.sellerId
-          );
+        if (auth.currentUser) {
+
+          renderMyProfile();
 
         }
-      );
 
 
-      sellerActions.appendChild(
-        profileButton
-      );
+      } catch (error) {
 
-      sellerActions.appendChild(
-        messageButton
-      );
-
-
-      if (seller?.phone) {
-
-        const callButton =
-          document.createElement(
-            "a"
-          );
-
-        callButton.className =
-          "secondary-btn";
-
-        callButton.href =
-          `tel:${seller.phone}`;
-
-        callButton.textContent =
-          t("call");
-
-        sellerActions.appendChild(
-          callButton
+        console.error(
+          "Publish error:",
+          error
         );
+
+
+        sellStatus.textContent =
+          error.message ||
+          t("publishFailed");
+
+        sellStatus.style.color =
+          "red";
+
+
+      } finally {
+
+        publishProductBtn.disabled =
+          false;
+
+        publishProductBtn.textContent =
+          t("publishProduct");
 
       }
 
     }
-
-  }
-
-
-  if (productModal) {
-
-    productModal.style.display =
-      "flex";
-
-    productModal.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-  }
-
-}
-
-
-function closeProductModal() {
-
-  if (!productModal) {
-    return;
-  }
-
-  productModal.style.display =
-    "none";
-
-  productModal.setAttribute(
-    "aria-hidden",
-    "true"
   );
 
 }
+/* =======================================================
+   MESSENGER — FAST MESSAGE SEND
+======================================================= */
+
+if (chatForm) {
+
+  chatForm.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+      const user =
+        auth.currentUser;
+
+      if (!user) {
+        alert(t("loginToMessage"));
+        return;
+      }
+
+      const text =
+        chatInput?.value?.trim() || "";
+
+      if (!text) {
+        return;
+      }
+
+      if (!selectedConversationId) {
+        return;
+      }
+
+      if (!selectedChatUser?.uid) {
+        return;
+      }
+
+      /* Prevent duplicate clicks */
+      const sendButton =
+        chatForm.querySelector(
+          'button[type="submit"]'
+        );
+
+      if (sendButton) {
+        sendButton.disabled = true;
+      }
+
+      try {
+
+        /*
+         * IMPORTANT:
+         * Save the message FIRST.
+         * Do not reload all conversations here.
+         */
+
+        const messageData = {
+
+          senderId:
+            user.uid,
+
+          receiverId:
+            selectedChatUser.uid,
+
+          text:
+            text,
+
+          createdAt:
+            serverTimestamp(),
+
+          seen:
+            false
+
+        };
 
 
-/* =========================================================
-   SELLER PROFILE
-   ========================================================= */
-
-async function openSellerProfile(
-  uid
-) {
-
-  if (!uid) {
-    return;
-  }
-
-  const profile =
-    await getUserProfile(uid);
-
-  if (!profile) {
-
-    alert(
-      t("profileNotFound")
-    );
-
-    return;
-
-  }
-
-  const photo =
-    profile.photoURL ||
-    getDefaultAvatar();
-
-  const name =
-    profile.name ||
-    profile.email ||
-    t("member");
-
-  const sellerProducts =
-    products.filter(
-      product =>
-        product.sellerId === uid
-    );
-
-
-  if (profileModalContent) {
-
-    profileModalContent.innerHTML = `
-
-      <div class="profile-card">
-
-        <div class="profile-header">
-
-          <img
-            src="${escapeHTML(photo)}"
-            alt=""
-            class="profile-avatar-image"
-            onerror="
-              this.onerror=null;
-              this.src='${escapeHTML(
-                getDefaultAvatar()
-              )}';
-            "
-          >
-
-          <div class="profile-info">
-
-            <h2>
-              ${escapeHTML(name)}
-            </h2>
-
-            <p>
-              ${escapeHTML(
-                profile.email || ""
-              )}
-            </p>
-
-            ${
-              profile.phone
-                ? `<p>📞 ${escapeHTML(
-                    profile.phone
-                  )}</p>`
-                : ""
-            }
-
-            ${
-              profile.location
-                ? `<p>📍 ${escapeHTML(
-                    profile.location
-                  )}</p>`
-                : ""
-            }
-
-          </div>
-
-        </div>
-
-        ${
-          profile.bio
-            ? `
-              <div class="profile-bio">
-                <strong>
-                  ${escapeHTML(t("bio"))}
-                </strong>
-                <p>
-                  ${escapeHTML(
-                    profile.bio
-                  )}
-                </p>
-              </div>
-            `
-            : ""
-        }
-
-        <h3>
-          ${escapeHTML(
-            t("myListings")
-          )}
-        </h3>
-
-        <div
-          id="sellerProductsContainer"
-          class="products-grid"
-        ></div>
-
-      </div>
-
-    `;
-
-  }
-
-
-  const sellerProductsContainer =
-    document.getElementById(
-      "sellerProductsContainer"
-    );
-
-
-  if (!sellerProductsContainer) {
-    return;
-  }
-
-
-  if (!sellerProducts.length) {
-
-    sellerProductsContainer.innerHTML = `
-      <div class="empty-state">
-        <p>
-          ${escapeHTML(
-            t("noListings")
-          )}
-        </p>
-      </div>
-    `;
-
-  } else {
-
-    sellerProducts.forEach(
-      product => {
-
-        const card =
-          document.createElement(
-            "article"
+        const messagesRef =
+          collection(
+            db,
+            "conversations",
+            selectedConversationId,
+            "messages"
           );
 
-        card.className =
-          "product-card";
 
-        const image =
-          product.imageURL ||
-          product.imageUrl ||
-          getDefaultAvatar();
+        await addDoc(
+          messagesRef,
+          messageData
+        );
 
-        card.innerHTML = `
-          <div class="product-image-wrapper">
-            <img
-              class="product-image"
-              src="${escapeHTML(image)}"
-              alt=""
-              onerror="
-                this.onerror=null;
-                this.src='${escapeHTML(
-                  getDefaultAvatar()
-                )}';
-              "
-            >
-          </div>
 
-          <div class="product-card-content">
+        /*
+         * Clear input immediately after
+         * successful Firestore write.
+         */
 
-            <span class="product-category">
-              ${escapeHTML(
-                product.category ||
-                t("others")
-              )}
-            </span>
+        if (chatInput) {
+          chatInput.value = "";
+          chatInput.focus();
+        }
 
-            <h3>
-              ${escapeHTML(
-                product.title ||
-                t("product")
-              )}
-            </h3>
 
-            <div class="product-price">
-              ${escapeHTML(
-                formatPrice(
-                  product.price
-                )
-              )}
+        /*
+         * DO NOT call:
+         *
+         * await loadConversations();
+         *
+         * here.
+         *
+         * The conversation list will be updated
+         * separately by its realtime listener.
+         */
+
+
+      } catch (error) {
+
+        console.error(
+          "Message send error:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "Message could not be sent."
+        );
+
+      } finally {
+
+        if (sendButton) {
+          sendButton.disabled = false;
+        }
+
+      }
+
+    }
+  );
+
+}
+/* =======================================================
+   PART 13 — FAST CONVERSATION UPDATE
+======================================================= */
+
+async function sendMessageFast(text) {
+
+  const user = auth.currentUser;
+
+  if (!user) {
+    throw new Error(t("loginFirst"));
+  }
+
+  if (!selectedChatUser?.uid) {
+    throw new Error("No chat selected.");
+  }
+
+  const cleanText = text.trim();
+
+  if (!cleanText) {
+    return;
+  }
+
+  const conversationId =
+    selectedConversationId ||
+    await ensureConversation(
+      selectedChatUser.uid
+    );
+
+  selectedConversationId =
+    conversationId;
+
+
+  /* -----------------------------------------------
+     1. Save message first
+  ------------------------------------------------ */
+
+  const messagesRef = collection(
+    db,
+    "conversations",
+    conversationId,
+    "messages"
+  );
+
+  await addDoc(
+    messagesRef,
+    {
+      senderId:
+        user.uid,
+
+      receiverId:
+        selectedChatUser.uid,
+
+      text:
+        cleanText,
+
+      seen:
+        false,
+
+      createdAt:
+        serverTimestamp()
+    }
+  );
+
+
+  /* -----------------------------------------------
+     2. Update conversation preview
+  ------------------------------------------------ */
+
+  const conversationRef = doc(
+    db,
+    "conversations",
+    conversationId
+  );
+
+  await setDoc(
+    conversationRef,
+    {
+      participants: [
+        user.uid,
+        selectedChatUser.uid
+      ],
+
+      lastMessage:
+        cleanText,
+
+      lastMessageSenderId:
+        user.uid,
+
+      updatedAt:
+        serverTimestamp()
+    },
+    {
+      merge: true
+    }
+  );
+
+
+  /* -----------------------------------------------
+     3. Clear input immediately
+  ------------------------------------------------ */
+
+  if (chatInput) {
+
+    chatInput.value = "";
+
+    chatInput.focus();
+
+  }
+
+}
+
+
+/* =======================================================
+   PART 13 — CHAT FORM
+======================================================= */
+
+if (chatForm) {
+
+    async event => {
+
+      event.preventDefault();
+
+      const text =
+        chatInput?.value?.trim() || "";
+
+      if (!text) {
+        return;
+      }
+
+
+      const sendButton =
+        chatForm.querySelector(
+          'button[type="submit"]'
+        );
+
+
+      if (sendButton) {
+        sendButton.disabled = true;
+      }
+
+
+      try {
+
+        await sendMessageFast(
+          text
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Fast message error:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "Message could not be sent."
+        );
+
+
+      } finally {
+
+        if (sendButton) {
+          sendButton.disabled = false;
+        }
+
+      }
+
+    }
+  );
+
+}
+/* =======================================================
+   MESSENGER — REALTIME MESSAGE LISTENER
+======================================================= */
+
+function listenToMessages(conversationId) {
+
+  /* পুরোনো listener বন্ধ */
+  if (unsubscribeMessages) {
+    unsubscribeMessages();
+    unsubscribeMessages = null;
+  }
+
+  if (!conversationId || !chatMessages) {
+    return;
+  }
+
+  const messagesRef = collection(
+    db,
+    "conversations",
+    conversationId,
+    "messages"
+  );
+
+  const messagesQuery = query(
+    messagesRef
+  );
+
+  unsubscribeMessages =
+    onSnapshot(
+      messagesQuery,
+      snapshot => {
+
+        const currentUser =
+          auth.currentUser;
+
+        if (!currentUser) {
+          return;
+        }
+
+        const messageList = [];
+
+        snapshot.forEach(
+          messageDoc => {
+
+            const data =
+              messageDoc.data();
+
+            messageList.push({
+
+              id:
+                messageDoc.id,
+
+              ...data
+
+            });
+
+          }
+        );
+
+
+        /* Oldest → newest */
+
+        messageList.sort(
+          (a, b) => {
+
+            const aTime =
+              a.createdAt?.toMillis?.() ||
+              0;
+
+            const bTime =
+              b.createdAt?.toMillis?.() ||
+              0;
+
+            return aTime - bTime;
+
+          }
+        );
+
+
+        chatMessages.innerHTML = "";
+
+
+        if (!messageList.length) {
+
+          chatMessages.innerHTML = `
+
+            <div class="empty-state">
+
+              <div>💬</div>
+
+              <p>
+                ${escapeHTML(
+                  t("noMessages")
+                )}
+              </p>
+
             </div>
 
-          </div>
-        `;
+          `;
 
-        card.addEventListener(
-          "click",
-          () => {
+          return;
 
-            closeProfileModal();
+        }
 
-            openProductModal(
-              product.id
+
+        messageList.forEach(
+          message => {
+
+            const isMine =
+              message.senderId ===
+              currentUser.uid;
+
+
+            const messageElement =
+              document.createElement(
+                "div"
+              );
+
+
+            messageElement.className =
+              isMine
+                ? "chat-message sent"
+                : "chat-message received";
+
+
+            messageElement.innerHTML = `
+
+              <div class="chat-bubble">
+
+                ${escapeHTML(
+                  message.text || ""
+                )}
+
+              </div>
+
+            `;
+
+
+            chatMessages.appendChild(
+              messageElement
             );
 
           }
         );
 
-        sellerProductsContainer.appendChild(
-          card
+
+        /* Always show latest message */
+
+        requestAnimationFrame(
+          () => {
+
+            chatMessages.scrollTop =
+              chatMessages.scrollHeight;
+
+          }
+        );
+
+      },
+
+      error => {
+
+        console.error(
+          "Realtime message listener error:",
+          error
         );
 
       }
     );
 
-  }
-
-
-  if (profileModal) {
-
-    profileModal.style.display =
-      "flex";
-
-    profileModal.setAttribute(
-      "aria-hidden",
-      "false"
-    );
-
-  }
-
 }
 
 
-function closeProfileModal() {
+/* =======================================================
+   START CONVERSATION
+======================================================= */
 
-  if (!profileModal) {
-    return;
-  }
-
-  profileModal.style.display =
-    "none";
-
-  profileModal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-}
-
-
-/* =========================================================
-   DELETE PRODUCT
-   ========================================================= */
-
-async function deleteProduct(
-  productId
+async function startConversation(
+  sellerId
 ) {
 
-  const user =
+  const currentUser =
     auth.currentUser;
 
-  if (!user) {
+
+  if (!currentUser) {
 
     alert(
-      t("loginFirst")
+      t("loginToMessage")
     );
 
     return;
 
   }
 
-  const product =
-    products.find(
-      item =>
-        item.id === productId
-    );
-
-  if (!product) {
-
-    alert(
-      t("productNotFound")
-    );
-
-    return;
-
-  }
 
   if (
-    product.sellerId !==
-    user.uid
+    currentUser.uid ===
+    sellerId
   ) {
 
     alert(
-      t("ownProduct")
+      t("cannotMessageSelf")
     );
 
     return;
@@ -3247,411 +2783,149 @@ async function deleteProduct(
   }
 
 
-  const confirmed =
-    window.confirm(
-      t("deleteConfirm")
+  /*
+   * Always create the same conversation ID
+   * for the same two users.
+   */
+
+  const conversationId =
+    [
+      currentUser.uid,
+      sellerId
+    ]
+      .sort()
+      .join("_");
+
+
+  selectedConversationId =
+    conversationId;
+
+
+  selectedChatUser = {
+
+    uid:
+      sellerId
+
+  };
+
+
+  /*
+   * Open Messenger immediately.
+   */
+
+  const messengerSection =
+    document.getElementById(
+      "messenger"
     );
 
-  if (!confirmed) {
-    return;
-  }
 
+  if (messengerSection) {
 
-  try {
-
-    await deleteDoc(
-      doc(
-        db,
-        "products",
-        productId
-      )
-    );
-
-    alert(
-      t("deleted")
-    );
-
-    closeProductModal();
-
-    await loadProducts();
-
-    if (auth.currentUser) {
-      await renderMyProfile();
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Delete product error:",
-      error
-    );
-
-    alert(
-      error.message ||
-      t("deleteFailed")
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   AUTH UI
-   ========================================================= */
-
-function showLoginForm() {
-
-  if (loginForm) {
-    loginForm.style.display =
-      "block";
-  }
-
-  if (registerForm) {
-    registerForm.style.display =
-      "none";
-  }
-
-  if (showRegisterBtn) {
-    showRegisterBtn.style.display =
-      "block";
-  }
-
-  if (showLoginBtn) {
-    showLoginBtn.style.display =
-      "none";
-  }
-
-  if (authTitle) {
-    authTitle.textContent =
-      t("login");
-  }
-
-}
-
-
-function showRegisterForm() {
-
-  if (loginForm) {
-    loginForm.style.display =
-      "none";
-  }
-
-  if (registerForm) {
-    registerForm.style.display =
-      "block";
-  }
-
-  if (showRegisterBtn) {
-    showRegisterBtn.style.display =
-      "none";
-  }
-
-  if (showLoginBtn) {
-    showLoginBtn.style.display =
-      "block";
-  }
-
-  if (authTitle) {
-    authTitle.textContent =
-      t("register");
-  }
-
-}
-
-
-/* =========================================================
-   REGISTER
-   ========================================================= */
-
-async function handleRegister(
-  event
-) {
-
-  event.preventDefault();
-
-  const email =
-    document
-      .getElementById(
-        "registerEmail"
-      )
-      ?.value
-      ?.trim()
-      .toLowerCase() || "";
-
-  const password =
-    document
-      .getElementById(
-        "registerPassword"
-      )
-      ?.value || "";
-
-
-  if (!email) {
-
-    showAuthMessage(
-      t("invalidEmail")
-    );
-
-    return;
-
-  }
-
-  if (password.length < 6) {
-
-    showAuthMessage(
-      t("weakPassword")
-    );
-
-    return;
+    messengerSection.scrollIntoView({
+      behavior:
+        "smooth"
+    });
 
   }
 
 
-  const button =
-    registerForm.querySelector(
-      'button[type="submit"]'
-    );
+  /*
+   * Start realtime listener immediately.
+   */
 
-  if (button) {
-
-    button.disabled =
-      true;
-
-    button.dataset.originalText =
-      button.textContent;
-
-    button.textContent =
-      currentLanguage === "ar"
-        ? "جاري إنشاء الحساب..."
-        : "Creating account...";
-
-  }
-
-
-  showAuthMessage(
-    currentLanguage === "ar"
-      ? "جاري إنشاء الحساب..."
-      : "Creating account..."
+  listenToMessages(
+    conversationId
   );
 
 
+  /*
+   * Load seller profile in background.
+   */
+
   try {
 
-    const credential =
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
+    const sellerProfile =
+      await getUserProfile(
+        sellerId
       );
 
-    await createUserProfile(
-      credential.user
-    );
 
-    showAuthMessage(
-      currentLanguage === "ar"
-        ? "تم إنشاء الحساب بنجاح."
-        : "Account created successfully.",
-      true
-    );
+    selectedChatUser = {
 
-    registerForm.reset();
+      uid:
+        sellerId,
 
-    showLoginForm();
+      name:
+        sellerProfile?.name ||
+        sellerProfile?.email ||
+        t("member"),
+
+      email:
+        sellerProfile?.email ||
+        "",
+
+      photoURL:
+        sellerProfile?.photoURL ||
+        getDefaultAvatar()
+
+    };
+
+
+    if (chatHeader) {
+
+      chatHeader.innerHTML = `
+
+        <div class="chat-user-header">
+
+          <img
+            src="${escapeHTML(
+              selectedChatUser.photoURL
+            )}"
+            alt="${escapeHTML(
+              selectedChatUser.name
+            )}"
+          >
+
+          <div>
+
+            <strong>
+              ${escapeHTML(
+                selectedChatUser.name
+              )}
+            </strong>
+
+            <small>
+              ${escapeHTML(
+                selectedChatUser.email
+              )}
+            </small>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
 
   } catch (error) {
 
     console.error(
-      "Register error:",
+      "Could not load chat user:",
       error
     );
 
-    showAuthMessage(
-      getFirebaseErrorMessage(
-        error
-      )
-    );
-
-  } finally {
-
-    if (button) {
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        button.dataset.originalText ||
-        t("createAccount");
-
-    }
-
   }
 
 }
+/* =======================================================
+   MESSENGER — CONVERSATION LIST
+======================================================= */
+
+let unsubscribeConversations = null;
 
 
-/* =========================================================
-   LOGIN
-   ========================================================= */
-
-async function handleLogin(
-  event
-) {
-
-  event.preventDefault();
-
-  const email =
-    document
-      .getElementById(
-        "loginEmail"
-      )
-      ?.value
-      ?.trim()
-      .toLowerCase() || "";
-
-  const password =
-    document
-      .getElementById(
-        "loginPassword"
-      )
-      ?.value || "";
-
-
-  if (!email) {
-
-    showAuthMessage(
-      t("invalidEmail")
-    );
-
-    return;
-
-  }
-
-  if (!password) {
-
-    showAuthMessage(
-      currentLanguage === "ar"
-        ? "يرجى إدخال كلمة المرور."
-        : "Please enter your password."
-    );
-
-    return;
-
-  }
-
-
-  const button =
-    loginForm.querySelector(
-      'button[type="submit"]'
-    );
-
-
-  if (button) {
-
-    button.disabled =
-      true;
-
-    button.dataset.originalText =
-      button.textContent;
-
-    button.textContent =
-      currentLanguage === "ar"
-        ? "جاري تسجيل الدخول..."
-        : "Logging in...";
-
-  }
-
-
-  showAuthMessage(
-    currentLanguage === "ar"
-      ? "جاري تسجيل الدخول..."
-      : "Logging in..."
-  );
-
-
-  try {
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    showAuthMessage(
-      currentLanguage === "ar"
-        ? "تم تسجيل الدخول بنجاح."
-        : "Logged in successfully.",
-      true
-    );
-
-    loginForm.reset();
-
-  } catch (error) {
-
-    console.error(
-      "Login error:",
-      error
-    );
-
-    showAuthMessage(
-      getFirebaseErrorMessage(
-        error
-      )
-    );
-
-  } finally {
-
-    if (button) {
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        button.dataset.originalText ||
-        t("login");
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   AUTH UI AFTER LOGIN
-   ========================================================= */
-
-function updateAuthUIForUser(
-  user
-) {
-
-  if (!authMessage) {
-    return;
-  }
-
-  if (!user) {
-
-    authMessage.textContent =
-      t("loginRegisterMessage");
-
-    return;
-
-  }
-
-  authMessage.textContent =
-    `${t("loggedInAs")} ${
-      user.email || ""
-    }`;
-
-}
-
-
-/* =========================================================
-   MESSENGER
-   ========================================================= */
-
-function createConversationId(
+function getConversationId(
   uid1,
   uid2
 ) {
@@ -3666,219 +2940,114 @@ function createConversationId(
 }
 
 
-async function startConversation(
-  otherUid
-) {
+/* =======================================================
+   Load Conversations Realtime
+======================================================= */
 
-  const currentUser =
+function listenToConversations() {
+
+  if (unsubscribeConversations) {
+
+    unsubscribeConversations();
+
+    unsubscribeConversations = null;
+
+  }
+
+
+  const user =
     auth.currentUser;
 
-  if (!currentUser) {
 
-    alert(
-      t("loginToMessage")
-    );
-
-    return;
-
-  }
-
-  if (!otherUid) {
-
-    alert(
-      t("profileNotFound")
-    );
-
-    return;
-
-  }
-
-  if (
-    currentUser.uid ===
-    otherUid
-  ) {
-
-    alert(
-      t("cannotMessageSelf")
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    const otherProfile =
-      await getUserProfile(
-        otherUid
-      );
-
-    if (!otherProfile) {
-
-      alert(
-        t("profileNotFound")
-      );
-
-      return;
-
-    }
-
-
-    selectedConversationId =
-      createConversationId(
-        currentUser.uid,
-        otherUid
-      );
-
-
-    selectedChatUser = {
-
-      uid: otherUid,
-
-      name:
-        otherProfile.name ||
-        otherProfile.email ||
-        t("member"),
-
-      email:
-        otherProfile.email ||
-        "",
-
-      photoURL:
-        otherProfile.photoURL ||
-        getDefaultAvatar()
-
-    };
-
-
-    if (chatHeader) {
-
-      chatHeader.innerHTML = `
-        <img
-          src="${escapeHTML(
-            selectedChatUser.photoURL
-          )}"
-          class="conversation-avatar"
-          alt=""
-          onerror="
-            this.onerror=null;
-            this.src='${escapeHTML(
-              getDefaultAvatar()
-            )}';
-          "
-        >
-
-        <span>
-          ${escapeHTML(
-            selectedChatUser.name
-          )}
-        </span>
-      `;
-
-    }
-
-
-    if (chatMessages) {
-
-      chatMessages.innerHTML = `
-        <div class="chat-empty">
-          <div>💬</div>
-          <p>
-            ${escapeHTML(
-              t("loading")
-            )}
-          </p>
-        </div>
-      `;
-
-    }
-
-
-    document
-      .getElementById("messages")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-
-    listenToMessages();
-
-    await loadConversations();
-
-  } catch (error) {
-
-    console.error(
-      "Start conversation error:",
-      error
-    );
-
-    alert(
-      error.message ||
-      t("firestoreError")
-    );
-
-  }
-
-}
-
-
-function listenToMessages() {
-
-  if (unsubscribeMessages) {
-
-    unsubscribeMessages();
-
-    unsubscribeMessages =
-      null;
-
-  }
-
-  if (!selectedConversationId) {
+  if (!user || !conversationList) {
     return;
   }
 
 
-  const messagesQuery =
+  /*
+   * We listen only to conversations where
+   * the current user's UID exists.
+   */
+
+  const conversationsRef =
+    collection(
+      db,
+      "conversations"
+    );
+
+
+  const conversationsQuery =
     query(
-      collection(
-        db,
-        "messages"
-      ),
+      conversationsRef,
       where(
-        "conversationId",
-        "==",
-        selectedConversationId
+        "participants",
+        "array-contains",
+        user.uid
       )
     );
 
 
-  unsubscribeMessages =
+  unsubscribeConversations =
     onSnapshot(
-      messagesQuery,
+      conversationsQuery,
+      async snapshot => {
 
-      snapshot => {
-
-        if (!chatMessages) {
-          return;
-        }
-
-        chatMessages.innerHTML =
-          "";
+        const conversations = [];
 
 
-        if (snapshot.empty) {
+        snapshot.forEach(
+          conversationDoc => {
 
-          chatMessages.innerHTML = `
-            <div class="chat-empty">
+            conversations.push({
+
+              id:
+                conversationDoc.id,
+
+              ...conversationDoc.data()
+
+            });
+
+          }
+        );
+
+
+        conversations.sort(
+          (a, b) => {
+
+            const aTime =
+              a.updatedAt?.toMillis?.() ||
+              a.createdAt?.toMillis?.() ||
+              0;
+
+            const bTime =
+              b.updatedAt?.toMillis?.() ||
+              b.createdAt?.toMillis?.() ||
+              0;
+
+            return bTime - aTime;
+
+          }
+        );
+
+
+        if (
+          !conversations.length
+        ) {
+
+          conversationList.innerHTML = `
+
+            <div class="empty-state">
+
               <div>💬</div>
+
               <p>
                 ${escapeHTML(
-                  t("noMessages")
+                  t("noConversations")
                 )}
               </p>
+
             </div>
+
           `;
 
           return;
@@ -3886,1168 +3055,342 @@ function listenToMessages() {
         }
 
 
-        const messageList =
-          snapshot.docs.map(
-            messageDoc => ({
-              id: messageDoc.id,
-              ...messageDoc.data()
-            })
+        conversationList.innerHTML = "";
+
+
+        for (
+          const conversation
+          of conversations
+        ) {
+
+          const otherUserId =
+            conversation.participants
+              ?.find(
+                uid =>
+                  uid !== user.uid
+              );
+
+
+          if (!otherUserId) {
+            continue;
+          }
+
+
+          let otherUser = null;
+
+
+          try {
+
+            otherUser =
+              await getUserProfile(
+                otherUserId
+              );
+
+          } catch (error) {
+
+            console.error(
+              "Profile load error:",
+              error
+            );
+
+          }
+
+
+          const name =
+            otherUser?.name ||
+            otherUser?.email ||
+            t("member");
+
+
+          const photo =
+            otherUser?.photoURL ||
+            getDefaultAvatar();
+
+
+          const lastMessage =
+            conversation.lastMessage ||
+            "";
+
+
+          const item =
+            document.createElement(
+              "div"
+            );
+
+
+          item.className =
+            "conversation-item";
+
+
+          item.dataset.uid =
+            otherUserId;
+
+
+          item.innerHTML = `
+
+            <img
+              class="conversation-avatar"
+              src="${escapeHTML(photo)}"
+              alt="${escapeHTML(name)}"
+            >
+
+            <div class="conversation-info">
+
+              <strong>
+                ${escapeHTML(name)}
+              </strong>
+
+              <span>
+                ${escapeHTML(
+                  lastMessage
+                )}
+              </span>
+
+            </div>
+
+          `;
+
+
+          item.addEventListener(
+            "click",
+            () => {
+
+              selectedChatUser = {
+
+                uid:
+                  otherUserId,
+
+                name:
+                  name,
+
+                email:
+                  otherUser?.email ||
+                  "",
+
+                photoURL:
+                  photo
+
+              };
+
+
+              selectedConversationId =
+                conversation.id;
+
+
+              listenToMessages(
+                conversation.id
+              );
+
+
+              if (chatHeader) {
+
+                chatHeader.innerHTML = `
+
+                  <div class="chat-user-header">
+
+                    <img
+                      src="${escapeHTML(
+                        photo
+                      )}"
+                      alt="${escapeHTML(
+                        name
+                      )}"
+                    >
+
+                    <div>
+
+                      <strong>
+                        ${escapeHTML(
+                          name
+                        )}
+                      </strong>
+
+                      <small>
+                        ${escapeHTML(
+                          otherUser?.email ||
+                          ""
+                        )}
+                      </small>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+
+            }
           );
 
 
-        messageList.sort(
-          (a, b) => {
+          conversationList.appendChild(
+            item
+          );
 
-            const aTime =
-              a.createdAt?.toMillis
-                ? a.createdAt.toMillis()
-                : 0;
-
-            const bTime =
-              b.createdAt?.toMillis
-                ? b.createdAt.toMillis()
-                : 0;
-
-            return aTime - bTime;
-
-          }
-        );
-
-
-        messageList.forEach(
-          message => {
-
-            const mine =
-              message.senderId ===
-              auth.currentUser?.uid;
-
-
-            const bubble =
-              document.createElement(
-                "div"
-              );
-
-            bubble.className =
-              `message-bubble ${
-                mine
-                  ? "mine"
-                  : "theirs"
-              }`;
-
-
-            const text =
-              document.createElement(
-                "div"
-              );
-
-            text.className =
-              "message-text";
-
-            text.textContent =
-              message.text || "";
-
-
-            const time =
-              document.createElement(
-                "small"
-              );
-
-            time.className =
-              "message-time";
-
-            time.textContent =
-              formatDateTime(
-                message.createdAt
-              );
-
-
-            bubble.appendChild(
-              text
-            );
-
-            bubble.appendChild(
-              time
-            );
-
-            chatMessages.appendChild(
-              bubble
-            );
-
-          }
-        );
-
-
-        chatMessages.scrollTop =
-          chatMessages.scrollHeight;
+        }
 
       },
 
       error => {
 
         console.error(
-          "Messages listener error:",
+          "Conversation listener error:",
           error
         );
 
-        if (chatMessages) {
-
-          chatMessages.innerHTML = `
-            <div class="chat-empty">
-              <div>⚠️</div>
-              <p>
-                ${escapeHTML(
-                  t("firestoreError")
-                )}
-              </p>
-            </div>
-          `;
-
-        }
-
       }
-
     );
 
 }
 
 
-/* =========================================================
-   SEND MESSAGE
-   ========================================================= */
+/* =======================================================
+   Create / Update Conversation
+======================================================= */
 
-async function sendMessage(
-  event
+async function ensureConversation(
+  otherUserId
 ) {
 
-  event.preventDefault();
-
-  const currentUser =
+  const user =
     auth.currentUser;
 
-  if (!currentUser) {
 
-    alert(
-      t("loginToMessage")
+  if (!user) {
+    throw new Error(
+      t("loginFirst")
     );
-
-    return;
-
   }
+
 
   if (
-    !selectedConversationId ||
-    !selectedChatUser
+    !otherUserId ||
+    otherUserId === user.uid
   ) {
 
-    return;
-
-  }
-
-
-  const text =
-    chatInput?.value
-      ?.trim() || "";
-
-
-  if (!text) {
-    return;
-  }
-
-
-  if (text.length > 5000) {
-
-    alert(
-      currentLanguage === "ar"
-        ? "الرسالة طويلة جداً."
-        : "Message is too long."
+    throw new Error(
+      t("cannotMessageSelf")
     );
 
-    return;
-
   }
 
 
-  const sendButton =
-    chatForm.querySelector(
-      'button[type="submit"]'
+  const conversationId =
+    getConversationId(
+      user.uid,
+      otherUserId
     );
 
 
-  if (chatInput) {
-    chatInput.disabled = true;
-  }
-
-  if (sendButton) {
-    sendButton.disabled = true;
-  }
-
-
-  try {
-
-    await addDoc(
-      collection(
-        db,
-        "messages"
-      ),
-      {
-
-        conversationId:
-          selectedConversationId,
-
-        senderId:
-          currentUser.uid,
-
-        receiverId:
-          selectedChatUser.uid,
-
-        senderEmail:
-          currentUser.email || "",
-
-        text,
-
-        createdAt:
-          serverTimestamp()
-
-      }
+  const conversationRef =
+    doc(
+      db,
+      "conversations",
+      conversationId
     );
 
+
+  const existing =
+    await getDoc(
+      conversationRef
+    );
+
+
+  if (!existing.exists()) {
 
     await setDoc(
-      doc(
-        db,
-        "conversations",
-        selectedConversationId
-      ),
+      conversationRef,
       {
 
         participants: [
-          currentUser.uid,
-          selectedChatUser.uid
+          user.uid,
+          otherUserId
         ],
 
-        participantEmails: {
-
-          [currentUser.uid]:
-            currentUser.email || "",
-
-          [selectedChatUser.uid]:
-            selectedChatUser.email || ""
-
-        },
-
         lastMessage:
-          text,
+          "",
 
-        lastMessageSenderId:
-          currentUser.uid,
+        createdAt:
+          serverTimestamp(),
 
         updatedAt:
           serverTimestamp()
 
-      },
-      {
-        merge: true
       }
     );
 
-
-    if (chatInput) {
-      chatInput.value = "";
-    }
-
-
-    await loadConversations();
-
-  } catch (error) {
-
-    console.error(
-      "Send message error:",
-      error
-    );
-
-    alert(
-      error.message ||
-      (
-        currentLanguage === "ar"
-          ? "تعذر إرسال الرسالة."
-          : "Message could not be sent."
-      )
-    );
-
-  } finally {
-
-    if (chatInput) {
-
-      chatInput.disabled =
-        false;
-
-      chatInput.focus();
-
-    }
-
-    if (sendButton) {
-      sendButton.disabled =
-        false;
-    }
-
   }
+
+
+  return conversationId;
 
 }
 
 
-/* =========================================================
-   LOAD CONVERSATIONS
-   ========================================================= */
-
-async function loadConversations() {
-
-  if (!conversationList) {
-    return;
-  }
-
-  const currentUser =
-    auth.currentUser;
-
-
-  if (!currentUser) {
-
-    conversationList.innerHTML = `
-      <div class="chat-empty">
-        <p>
-          ${escapeHTML(
-            t("profileRequired")
-          )}
-        </p>
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  try {
-
-    const conversationsQuery =
-      query(
-        collection(
-          db,
-          "conversations"
-        ),
-        where(
-          "participants",
-          "array-contains",
-          currentUser.uid
-        )
-      );
-
-
-    const snapshot =
-      await getDocs(
-        conversationsQuery
-      );
-
-
-    conversationList.innerHTML =
-      "";
-
-
-    if (snapshot.empty) {
-
-      conversationList.innerHTML = `
-        <div class="chat-empty">
-          <div>💬</div>
-          <p>
-            ${escapeHTML(
-              t("noConversations")
-            )}
-          </p>
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    const conversationData =
-      snapshot.docs.map(
-        conversationDoc => ({
-          id:
-            conversationDoc.id,
-          ...conversationDoc.data()
-        })
-      );
-
-
-    conversationData.sort(
-      (a, b) => {
-
-        const aTime =
-          a.updatedAt?.toMillis
-            ? a.updatedAt.toMillis()
-            : 0;
-
-        const bTime =
-          b.updatedAt?.toMillis
-            ? b.updatedAt.toMillis()
-            : 0;
-
-        return bTime - aTime;
-
-      }
-    );
-
-
-    for (
-      const conversation
-      of conversationData
-    ) {
-
-      const otherUid =
-        conversation
-          .participants
-          ?.find(
-            uid =>
-              uid !==
-              currentUser.uid
-          );
-
-
-      if (!otherUid) {
-        continue;
-      }
-
-
-      const otherProfile =
-        await getUserProfile(
-          otherUid
-        );
-
-
-      const item =
-        document.createElement(
-          "div"
-        );
-
-      item.className =
-        "conversation-item";
-
-
-      if (
-        selectedConversationId ===
-        conversation.id
-      ) {
-
-        item.classList.add(
-          "active"
-        );
-
-      }
-
-
-      const photo =
-        otherProfile?.photoURL ||
-        getDefaultAvatar();
-
-
-      const name =
-        otherProfile?.name ||
-        otherProfile?.email ||
-        t("member");
-
-
-      item.innerHTML = `
-        <img
-          class="conversation-avatar"
-          src="${escapeHTML(photo)}"
-          alt=""
-          onerror="
-            this.onerror=null;
-            this.src='${escapeHTML(
-              getDefaultAvatar()
-            )}';
-          "
-        >
-
-        <div class="conversation-info">
-
-          <strong>
-            ${escapeHTML(name)}
-          </strong>
-
-          <span>
-            ${escapeHTML(
-              conversation.lastMessage ||
-              ""
-            )}
-          </span>
-
-        </div>
-      `;
-
-
-      item.addEventListener(
-        "click",
-        () => {
-
-          startConversation(
-            otherUid
-          );
-
-        }
-      );
-
-
-      conversationList.appendChild(
-        item
-      );
-
-    }
-
-  } catch (error) {
-
-    console.error(
-      "Conversation loading error:",
-      error
-    );
-
-    conversationList.innerHTML = `
-      <div class="chat-empty">
-        <div>⚠️</div>
-        <p>
-          ${escapeHTML(
-            t("firestoreError")
-          )}
-        </p>
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-async function handleLogout() {
-
-  try {
-
-    if (unsubscribeMessages) {
-
-      unsubscribeMessages();
-
-      unsubscribeMessages =
-        null;
-
-    }
-
-    await signOut(auth);
-
-    selectedConversationId =
-      null;
-
-    selectedChatUser =
-      null;
-
-    currentProfile =
-      null;
-
-    alert(
-      t("loggedOut")
-    );
-
-  } catch (error) {
-
-    console.error(
-      "Logout error:",
-      error
-    );
-
-    alert(
-      currentLanguage === "ar"
-        ? "تعذر تسجيل الخروج."
-        : "Unable to log out."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-function setupNavigation() {
-
-  const profileNavBtn =
-    document.getElementById(
-      "profileNavBtn"
-    );
-
-  const headerSellBtn =
-    document.getElementById(
-      "headerSellBtn"
-    );
-
-  const heroSellBtn =
-    document.getElementById(
-      "heroSellBtn"
-    );
-
-
-  function goToSell() {
-
-    document
-      .getElementById("sell")
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-  }
-
-
-  if (headerSellBtn) {
-
-    headerSellBtn.addEventListener(
-      "click",
-      goToSell
-    );
-
-  }
-
-
-  if (heroSellBtn) {
-
-    heroSellBtn.addEventListener(
-      "click",
-      () => {
-
-        if (!auth.currentUser) {
-
-          alert(
-            t("loginFirst")
-          );
-
-          document
-            .getElementById("login")
-            ?.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-
-          return;
-
-        }
-
-        goToSell();
-
-      }
-    );
-
-  }
-
-
-  if (profileNavBtn) {
-
-    profileNavBtn.addEventListener(
-      "click",
-      event => {
-
-        event.preventDefault();
-
-        document
-          .getElementById("profile")
-          ?.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-
-        if (auth.currentUser) {
-
-          renderMyProfile();
-
-        } else {
-
-          document
-            .getElementById("login")
-            ?.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-
-        }
-
-      }
-    );
-
-  }
-
-
-  document
-    .querySelectorAll(
-      ".category-card"
-    )
-    .forEach(card => {
-
-      card.addEventListener(
-        "click",
-        () => {
-
-          const category =
-            card.dataset.category ||
-            "";
-
-          if (categorySelect) {
-
-            categorySelect.value =
-              category;
-
-          }
-
-          filterProducts();
-
-          document
-            .getElementById(
-              "listings"
-            )
-            ?.scrollIntoView({
-              behavior: "smooth",
-              block: "start"
-            });
-
-        }
-      );
-
-    });
-
-}
-
-
-/* =========================================================
-   MODAL EVENTS
-   ========================================================= */
-
-function setupModalEvents() {
-
-  closeProductModal?.addEventListener(
-    "click",
-    closeProductModal
-  );
-
-  productModalOverlay?.addEventListener(
-    "click",
-    closeProductModal
-  );
-
-  closeProfileModalBtn?.addEventListener(
-    "click",
-    closeProfileModal
-  );
-
-  profileModalOverlay?.addEventListener(
-    "click",
-    closeProfileModal
-  );
-
-  closeEditProfileModal?.addEventListener(
-    "click",
-    closeEditProfile
-  );
-
-  editProfileModalOverlay?.addEventListener(
-    "click",
-    closeEditProfile
-  );
-
-
-  document.addEventListener(
-    "keydown",
-    event => {
-
-      if (
-        event.key === "Escape"
-      ) {
-
-        closeProductModal();
-        closeProfileModal();
-        closeEditProfile();
-
-      }
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   AUTH STATE
-   ========================================================= */
+/* =======================================================
+   Auth State → Start Messenger Listener
+======================================================= */
 
 onAuthStateChanged(
   auth,
-  async user => {
+  user => {
 
-    try {
+    if (user) {
 
-      updateAuthUIForUser(
-        user
-      );
+      /*
+       * Start realtime conversation listener.
+       */
 
+      listenToConversations();
 
-      if (user) {
-
-        await createUserProfile(
-          user
-        );
-
-        currentProfile =
-          await getUserProfile(
-            user.uid
-          );
-
-        await renderMyProfile();
-
-        await loadConversations();
-
-      } else {
-
-        currentProfile =
-          null;
-
-        selectedConversationId =
-          null;
-
-        selectedChatUser =
-          null;
-
-
-        if (unsubscribeMessages) {
-
-          unsubscribeMessages();
-
-          unsubscribeMessages =
-            null;
-
-        }
-
-
-        if (profileContent) {
-
-          profileContent.innerHTML = `
-            <div class="empty-state">
-              <div>👤</div>
-              <h3>
-                ${escapeHTML(
-                  t("profileRequired")
-                )}
-              </h3>
-            </div>
-          `;
-
-        }
-
-
-        if (conversationList) {
-
-          conversationList.innerHTML = `
-            <div class="chat-empty">
-              <div>💬</div>
-              <p>
-                ${escapeHTML(
-                  t("loginFirst")
-                )}
-              </p>
-            </div>
-          `;
-
-        }
-
-
-        if (chatHeader) {
-
-          chatHeader.innerHTML = `
-            <span>
-              ${escapeHTML(
-                t("selectConversation")
-              )}
-            </span>
-          `;
-
-        }
-
-
-        if (chatMessages) {
-          chatMessages.innerHTML = "";
-        }
-
-      }
-
-    } catch (error) {
-
-      console.error(
-        "Auth state error:",
-        error
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   EVENT LISTENERS
-   ========================================================= */
-
-if (languageBtn) {
-
-  languageBtn.addEventListener(
-    "click",
-    switchLanguage
-  );
-
-}
-
-
-if (searchBtn) {
-
-  searchBtn.addEventListener(
-    "click",
-    filterProducts
-  );
-
-}
-
-
-if (searchInput) {
-
-  searchInput.addEventListener(
-    "input",
-    filterProducts
-  );
-
-  searchInput.addEventListener(
-    "keydown",
-    event => {
+    } else {
 
       if (
-        event.key === "Enter"
+        unsubscribeConversations
       ) {
 
-        event.preventDefault();
+        unsubscribeConversations();
 
-        filterProducts();
-
-      }
-
-    }
-  );
-
-}
-
-
-if (categorySelect) {
-
-  categorySelect.addEventListener(
-    "change",
-    filterProducts
-  );
-
-}
-
-
-if (showRegisterBtn) {
-
-  showRegisterBtn.addEventListener(
-    "click",
-    showRegisterForm
-  );
-
-}
-
-
-if (showLoginBtn) {
-
-  showLoginBtn.addEventListener(
-    "click",
-    showLoginForm
-  );
-
-}
-
-
-if (loginForm) {
-
-  loginForm.addEventListener(
-    "submit",
-    handleLogin
-  );
-
-}
-
-
-if (registerForm) {
-
-  registerForm.addEventListener(
-    "submit",
-    handleRegister
-  );
-
-}
-
-
-if (sellProductForm) {
-
-  sellProductForm.addEventListener(
-    "submit",
-    publishProduct
-  );
-
-}
-
-
-if (editProfileForm) {
-
-  editProfileForm.addEventListener(
-    "submit",
-    saveProfile
-  );
-
-}
-
-
-if (chatForm) {
-
-  chatForm.addEventListener(
-    "submit",
-    sendMessage
-  );
-
-}
-
-
-if (productImageFile) {
-
-  productImageFile.addEventListener(
-    "change",
-    () => {
-
-      const file =
-        productImageFile.files?.[0];
-
-      if (!file) {
-
-        if (imageStatus) {
-          imageStatus.textContent =
-            "";
-        }
-
-        return;
+        unsubscribeConversations =
+          null;
 
       }
+
 
       if (
-        !file.type.startsWith(
-          "image/"
-        )
+        unsubscribeMessages
       ) {
 
-        productImageFile.value =
-          "";
+        unsubscribeMessages();
 
-        if (imageStatus) {
-
-          imageStatus.textContent =
-            t("validImage");
-
-        }
-
-        return;
+        unsubscribeMessages =
+          null;
 
       }
 
-      if (
-        file.size >
-        10 * 1024 * 1024
-      ) {
 
-        productImageFile.value =
-          "";
+      selectedConversationId =
+        null;
 
-        if (imageStatus) {
+      selectedChatUser =
+        null;
 
-          imageStatus.textContent =
-            t("imageTooLarge");
 
-        }
+      if (conversationList) {
 
-        return;
+        conversationList.innerHTML = "";
 
       }
 
-      if (imageStatus) {
 
-        imageStatus.textContent =
-          `${file.name} ✓`;
+      if (chatMessages) {
+
+        chatMessages.innerHTML = "";
 
       }
 
     }
+
   );
-
-}
-
-
-/* =========================================================
-   START MAZAD
-   ========================================================= */
-
-async function initializeMazad() {
-
-  try {
-
-    applyLanguage();
-
-    setupNavigation();
-
-    setupModalEvents();
-
-    await loadProducts();
-
-  } catch (error) {
-
-    console.error(
-      "Mazad initialization error:",
-      error
-    );
-
-  }
-
-}
-
-
-if (
-  document.readyState ===
-  "loading"
-) {
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    initializeMazad,
-    {
-      once: true
-    }
-  );
-
-} else {
-
-  initializeMazad();
-
-}
+  
