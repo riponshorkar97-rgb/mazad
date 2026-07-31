@@ -1,3 +1,118 @@
-@media (max-width:768px){
+/* Responsive Design */
+
+
+/* Mobile */
+
+@media(max-width:600px){
+
+
+.header{
+    padding:0 12px;
+}
+
+
+.logo h2{
+    font-size:22px;
+}
+
+
+.header-right{
+    gap:12px;
+}
+
+
+.categories{
+    overflow-x:auto;
+    justify-content:flex-start;
+    gap:25px;
+    padding:15px;
+}
+
+
+.category{
+    min-width:70px;
+}
+
+
+.banner{
+    height:160px;
+}
+
+
+.banner-content h1{
+    font-size:24px;
+}
+
+
+.product-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+
+
+.product-card img{
+    height:120px;
+}
+
+
+.product-info h3{
+    font-size:14px;
+}
+
+
+.price{
+    font-size:16px;
+}
+
+
+.sell-btn{
+    right:15px;
+    bottom:85px;
+    padding:13px 18px;
+}
+
+
+}
+
+
+
+
+
+/* Tablet */
+
+@media(min-width:601px) and (max-width:1024px){
+
+
+.product-grid{
+    grid-template-columns:repeat(3,1fr);
+}
+
+
+.banner{
+    height:220px;
+}
+
+
+}
+
+
+
+
+
+/* Large Screen */
+
+@media(min-width:1025px){
+
+
+body{
+    max-width:1200px;
+    margin:auto;
+}
+
+
+.product-grid{
+    grid-template-columns:repeat(4,1fr);
+}
+
 
 }
